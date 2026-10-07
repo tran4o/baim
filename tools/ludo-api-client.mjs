@@ -29,10 +29,25 @@ export function validateCandidate(config) {
 
 export function pricingFromSpec(spec, model, duration) {
   const description = spec?.components?.schemas?.AnimateSpritePayload?.properties?.model?.description;
-  const line = description?.split('\n').find(line => line.startsWith(`- "${model}"`));
-  const match = line?.match(/:\s*([\d.]+) credits\/s, min charge ([\d.]+) credits/);
-  if (!match) throw new Error('Cannot verify current Ludo pricing; stop before spending');
-  const rate = Number(match[1]), minimum = Number(match[2]);
+  const fail = () => { throw new Error('Cannot verify current Ludo pricing; stop before spending'); };
+  if (!MODELS.includes(model) || !Number.isFinite(duration) || duration <= 0 || duration > 5
+      || typeof description !== 'string' || description.length > 20000) fail();
+  const lines = description.split(/\r?\n/).filter(line => line.includes(`"${model}"`));
+  if (lines.length !== 1) fail();
+  const number = '(0|[1-9]\\d*)(?:\\.\\d+)?';
+  // Entire line must have one documented grammar. Unknown suffixes/discounts are unsafe.
+  const prefix = `^- "${model}" \\(${model === 'hydra' ? 'Hydra' : 'Forge'}\\): `;
+  const suffix = model === 'hydra' ? '(?: · Most capable all-around model, generates audio)?' : '';
+  const old = lines[0].match(new RegExp(prefix + `(${number}) credits/s, min charge (${number}) credits${suffix}$`));
+  const current = lines[0].match(new RegExp(prefix + `(${number}) credits/s, shortest duration (${number})s, so (${number}) credits minimum${suffix}$`));
+  if (!old && !current) fail();
+  const rate = Number((old || current)[1]), minimum = Number(old ? old[3] : current[5]);
+  if (![rate, minimum].every(value => Number.isFinite(value) && value > 0 && value <= 1000)) fail();
+  if (current) {
+    const shortest = Number(current[3]);
+    if (shortest !== (model === 'hydra' ? 3 : 1) || duration < shortest
+        || Math.abs(rate * shortest - minimum) > 1e-9) fail();
+  }
   return { model, rate, minimum, estimatedCredits: Math.round(Math.max(rate * duration, minimum) * 10) / 10,
     specVersion: spec.info?.version, verifiedAt: new Date().toISOString(), descriptionSHA256: sha256(description) };
 }

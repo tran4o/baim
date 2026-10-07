@@ -2,6 +2,7 @@ import sharp from 'sharp';
 import { createHash } from 'node:crypto';
 import { constants, openSync, closeSync, fstatSync, readSync, lstatSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { assertNoLinks, assertPrivate, privateReferencePath, gitDirectory, windowsACL } from './ludo-private-state.mjs';
 
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
@@ -37,20 +38,23 @@ function safeParts(path) {
 
 // Reject every link/component before opening; bounded reads also catch growth after stat.
 export function readReferenceFile(root, path, { prepared = false, label } = {}) {
-  const parts = safeParts(path);
+  let parts = safeParts(path);
   if (prepared) {
     if (!/^[a-z][a-z0-9-]{2,63}$/.test(label || '')
         || !new RegExp(`^\\.git/ludo-api/${label}/reference-[a-f0-9]{64}\\.png$`).test(path)) throw new Error('Unsafe prepared reference path');
+    privateReferencePath(root, path);
+    root = gitDirectory(root); parts = parts.slice(1);
   } else if (!path.startsWith('assets_src/characters/') || parts.some(part => part.startsWith('.'))) {
     throw new Error('Reference must stay within public character source assets');
   }
   let current = root;
+  assertNoLinks(root);
   if (lstatSync(current).isSymbolicLink()) throw new Error('Unsafe reference root');
   for (let i = 0; i < parts.length; i++) {
     current = join(current, parts[i]);
     const st = lstatSync(current);
     if (st.isSymbolicLink() || (i < parts.length - 1 ? !st.isDirectory() : !st.isFile())) throw new Error('Unsafe reference file or directory');
-    if (prepared && i > 0 && process.platform !== 'win32' && (st.mode & 0o077)) throw new Error('Prepared reference state must be owner-only');
+    if (prepared) assertPrivate(current);
   }
   const fd = openSync(current, constants.O_RDONLY | (constants.O_NOFOLLOW || 0));
   try {
@@ -126,10 +130,17 @@ export async function prepareReferences(config, spec, root) {
         // candidateDir in the native CLI creates/validates the owner-only directory first.
         const parent = `.git/ludo-api/${config.label}`;
         for (const part of ['.git', '.git/ludo-api', parent]) {
-          const st = lstatSync(join(root, part));
+          const full = part === '.git' ? gitDirectory(root) : join(gitDirectory(root), ...part.split('/').slice(1));
+          assertNoLinks(full);
+          const st = lstatSync(full);
           if (!st.isDirectory() || st.isSymbolicLink() || (process.platform !== 'win32' && part !== '.git' && (st.mode & 0o077))) throw new Error('Unsafe prepared reference directory');
+          if (part !== '.git') assertPrivate(full);
         }
-        if (!existsSync(join(root, path))) writeFileSync(join(root, path), output, { flag: 'wx', mode: 0o600 });
+        const full = privateReferencePath(root, path);
+        if (!existsSync(full)) {
+          writeFileSync(full, output, { flag: 'wx', mode: 0o600 });
+          if (process.platform === 'win32') windowsACL(full, true);
+        }
         if (hash(readReferenceFile(root, path, { prepared: true, label: config.label })) !== sha256) throw new Error('Existing prepared derivative changed; preserve and reconcile');
         prepared = { path, sha256, ...dimensions };
       }

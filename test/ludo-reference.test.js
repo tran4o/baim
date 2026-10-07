@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, readdirSync, symlinkSync } from 'node:fs';
 import { join } from 'node:path';
+import { privateDirectory } from '../tools/ludo-private-state.mjs';
 import { tmpdir } from 'node:os';
 import sharp from 'sharp';
 import { referenceConstraints, referenceSize, prepareReferences, validateReferences, decodeReference, readReferenceFile } from '../tools/ludo-reference.mjs';
@@ -21,7 +22,8 @@ async function fixture(t, width = 981, height = 1604) {
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const label = 'future-animation-c01', reference = 'assets_src/characters/example/external_animation_v1/references/approved.png';
   mkdirSync(join(root, 'assets_src/characters/example/external_animation_v1/references'), { recursive: true });
-  mkdirSync(join(root, `.git/ludo-api/${label}`), { recursive: true, mode: 0o700 });
+  mkdirSync(join(root, '.git'));
+  privateDirectory(join(root, '.git'), join(root, `.git/ludo-api/${label}`));
   const bytes = await png(width, height); writeFileSync(join(root, reference), bytes);
   const config = { label, reference, referenceSHA256: sha256(bytes), finalReference: reference, finalReferenceSHA256: sha256(bytes),
     sourceDir: 'assets_src/characters/example/external_animation_v1/input', motionPrompt: 'A calm seated nod then settle.',

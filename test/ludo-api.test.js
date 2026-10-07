@@ -144,11 +144,11 @@ test('Ludo derived atlas uses returned geometry and explicitly labels inferred u
 
 test('Ludo environment gate refuses master, foreign host/path and noncanonical remote', () => {
   const run = (_command, args) => args[0] === 'remote' ? 'https://github.com/tran4o/baim.git\n' : args[0] === 'branch' ? 'feat/test\n' : args[1] === '--show-toplevel' ? '/home/ZeShad/baim\n' : 'base\n';
-  assert.equal(requireEnvironment('/home/ZeShad/baim', run, 'vps-b30ffe96').branch, 'feat/test');
-  assert.throws(() => requireEnvironment('/home/ubuntu/git/baim', run, 'vps-b30ffe96'), /Wrong/);
-  assert.throws(() => requireEnvironment('/home/ZeShad/baim', run, 'other-host'), /Wrong/);
-  assert.throws(() => requireEnvironment('/home/ZeShad/baim', (_c, args) => args[0] === 'branch' ? 'master' : run(_c, args), 'vps-b30ffe96'), /never master/);
-  assert.throws(() => requireEnvironment('/home/ZeShad/baim', (_c, args) => args[0] === 'remote' ? 'other-repo' : run(_c, args), 'vps-b30ffe96'), /Wrong/);
+  assert.equal(requireEnvironment('/home/ZeShad/baim', run, 'vps-b30ffe96', 'linux').branch, 'feat/test');
+  assert.throws(() => requireEnvironment('/home/ubuntu/git/baim', run, 'vps-b30ffe96', 'linux'), /Wrong/);
+  assert.throws(() => requireEnvironment('/home/ZeShad/baim', run, 'other-host', 'linux'), /Wrong/);
+  assert.throws(() => requireEnvironment('/home/ZeShad/baim', (_c, args) => args[0] === 'branch' ? 'master' : run(_c, args), 'vps-b30ffe96', 'linux'), /never master/);
+  assert.throws(() => requireEnvironment('/home/ZeShad/baim', (_c, args) => args[0] === 'remote' ? 'other-repo' : run(_c, args), 'vps-b30ffe96', 'linux'), /Wrong/);
 });
 
 test('Preview file guard blocks private state, dotfiles and aliases into private/outside files', () => {
