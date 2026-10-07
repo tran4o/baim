@@ -24,6 +24,25 @@ Setup/use first probes that the active port-5173 server blocks existing private 
 
 An existing `LUDO_API_KEY` environment variable is also supported. Never put it in a committed file, browser code, shell command history or logs. Private raw responses/job state stay in `.git/ludo-api/` (not served or tracked); signed result URLs are not copied into public provenance.
 
+## Temporary Windows route
+
+The explicitly approved PC primary checkout is `C:/Users/SveBiS/Desktop/myStuff/2026_GitPro/baim-local-active`. Its registered linked worktrees are also supported. On Windows, open the exact focused checkout in VS Code and use its integrated terminal. Set the non-secret checkout selector for that terminal only:
+
+```powershell
+$env:BAIM_LUDO_PC_ROOT = (Get-Location).Path
+npm.cmd run ludo:api -- setup
+```
+
+Run setup only after tooling review, using the owner account. Paste a new owner-provided key only into the hidden prompt; never transfer the VPS key or place a key in PowerShell assignments/history. No key is needed for `plan` or `validate-plan`. The selector does not bypass canonical remote, focused branch, primary Git directory or registered worktree checks. VPS defaults still require the actual VPS hostname and primary path. This temporary route does not make the VPS workflow assistant pass on Windows.
+
+Private directories and files on Windows are protected with native ACLs, allowing only the current owner and SYSTEM. Existing permissive state is rejected, not silently repaired. For migrated state owned by your current Windows account, the reviewed explicit `npm.cmd run ludo:api -- setup --protect-existing-state` command protects only that checkout's private API state tree before privacy verification/key entry. It preflights every entry, rejects links/hardlinks and foreign ownership, preserves all file contents, and refuses an existing key before any ACL migration. A partial ACL failure stops; no generation is attempted. Historical plans and consumed/uncertain jobs remain preserved and retain their original approval status. Setup checks preview privacy before requesting a key. An ACL failure is a real blocker; chmod is not a Windows privacy fix. The Codex sandbox account may lack ACL modification rights; run owner-side checks in VS Code. File-symlink regression fixtures may additionally require a temporary administrator VS Code terminal. Ordinary key setup should stay non-elevated.
+
+The primary checkout retains `.git/ludo-api`. Linked worktrees retain their own state under the primary `.git/worktrees/NAME/ludo-api`, with logical `.git/ludo-api/...` reference paths resolved through the verified worktree pointer. The live primary preview on port 5173 is probed at the actual existing private file path. Preview guards remain unchanged; no preview restart is part of setup. Do not copy plans/jobs between worktrees or relabel consumed/uncertain work. New Windows plans bind both branch and resolved checkout/Git state paths. Existing job recovery keeps its original request IDs and exclusive intent behavior.
+
+Pricing accepts explicit historical `min charge N credits` and current `shortest duration Ns, so N credits minimum` formats. Current Hydra's exact documented capability suffix is recognized; unknown suffixes, duplicate model lines, inconsistent arithmetic, wrong model identity and nonfinite/unbounded values stop preparation. The full original description hash is retained, including capability text and other model lines. The current Forge description supplies a rate but no explicit minimum; preparation stops rather than guessing a minimum. A schema version that remains 0.9.10 does not preserve approval when the description or reference schema changes.
+
+`validate-plan` checks current pricing as well as references. Prepare a fresh immutable candidate after any binding change; historical c01/c02 state and c03 preparation are preservation evidence, not current spending authority. Tooling publication, hidden key setup, one exact generation decision, and later runtime publication remain separate gates. No paid request is needed for compatibility regression tests.
+
 ## Normal per-animation sequence
 
 The agent creates the candidate configuration in task-owned ignored staging, such as `target/ludo-api/candidate.json`. Example structure only; replace the placeholders with an approved reference and its real hash:

@@ -6,41 +6,45 @@ import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { LudoClient, SPEC_URL, validateCandidate, pricingFromSpec, makePayload, sha256, downloadSheet, normalizeSheet, deriveAtlas, submitWithIntent, verifyApproval } from './ludo-api-client.mjs';
 import { prepareReferences, validateReferences } from './ludo-reference.mjs';
+import { PC_PRIMARY, VPS_ROOT, assertNoLinks, gitDirectory, privateDirectory, assertPrivate, windowsACL, protectExistingState } from './ludo-private-state.mjs';
 
-const ROOT = '/home/ZeShad/baim';
-const PRIVATE = join(ROOT, '.git/ludo-api');
-const KEY = join(PRIVATE, 'key');
+let ROOT = VPS_ROOT, PRIVATE = join(ROOT, '.git/ludo-api'), KEY = join(PRIVATE, 'key');
 const json = value => `${JSON.stringify(value, null, 2)}\n`;
 const read = path => JSON.parse(readFileSync(path, 'utf8'));
 
-export function requireEnvironment(root = ROOT, run = execFileSync, host = hostname()) {
+export function requireEnvironment(root = ROOT, run = execFileSync, host = hostname(), platform = process.platform) {
   const git = (...args) => run('git', args, { cwd: root, encoding: 'utf8' }).trim();
-  if (host !== 'vps-b30ffe96' || root !== ROOT || git('rev-parse', '--show-toplevel') !== ROOT
+  if (platform === 'win32') {
+    const primary = resolve(PC_PRIMARY);
+    root = assertNoLinks(root);
+    if (resolve(git('rev-parse', '--show-toplevel')) !== root
+        || resolve(git('rev-parse', '--path-format=absolute', '--git-common-dir')) !== join(primary, '.git')
+        || git('remote', 'get-url', 'marto') !== 'https://github.com/tran4o/baim.git'
+        || git('remote', 'get-url', 'zeshad') !== 'https://github.com/ZeShad/baim.git') throw new Error('Wrong PC repository/canonical remote; stop');
+    assertNoLinks(primary); assertNoLinks(join(primary, '.git'));
+    const dir = gitDirectory(root), expected = resolve(git('rev-parse', '--absolute-git-dir'));
+    if (dir !== expected || !lstatSync(join(primary, '.git')).isDirectory()) throw new Error('Wrong primary Git directory; stop');
+    if (root !== primary) {
+      if (relative(join(primary, '.git/worktrees'), dir).startsWith('..')
+          || resolve(readFileSync(join(dir, 'gitdir'), 'utf8').trim()) !== join(root, '.git')) throw new Error('Wrong linked worktree; stop');
+    }
+  } else if (host !== 'vps-b30ffe96' || root !== VPS_ROOT || git('rev-parse', '--show-toplevel') !== VPS_ROOT
       || git('remote', 'get-url', 'marto') !== 'https://github.com/tran4o/baim.git') throw new Error('Wrong host/repository/canonical remote; stop');
   const branch = git('branch', '--show-current');
   if (!branch.startsWith('feat/')) throw new Error('Use a focused feat/ branch, never master');
-  return { branch, base: git('rev-parse', 'marto/master') };
+  return { branch, base: git('rev-parse', 'marto/master'), ...(platform === 'win32' ? { platform, root, gitDir: gitDirectory(root) } : {}) };
 }
 
 function privateDir(path) {
-  if (lstatSync(join(ROOT, '.git')).isSymbolicLink()) throw new Error('Pilot requires the primary checkout');
-  const rel = relative(join(ROOT, '.git'), path);
-  if (rel.startsWith('..') || isAbsolute(rel)) throw new Error('Invalid private state path');
-  let current = join(ROOT, '.git');
-  for (const part of rel.split('/')) {
-    current = join(current, part);
-    if (existsSync(current)) {
-      const st = lstatSync(current);
-      if (!st.isDirectory() || st.isSymbolicLink()) throw new Error('Unsafe private state directory');
-      if ((st.mode & 0o077) !== 0) throw new Error('Private API state requires owner-only permissions');
-    } else mkdirSync(current, { mode: 0o700 });
-  }
+  privateDirectory(gitDirectory(ROOT), path);
 }
+function protectNew(path) { if (process.platform === 'win32') windowsACL(path, true); assertPrivate(path); }
 function save(path, data, exclusive = false) {
-  if (exclusive) { writeFileSync(path, json(data), { flag: 'wx', mode: 0o600 }); return; }
-  if (existsSync(path) && lstatSync(path).isSymbolicLink()) throw new Error('Unsafe state file');
+  if (exclusive) { writeFileSync(path, json(data), { flag: 'wx', mode: 0o600 }); protectNew(path); return; }
+  if (existsSync(path)) assertPrivate(path);
   const temp = `${path}.${randomUUID()}.tmp`;
   writeFileSync(temp, json(data), { flag: 'wx', mode: 0o600 });
+  protectNew(temp);
   renameSync(temp, path);
 }
 function candidateDir(label) {
@@ -50,6 +54,7 @@ function candidateDir(label) {
 function sourceDir(path) {
   if (!/^assets_src\/characters\/[a-z0-9_]+\/external_animation_v1\/input$/.test(path || '')) throw new Error('Use the established character source input directory');
   const full = resolve(ROOT, path);
+  assertNoLinks(full);
   let current = ROOT;
   for (const part of path.split('/')) {
     current = join(current, part);
@@ -59,28 +64,33 @@ function sourceDir(path) {
 }
 function loadKey() {
   if (process.env.LUDO_API_KEY) return process.env.LUDO_API_KEY;
-  if (!existsSync(KEY)) throw new Error('No API key configured. Run npm run ludo:api -- setup privately in your VPS terminal');
+  if (!existsSync(KEY)) throw new Error('No API key configured. Run setup privately in the verified checkout terminal');
   const st = lstatSync(KEY);
-  if (!st.isFile() || st.isSymbolicLink() || (st.mode & 0o077)) throw new Error('API key must be an owner-only regular file');
+  assertPrivate(KEY);
+  if (!st.isFile()) throw new Error('API key must be an owner-only regular file');
   return readFileSync(KEY, 'utf8').trim();
 }
 async function verifyPrivacy() {
   privateDir(PRIVATE);
   const name = `probe-${randomUUID()}.txt`, file = join(PRIVATE, name);
   writeFileSync(file, 'non-secret privacy probe', { flag: 'wx', mode: 0o600 });
+  protectNew(file);
   try {
-    const response = await fetch(`http://127.0.0.1:5173/.git/ludo-api/${name}`, { signal: AbortSignal.timeout(5000) });
-    if (response.status !== 404) throw new Error('Preview does not protect private API state. Restart only the verified ZeShad port-5173 server before setup/use');
+    const probePath = relative(process.platform === 'win32' ? resolve(PC_PRIMARY) : ROOT, file).replaceAll('\\', '/');
+    if (probePath.startsWith('../') || isAbsolute(probePath)) throw new Error('Private probe is outside the verified preview checkout');
+    const response = await fetch(`http://127.0.0.1:5173/${probePath}`, { redirect: 'error', signal: AbortSignal.timeout(5000) });
+    if (response.status !== 404) throw new Error('Preview does not protect private API state; stop before setup/use');
   } finally { unlinkSync(file); }
 }
-async function readHiddenKey() {
-  if (!process.stdin.isTTY) throw new Error('Setup requires an interactive VPS terminal; never paste the key into chat or a command argument');
-  process.stdout.write('Paste Ludo API key (hidden), then Enter: ');
-  process.stdin.setRawMode(true); process.stdin.resume(); process.stdin.setEncoding('utf8');
+export async function readHiddenKey(input = process.stdin, output = process.stdout) {
+  if (!input.isTTY || typeof input.setRawMode !== 'function') throw new Error('Setup requires an interactive terminal; never paste the key into chat or a command argument');
+  const wasRaw = Boolean(input.isRaw);
+  output.write('Paste Ludo API key (hidden), then Enter: ');
+  input.setRawMode(true); input.resume(); input.setEncoding('utf8');
   return new Promise((resolveKey, reject) => {
     let key = '';
     const finish = (error) => {
-      process.stdin.off('data', onData); process.stdin.setRawMode(false); process.stdin.pause(); process.stdout.write('\n');
+      input.off('data', onData); input.setRawMode(wasRaw); input.pause(); output.write('\n');
       if (error) reject(error); else resolveKey(key);
     };
     const onData = chunk => {
@@ -92,7 +102,7 @@ async function readHiddenKey() {
         if (key.length > 1000) { finish(new Error('Invalid key length')); return; }
       }
     };
-    process.stdin.on('data', onData);
+    input.on('data', onData);
   });
 }
 async function currentSpec() {
@@ -122,12 +132,23 @@ export async function main(args) {
   if (!command || command === 'help') {
     console.log('Ludo pilot: setup | check | plan candidate.json | validate-plan LABEL | submit LABEL --approve-plan HASH --max-credits N | collect LABEL\nNo command generates by default. See docs/ludo-api-pilot.md.'); return;
   }
+  if (process.platform === 'win32') {
+    if (!process.env.BAIM_LUDO_PC_ROOT || !isAbsolute(process.env.BAIM_LUDO_PC_ROOT)) throw new Error('Set BAIM_LUDO_PC_ROOT to the explicit approved PC checkout');
+    ROOT = resolve(process.env.BAIM_LUDO_PC_ROOT);
+  }
   const environment = requireEnvironment();
+  if (process.platform !== 'win32' && gitDirectory(ROOT) !== join(ROOT, '.git')) throw new Error('VPS pilot requires the primary checkout');
+  PRIVATE = join(gitDirectory(ROOT), 'ludo-api'); KEY = join(PRIVATE, 'key');
   if (command === 'setup') {
     if (existsSync(KEY)) throw new Error('Key already configured; do not overwrite it without an explicit rotation decision');
+    if (labelOrPath !== undefined) {
+      if (labelOrPath !== '--protect-existing-state' || options.length || process.platform !== 'win32') throw new Error('Setup accepts only the explicit Windows --protect-existing-state option');
+      if (existsSync(PRIVATE)) console.log(`Protected ACLs on ${protectExistingState(PRIVATE)} existing private state entries; contents preserved.`);
+    }
     await verifyPrivacy();
     const key = await readHiddenKey(); await new LudoClient(key).check();
     writeFileSync(KEY, key, { flag: 'wx', mode: 0o600 });
+    protectNew(KEY);
     console.log('API key validated and stored privately. No generation or credits spent.'); return;
   }
   if (command === 'check') {
@@ -148,12 +169,16 @@ export async function main(args) {
   }
   if (!['submit', 'collect', 'validate-plan'].includes(command)) throw new Error('Unknown command; run help');
   const dir = candidateDir(labelOrPath), planPath = join(dir, 'plan.json');
+  assertPrivate(planPath);
   const planBytes = readFileSync(planPath), plan = JSON.parse(planBytes);
   validateCandidate(plan.config);
   if (plan.environment.branch !== environment.branch) throw new Error('Candidate belongs to a different task branch');
+  if (plan.environment.root && (plan.environment.root !== environment.root || plan.environment.gitDir !== environment.gitDir)) throw new Error('Candidate belongs to a different checkout');
   await verifyPrivacy();
   if (command === 'validate-plan') {
-    await validateReferences(plan, await currentSpec(), ROOT);
+    const spec = await currentSpec();
+    await validateReferences(plan, spec, ROOT);
+    if (pricingFromSpec(spec, plan.config.model, plan.config.duration).descriptionSHA256 !== plan.pricing.descriptionSHA256) throw new Error('Pricing changed; fresh reviewed plan required');
     if (sha256(readFileSync(planPath)) !== sha256(planBytes)) throw new Error('Saved plan changed during validation; fresh reviewed plan required');
     print({ label: labelOrPath, valid: true, planSHA256: sha256(json(plan)), referenceNote: plan.referencePreparation?.note || 'Compatible legacy reference bytes unchanged.' }); return;
   }
@@ -169,6 +194,7 @@ export async function main(args) {
     if (state.credits_charged > cap) throw new Error('Reported charge exceeds approval cap; saved job must be investigated, never resubmitted');
     print({ label: labelOrPath, jobId: state.id || null, status: state.status, next: 'collect the saved candidate; never repeat submit' }); return;
   }
+  assertPrivate(statePath);
   const state = read(statePath);
   if (!state.id && !state.result) {
     const jobs = await client.jobs();
@@ -192,6 +218,7 @@ export async function main(args) {
       pollAfterMs: state.poll_after_ms || null, next: ['failed', 'canceled'].includes(state.status) ? 'stop; a new paid attempt needs a new decision' : 'collect again after the recommended delay; this is a free read' }); return;
   }
   if (existsSync(join(dir, 'download.json'))) {
+    assertPrivate(join(dir, 'download.json'));
     const report = read(join(dir, 'download.json'));
     const destination = join(sourceDir(plan.config.sourceDir), `${plan.config.label}-api`);
     for (const [name, digest] of [['spritesheet.png', report.sourceSHA256], ['derived-atlas.json', report.derivedAtlasSHA256], ['provenance.json', report.provenanceSHA256]]) {
@@ -201,8 +228,9 @@ export async function main(args) {
     print(report); return;
   }
   const bytesPath = join(dir, 'spritesheet.png');
+  if (existsSync(bytesPath)) assertPrivate(bytesPath);
   const nativeBytes = existsSync(bytesPath) ? readFileSync(bytesPath) : await downloadSheet(state.result.spritesheet_url);
-  if (!existsSync(bytesPath)) writeFileSync(bytesPath, nativeBytes, { flag: 'wx', mode: 0o600 });
+  if (!existsSync(bytesPath)) { writeFileSync(bytesPath, nativeBytes, { flag: 'wx', mode: 0o600 }); protectNew(bytesPath); }
   const normalized = await normalizeSheet(nativeBytes), bytes = normalized.bytes;
   const nativeSourceFile = normalized.nativeFormat === 'png' ? 'spritesheet.png' : 'spritesheet.original.webp';
   const atlas = await deriveAtlas(bytes, state.result);
