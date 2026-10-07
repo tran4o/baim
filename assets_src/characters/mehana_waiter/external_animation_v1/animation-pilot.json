@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "characterId": "npc.mehana_waiter",
+  "displayName": "Kiro",
+  "scope": {
+    "sceneId": "scene.chapter1.mehana",
+    "canvas": {"width": 1280, "height": 720},
+    "placement": {"left": 727, "top": 222, "height": 265, "zIndex": 50},
+    "fallbackAsset": "assets/chapter1/characters/mehana_waiter/idle-bartender-v2.png",
+    "occluderLayerId": "layer.mehana.counter_front"
+  },
+  "animations": {
+    "kiro_polishing_idle_web_c01": {
+      "slot": "Idle",
+      "status": "runtime_approved",
+      "use": true,
+      "loop": true,
+      "quietOnly": true,
+      "source": {
+        "exportFilename": "sprite--9px-frames-36-rows-6-cols-6.zip",
+        "storedFilename": "input/kiro-polishing-idle-5s-web-c01/sprite--9px-frames-36-rows-6-cols-6.zip",
+        "sourceZipSha256": "a055b19454ed1791546db2fc6ac2430cb978ce0bad8a635eb652e33c84771304",
+        "sheetSha256": "27b8299759ccf8d9b892459dd1a105c82cc0101e0479ae03eb12e25e8ef280cf",
+        "metadataSha256": "b70549c861646c3d3f99713c3e54321fdc32d1de4d737265e9888827f0351271"
+      },
+      "generation": {
+        "tool": "Ludo.ai website",
+        "model": "Hydra",
+        "prompt": "Animate this exact bartender in a seamless 5-second loop. Preserve his identity, expression, clothing, proportions and painted style. Keep the glass and its holding hand fixed. Make two slow, tiny polishing strokes with the striped cloth, always touching the glass; movement under ¼ glass width. Return smoothly to the starting pose. Add subtle chest breathing and one soft blink. Keep his downcast gaze and mouth closed. Anchor head, torso, legs and shoes. Fixed camera, scale and full canvas; transparent background. No glass lifting or rotation, new gestures, props, counter, scenery, shadows, text or extra limbs.",
+        "settings": {"requestedDurationSeconds": 5, "maxFrames": 36, "spriteSize": "True Size", "loop": true, "trimWhitespace": false, "margin": "Auto"},
+        "displayedCredits": 15,
+        "creditsSpent": null,
+        "resultId": null,
+        "unavailableEvidenceReason": "Owner supplied completed original website ZIP; screenshot verified settings and displayed 15-credit cost. Actual billing, provider result ID and uploaded-reference identity are not independently verified. Failed API c03 is separate and preserved."
+      },
+      "import": {
+        "runtime": {"asset": "assets/chapter1/characters/mehana_waiter/kiro-polishing-idle-web-c01.png", "frameWidth": 339, "frameHeight": 1024, "frames": 36, "columns": 6, "frameDurationMs": 133, "durationMs": 4788},
+        "timingOrigin": "unchanged original website frame JSON"
+      },
+      "review": {"candidateStatus": "runtime_approved", "decision": "Owner: looks good approved", "reviewer": "owner", "approvedAt": "2026-10-08", "publicationApproved": false}
+    }
+  }
+}

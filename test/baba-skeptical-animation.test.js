@@ -52,7 +52,17 @@ test('Baba skeptical pauses in menus, cancels on close and never replays a late-
 test('Skeptical source and timing are bound; original approved assets, systems and localization are preserved',()=>{
  assert.equal(baseline.approvedBaseline,'a69ac4f2f8a164a6ac4859d9c6e8f61b2fb117dd');
  const pilotPath='assets_src/characters/baba_stoyanka/external_animation_v1/animation-pilot.json';
- for(const [p,expected]of Object.entries(baseline.files))assert.equal(sha(readFileSync(p)),expected,`approved baseline changed: ${p}`);
+ // Retain the original baseline hash; remove only the reviewed opt-in idle extension.
+ const preservedBytes=p=>{
+  if(p!=='src/engine/Renderer.js')return readFileSync(p);
+  let source=readFileSync(p,'utf8');
+  const hook="  sceneLayerIdleAnimation(scene, layer) {\n    const animation = layer.animation;\n    if (animation?.quietOnly !== true) return animation;\n    const npcId = animation.npcId;\n    const game = this.game;\n    if (!npcId || !scene.npcs?.some(npc => npc.id === npcId)\n      || game.paused || game.menuOpen || game.devHome || game.editMode\n      || game.content?.dialogues?.[game.dialogue?.current?.id]?.npcId === npcId\n      || game.npcSpeechBubble?.npcId === npcId\n      || game.npcSpeechAnimationTime?.(npcId) != null) return null;\n    return animation;\n  }\n\n";
+  for(const [added,original]of [[hook,''],['    const idleAnimation = this.sceneLayerIdleAnimation(scene, layer);\n',''],['const baseAnimation = talking ? layer.talkAnimation : idleAnimation;','const baseAnimation = talking ? layer.talkAnimation : layer.animation;'],['const animation = reacting ? reaction : talking ? layer.talkAnimation : idleAnimation;','const animation = reacting ? reaction : talking ? layer.talkAnimation : layer.animation;']]){
+   assert.equal(source.split(added).length,2,'exact reviewed quiet-idle extension required');source=source.replace(added,original);
+  }
+  return source;
+ };
+ for(const [p,expected]of Object.entries(baseline.files))assert.equal(sha(preservedBytes(p)),expected,`approved baseline changed: ${p}`);
  const pilot=JSON.parse(readFileSync(pilotPath));
  const candidate=pilot.animations.baba_skeptical_seated_1;delete pilot.animations.baba_skeptical_seated_1;
  assert.equal(sha(JSON.stringify(pilot)),baseline.semantic.pilot,'all prior Baba animation records must remain unchanged');
@@ -73,6 +83,7 @@ test('Skeptical source and timing are bound; original approved assets, systems a
  // Normalize only the explicit mehana redesign mappings; keep the frozen Baba baseline intact.
  const manifest='src/content/art/assetManifest.js';
  const priorManifest=readFileSync(manifest,'utf8')
+ .replace('      mehanaWaiterPolishingIdle: "assets/chapter1/characters/mehana_waiter/kiro-polishing-idle-web-c01.png",\n','')
  .replace('      babaStoyankaSkepticalSeated: "assets/chapter1/characters/baba_stoyanka/skeptical-seated-v1.webp",\n','')
  .replace('background: "assets/chapter1/scenes/mehana/background-redesign-v1.png"','background: "assets/chapter1/scenes/mehana/background.png"')
  .replace('mehana_waiter/idle-bartender-v2.png','mehana_waiter/idle-v1.png')

@@ -41,9 +41,11 @@ test('static chairs and floor retain every approved painting RGB pixel outside c
  for(let i=0;i<room.length;i+=4)if(room[i+3]!==0)assert.deepEqual(room.subarray(i,i+3),original.subarray(i,i+3));
 });
 
-test('approved smaller bartender remains static with the original waiter and dialogue preserved',async()=>{
+test('owner-requested bartender registration and static fallback survive the quiet polishing preview',async()=>{
  const scene=chapter1.scenes.find(s=>s.id==='scene.chapter1.mehana');const layer=scene.foregroundLayers.find(l=>l.id==='layer.mehana.waiter_idle');
- assert.deepEqual([layer.left,layer.top,layer.height],[733,238,230]);assert.equal(layer.animation,undefined);
+ assert.deepEqual([layer.left,layer.top,layer.height],[727,222,265]);
+ assert.equal(layer.asset,'mehanaWaiterIdle');assert.equal(layer.animation.quietOnly,true);assert.equal(layer.animation.npcId,'npc.mehana_waiter');
+ assert.equal(layer.animation.frameCount,36);assert.equal(layer.animation.frameDurationMs,133);assert.equal(layer.animation.loop,true);
  assert.equal(scene.npcs.find(n=>n.id==='npc.mehana_waiter').dialogueId,'dialogue.mehana_waiter');
  const {createHash}=await import('node:crypto');assert.equal(createHash('sha256').update(readFileSync('assets/chapter1/characters/mehana_waiter/idle-v1.png')).digest('hex'),'c1c3ec8e93ab0bfc3e842c80746470bc5aaab149f4be0ab62badcda17bd54c26');
 });

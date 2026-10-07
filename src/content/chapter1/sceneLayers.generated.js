@@ -351,9 +351,26 @@ export const sceneLayerGeometry = {
         "id": "layer.mehana.waiter_idle",
         "asset": "mehanaWaiterIdle",
         "zIndex": 50,
-        "top": 238,
-        "left": 733,
-        "height": 230
+        "top": 222,
+        "left": 727,
+        "height": 265,
+        "animation": {
+          "quietOnly": true,
+          "npcId": "npc.mehana_waiter",
+          "asset": "mehanaWaiterPolishingIdle",
+          "frameWidth": 339,
+          "frameHeight": 1024,
+          "frameCount": 36,
+          "columns": 6,
+          "frameDurationMs": 133,
+          "loop": true,
+          "contentBounds": {
+            "x": 0,
+            "y": 0,
+            "w": 339,
+            "h": 1024
+          }
+        }
       },
       {
         "id": "layer.mehana.tony_fridge_seated",
