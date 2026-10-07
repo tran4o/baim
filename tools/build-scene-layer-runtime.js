@@ -126,6 +126,12 @@ function runtimeAnimation(animation, sourcePath, layerId) {
     throw new Error(`${sourcePath} ${layerId} transitionDurationMs must be finite and nonnegative`);
   }
   const phases = {};
+  if (animation.quietOnly != null && typeof animation.quietOnly !== "boolean") {
+    throw new Error(`${sourcePath} ${layerId} quietOnly must be boolean`);
+  }
+  if (animation.quietOnly === true && (typeof animation.npcId !== "string" || !animation.npcId)) {
+    throw new Error(`${sourcePath} ${layerId} quiet idle needs npcId`);
+  }
   for (const key of phaseKeys) if (animation[key] != null) {
     if (!Number.isInteger(animation[key]) || animation[key] < 0 || animation[key] >= Number(animation.frameCount)) {
       throw new Error(sourcePath + ' ' + layerId + ' ' + key + ' must be a valid frame index');
@@ -140,6 +146,8 @@ function runtimeAnimation(animation, sourcePath, layerId) {
   }
   return {
     ...phases,
+    ...(animation.quietOnly != null ? { quietOnly: animation.quietOnly } : {}),
+    ...(animation.quietOnly === true ? { npcId: animation.npcId } : {}),
     ...(animation.interpolateFrames != null ? { interpolateFrames: animation.interpolateFrames } : {}),
     ...(animation.transitionDurationMs != null ? { transitionDurationMs: animation.transitionDurationMs } : {}),
     ...(registration ? { registrationBounds: Object.fromEntries(["x", "y", "w", "h"].map((key) => [key, Number(registration[key])])) } : {}),

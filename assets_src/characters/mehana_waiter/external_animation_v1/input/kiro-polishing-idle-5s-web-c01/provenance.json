@@ -1,0 +1,37 @@
+{
+  "label": "kiro-polishing-idle-5s-web-c01",
+  "displayName": "Kiro",
+  "status": "runtime_approved",
+  "transport": "owner-downloaded-ludo-website-zip",
+  "requestedDurationSeconds": 5,
+  "exportedFrameDurationMs": 133,
+  "exportedDurationMs": 4788,
+  "frameCount": 36,
+  "frameWidth": 339,
+  "frameHeight": 1024,
+  "columns": 6,
+  "rows": 6,
+  "zipSHA256": "a055b19454ed1791546db2fc6ac2430cb978ce0bad8a635eb652e33c84771304",
+  "sheetSHA256": "27b8299759ccf8d9b892459dd1a105c82cc0101e0479ae03eb12e25e8ef280cf",
+  "metadataSHA256": "b70549c861646c3d3f99713c3e54321fdc32d1de4d737265e9888827f0351271",
+  "runtime": "assets/chapter1/characters/mehana_waiter/kiro-polishing-idle-web-c01.png",
+  "runtimeSHA256": "27b8299759ccf8d9b892459dd1a105c82cc0101e0479ae03eb12e25e8ef280cf",
+  "sourceUnmodified": true,
+  "stableNpcId": "npc.mehana_waiter",
+  "appearance": {
+    "left": 727,
+    "top": 222,
+    "height": 265
+  },
+  "generationReportedCompletedByOwner": true,
+  "displayedWebsiteCost": 15,
+  "actualChargeVerified": false,
+  "uploadedReferenceIdentityVerified": false,
+  "note": "Website PNG and frame JSON preserved unchanged. Export dimensions match the prepared smaller reference, but input identity and billing are not independently verified. API c03 remains failed and separate. Visual gameplay review approved; publication remains a separate decision.",
+  "review": {
+    "decision": "Owner: looks good approved",
+    "reviewer": "owner",
+    "approvedAt": "2026-10-08",
+    "publicationApproved": false
+  }
+}

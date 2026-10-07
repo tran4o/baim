@@ -637,7 +637,21 @@ export class Renderer {
     return true;
   }
 
+  sceneLayerIdleAnimation(scene, layer) {
+    const animation = layer.animation;
+    if (animation?.quietOnly !== true) return animation;
+    const npcId = animation.npcId;
+    const game = this.game;
+    if (!npcId || !scene.npcs?.some(npc => npc.id === npcId)
+      || game.paused || game.menuOpen || game.devHome || game.editMode
+      || game.content?.dialogues?.[game.dialogue?.current?.id]?.npcId === npcId
+      || game.npcSpeechBubble?.npcId === npcId
+      || game.npcSpeechAnimationTime?.(npcId) != null) return null;
+    return animation;
+  }
+
   drawSceneRasterLayer(scene, layer) {
+    const idleAnimation = this.sceneLayerIdleAnimation(scene, layer);
     const fallbackImage = this.game.assets.getSceneImage(scene.id, layer.asset);
     const speechTime = layer.talkAnimation
       ? this.game.npcSpeechAnimationTime?.(layer.talkAnimation.npcId)
@@ -684,7 +698,7 @@ export class Renderer {
       ? { animation: layer.animation, image: stationaryImage, frameIndex: layer.stationaryLowerBody.frameIndex } : null;
     if (reacting && (reaction.interpolateFrames || reaction.transitionDurationMs > 0)) {
       const blend = sceneReactionBlendSamples(reaction, reactionResult.state.elapsed);
-      const baseAnimation = talking ? layer.talkAnimation : layer.animation;
+      const baseAnimation = talking ? layer.talkAnimation : idleAnimation;
       const baseImage = talking ? talkImage : this.game.assets.getSceneImage(scene.id, baseAnimation?.asset);
       if (baseAnimation && this.game.assets.isLoaded(baseImage)) {
         const baseFrame = talking && talkFrame != null ? talkFrame
@@ -694,7 +708,7 @@ export class Renderer {
         if (this.drawSceneAnimationSamples(layer, samples, stationarySample)) return;
       }
     }
-    const animation = reacting ? reaction : talking ? layer.talkAnimation : layer.animation;
+    const animation = reacting ? reaction : talking ? layer.talkAnimation : idleAnimation;
     const animationImage = reacting ? reactionImage : talking ? talkImage : animation?.asset
       ? this.game.assets.getSceneImage(scene.id, animation.asset)
       : null;

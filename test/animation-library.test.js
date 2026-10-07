@@ -76,6 +76,10 @@ test("world catalog includes procedural, CSS, and static-state categories", () =
 });
 
 test("approved NPC motion is counted without claiming missing evidence needs approval", () => {
-  assert.match(npcHtml, /<strong>2<\/strong><span>live motion<\/span>/);
+  assert.match(npcHtml, /<strong>3<\/strong><span>live motion<\/span>/);
+  const kiro = JSON.parse(readFileSync("assets_src/characters/mehana_waiter/external_animation_v1/animation-pilot.json", "utf8"));
+  assert.equal(kiro.animations.kiro_polishing_idle_web_c01.review.candidateStatus, "runtime_approved");
+  assert.equal(kiro.animations.kiro_polishing_idle_web_c01.review.publicationApproved, false);
+  assert.match(npcHtml, /kiro-polishing-idle-web-c01\.png/);
   assert.match(npcHtml, /Runtime approved; generation evidence incomplete \(see manifest\)/);
 });

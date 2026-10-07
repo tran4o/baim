@@ -12,9 +12,26 @@
       "asset": "mehanaWaiterIdle",
       "output": "assets/chapter1/characters/mehana_waiter/idle-bartender-v2.png",
       "zIndex": 50,
-      "top": 238,
-      "left": 733,
-      "height": 230
+      "top": 222,
+      "left": 727,
+      "height": 265,
+      "animation": {
+        "asset": "mehanaWaiterPolishingIdle",
+        "npcId": "npc.mehana_waiter",
+        "quietOnly": true,
+        "frameWidth": 339,
+        "frameHeight": 1024,
+        "frameCount": 36,
+        "columns": 6,
+        "frameDurationMs": 133,
+        "loop": true,
+        "contentBounds": {
+          "x": 0,
+          "y": 0,
+          "w": 339,
+          "h": 1024
+        }
+      }
     },
     {
       "id": "layer.mehana.tony_fridge_seated",

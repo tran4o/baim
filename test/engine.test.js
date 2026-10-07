@@ -808,9 +808,9 @@ test("Mehana starts Bai Mitko seated with waiter and table interactions", () => 
   assert.equal(scene.interactables.some((target) => target.id === "hotspot.mehana.table"), true);
   assert.equal(waiter.dialogueId, "dialogue.mehana_waiter");
   assert.equal(waiterLayer.asset, "mehanaWaiterIdle");
-  assert.equal(waiterLayer.height, 230);
-  assert.equal(waiterLayer.left, 733);
-  assert.equal(waiterLayer.top, 238);
+  assert.equal(waiterLayer.height, 265);
+  assert.equal(waiterLayer.left, 727);
+  assert.equal(waiterLayer.top, 222);
   const counter = scene.foregroundLayers.find(layer => layer.id === "layer.mehana.counter_front");
   assert.ok(counter.zIndex < waiterLayer.zIndex, "counter must occlude waiter lower body");
   assert.equal(scene.npcs.some((npc) => npc.id === "npc.tony_fridge"), true);

@@ -23,7 +23,8 @@
       "id": "npc.mehana_waiter",
       "label": "Kiro / Mehana Waiter",
       "description": "Owner-approved skinny, balding, nervous bartender polishing a glass behind the counter. Static pose for unchanged waiter/shopkeeper interactions; original waiter artwork retained.",
-      "source": "assets/chapter1/characters/mehana_waiter/idle-bartender-v2.png"
+      "source": "assets/chapter1/characters/mehana_waiter/idle-bartender-v2.png",
+      "animationPilot": "assets_src/characters/mehana_waiter/external_animation_v1/animation-pilot.json"
     },
     {
       "id": "npc.tony_fridge",
