@@ -44,6 +44,7 @@ export const assetManifest = {
       mehanaCellarHatch: "assets/chapter1/scenes/mehana/cellar-hatch-preserved-v1.png",
       mehanaWaiterIdle: "assets/chapter1/characters/mehana_waiter/idle-bartender-v2.png",
       mehanaWaiterPolishingIdle: "assets/chapter1/characters/mehana_waiter/kiro-polishing-idle-web-c01.png",
+      mehanaWaiterSneakyGlassSwap: "assets/chapter1/characters/mehana_waiter/kiro-sneaky-glass-swap-web-c02.webp",
       tonyFridgeSeated: "assets/chapter1/characters/tony_fridge/seated-v1.png",
       tonyFridgeIdleSeated: "assets/chapter1/characters/tony_fridge/idle-seated-v1.webp",
       tonyFridgeTalkSeated: "assets/chapter1/characters/tony_fridge/talk-seated-v1.webp",

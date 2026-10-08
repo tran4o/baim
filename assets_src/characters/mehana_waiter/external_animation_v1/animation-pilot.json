@@ -4,8 +4,16 @@
   "displayName": "Kiro",
   "scope": {
     "sceneId": "scene.chapter1.mehana",
-    "canvas": {"width": 1280, "height": 720},
-    "placement": {"left": 727, "top": 222, "height": 265, "zIndex": 50},
+    "canvas": {
+      "width": 1280,
+      "height": 720
+    },
+    "placement": {
+      "left": 727,
+      "top": 222,
+      "height": 265,
+      "zIndex": 50
+    },
     "fallbackAsset": "assets/chapter1/characters/mehana_waiter/idle-bartender-v2.png",
     "occluderLayerId": "layer.mehana.counter_front"
   },
@@ -27,17 +35,145 @@
         "tool": "Ludo.ai website",
         "model": "Hydra",
         "prompt": "Animate this exact bartender in a seamless 5-second loop. Preserve his identity, expression, clothing, proportions and painted style. Keep the glass and its holding hand fixed. Make two slow, tiny polishing strokes with the striped cloth, always touching the glass; movement under ¼ glass width. Return smoothly to the starting pose. Add subtle chest breathing and one soft blink. Keep his downcast gaze and mouth closed. Anchor head, torso, legs and shoes. Fixed camera, scale and full canvas; transparent background. No glass lifting or rotation, new gestures, props, counter, scenery, shadows, text or extra limbs.",
-        "settings": {"requestedDurationSeconds": 5, "maxFrames": 36, "spriteSize": "True Size", "loop": true, "trimWhitespace": false, "margin": "Auto"},
+        "settings": {
+          "requestedDurationSeconds": 5,
+          "maxFrames": 36,
+          "spriteSize": "True Size",
+          "loop": true,
+          "trimWhitespace": false,
+          "margin": "Auto"
+        },
         "displayedCredits": 15,
         "creditsSpent": null,
         "resultId": null,
         "unavailableEvidenceReason": "Owner supplied completed original website ZIP; screenshot verified settings and displayed 15-credit cost. Actual billing, provider result ID and uploaded-reference identity are not independently verified. Failed API c03 is separate and preserved."
       },
       "import": {
-        "runtime": {"asset": "assets/chapter1/characters/mehana_waiter/kiro-polishing-idle-web-c01.png", "frameWidth": 339, "frameHeight": 1024, "frames": 36, "columns": 6, "frameDurationMs": 133, "durationMs": 4788},
+        "runtime": {
+          "asset": "assets/chapter1/characters/mehana_waiter/kiro-polishing-idle-web-c01.png",
+          "frameWidth": 339,
+          "frameHeight": 1024,
+          "frames": 36,
+          "columns": 6,
+          "frameDurationMs": 133,
+          "durationMs": 4788
+        },
         "timingOrigin": "unchanged original website frame JSON"
       },
-      "review": {"candidateStatus": "runtime_approved", "decision": "Owner: looks good approved", "reviewer": "owner", "approvedAt": "2026-10-08", "publicationApproved": false}
+      "review": {
+        "candidateStatus": "runtime_approved",
+        "decision": "Owner: looks good approved",
+        "reviewer": "owner",
+        "approvedAt": "2026-10-08",
+        "publicationApproved": false
+      }
+    },
+    "kiro_sneaky_glass_swap_web_c01": {
+      "label": "kiro-sneaky-glass-swap-5s-web-c01",
+      "slot": "Secondary Idle",
+      "status": "rejected",
+      "use": false,
+      "loop": false,
+      "source": {
+        "exportFilename": "sprite--9px-frames-36-rows-6-cols-6.gif",
+        "storedFilename": "input/kiro-sneaky-glass-swap-5s-web-c01/sprite--9px-frames-36-rows-6-cols-6.gif",
+        "sourceGifSha256": "f61797f5c0b2d02f2fa3f4f97949704033eba9d4651a68e4e25b95c29fc5e58b"
+      },
+      "generation": {
+        "tool": "Ludo.ai website",
+        "model": "Hydra",
+        "prompt": "Animate this exact bartender for five seconds, once. Preserve identity, clothing, proportions, painted style, scale and position. Stop polishing; lower the glass below the unseen counter; retrieve a different glass of the same design; give it a tiny, discreet cartoonish spit. Combine a sheepish smile and quick glance around into one brief beat, then polish again. End in the starting polishing pose. Keep the cloth in its original hand and hands/glasses coherent. Fixed camera, transparent background. No speaking, walking, body drift, extra limbs, characters, furniture, scenery or spray.",
+        "settings": {
+          "requestedDurationSeconds": 5,
+          "maxFrames": 36,
+          "spriteSize": "True Size",
+          "loop": false,
+          "trimWhitespace": false,
+          "margin": "Auto"
+        },
+        "displayedCredits": 15,
+        "creditsSpent": null,
+        "resultId": null,
+        "unavailableEvidenceReason": "Manual owner generation; actual billing/result ID/reference identity not independently verified."
+      },
+      "review": {
+        "candidateStatus": "rejected",
+        "decision": "Owner rejected visible liquid stream/pouring and gaze fixed on glass; requested near-invisible gesture while looking viewer-right with glass tilted viewer-left.",
+        "reviewer": "owner",
+        "reviewedAt": "2026-10-08",
+        "publicationApproved": false
+      }
+    },
+    "kiro_sneaky_glass_swap_web_c02": {
+      "label": "kiro-sneaky-glass-swap-5s-web-c02",
+      "slot": "Secondary Idle",
+      "status": "runtime_approved",
+      "use": true,
+      "loop": false,
+      "quietOnly": true,
+      "source": {
+        "exportFilename": "sprite--9px-frames-36-rows-6-cols-6 (1).zip",
+        "storedFilename": "input/kiro-sneaky-glass-swap-5s-web-c02/sprite--9px-frames-36-rows-6-cols-6 (1).zip",
+        "sourceZipSha256": "2f1176321084411adfb437933e9ebe923cb09efbed4b52a2fc0116339b577d5d",
+        "sheetSha256": "ab0392e42db6468e65240c26ebbe981bce2b35195205cf5917bec2fd50e1dd6e",
+        "metadataSha256": "a7d1aba0b95b54460776ddfbbaa5bd8e338b3b9b7cdf3498e5d796398beecc9a",
+        "metadataFile": "input/kiro-sneaky-glass-swap-5s-web-c02/sprite--9px-frames-36-rows-6-cols-6.json"
+      },
+      "generation": {
+        "tool": "Ludo.ai website",
+        "model": "Hydra",
+        "prompt": "Animate this exact bartender for five seconds, once. Preserve his identity, clothing, proportions, painted style, scale and position. Stop polishing, lower the current glass below the unseen counter, and retrieve another glass of the same design. Tilt the glass slightly toward the viewer’s left. While looking toward the viewer’s right, make one tiny, discreet spitting mouth gesture toward the glass. Saliva is practically invisible: no stream, spray or pouring liquid. Give a brief sheepish smile, then resume polishing in the starting pose. Keep cloth and hands consistent. Fixed camera, transparent background; no walking, scenery or extra limbs.",
+        "settings": {
+          "requestedDurationSeconds": 5,
+          "maxFrames": 36,
+          "spriteSize": "True Size",
+          "loop": false,
+          "trimWhitespace": false,
+          "margin": "Auto",
+          "optionalFinalFrame": null
+        },
+        "displayedCredits": 15,
+        "creditsSpent": null,
+        "resultId": null,
+        "unavailableEvidenceReason": "Owner screenshots verify prompt/settings/displayed15credit cost; owner supplied completed originalZIP. Actual billing/result ID and uploaded reference file identity not independently verified.",
+        "preparedReference": {
+          "path": "preparation/kiro-sneaky-glass-swap-5s-web-c01/idle-frame-000.png",
+          "sha256": "b435c04743ec41fdb86c5f1df02b1bda50b518fcf094104936ce2861b0c99d9e"
+        }
+      },
+      "import": {
+        "runtime": {
+          "asset": "assets/chapter1/characters/mehana_waiter/kiro-sneaky-glass-swap-web-c02.webp",
+          "frameWidth": 170,
+          "frameHeight": 512,
+          "frames": 36,
+          "columns": 6,
+          "frameDurationMs": 131,
+          "durationMs": 4716
+        },
+        "timingOrigin": "unchanged original website frame JSON",
+        "derivedOutputHashes": {
+          "assets/chapter1/characters/mehana_waiter/kiro-sneaky-glass-swap-web-c02.webp": "6bf18a736158d6c3e21d39d25fc3844877cb0fb9b53024a962809ed426670ffc"
+        },
+        "optimization": "per-frame339x1024 to170x512 Lanczos3; lossless WebP encode, native131ms timing unchanged; frame rounding changes full-canvas width by0.259scene pixels at265px height"
+      },
+      "scheduling": {
+        "intervalMinMs": 25000,
+        "intervalMaxMs": 50000,
+        "clock": "eligible quiet game time",
+        "menuBehavior": "freeze timer and active playback",
+        "conversationOrSceneExit": "cancel; fresh interval after quiet return",
+        "missingArt": "consume occurrence; no late-loading replay"
+      },
+      "review": {
+        "candidateStatus": "runtime_approved",
+        "decision": "Owner approved actual BG/EN gameplay review and publication bundle in focused Codex chat: approve gameplay and publish.",
+        "reviewer": "owner",
+        "sourceSelectedAt": "2026-10-08",
+        "publicationApproved": true,
+        "runtimeApprovedAt": "2026-10-08",
+        "publicationScope": "Commit reviewed task branch; push zeshad; canonical PR; merge exact-head green CI; synchronize and verify PC preview; remove unchanged merged task branch and task scratch only. No VPS changes or spending."
+      }
     }
   }
 }

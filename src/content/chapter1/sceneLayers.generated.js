@@ -370,6 +370,27 @@ export const sceneLayerGeometry = {
             "w": 339,
             "h": 1024
           }
+        },
+        "idleVariation": {
+          "npcId": "npc.mehana_waiter",
+          "intervalMinMs": 25000,
+          "intervalMaxMs": 50000,
+          "animation": {
+            "transitionDurationMs": 148,
+            "asset": "mehanaWaiterSneakyGlassSwap",
+            "frameWidth": 170,
+            "frameHeight": 512,
+            "frameCount": 36,
+            "columns": 6,
+            "frameDurationMs": 131,
+            "loop": false,
+            "contentBounds": {
+              "x": 0,
+              "y": 0,
+              "w": 170,
+              "h": 512
+            }
+          }
         }
       },
       {

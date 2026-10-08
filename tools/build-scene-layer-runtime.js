@@ -52,6 +52,17 @@ function runtimeLayer(layer, sourcePath) {
   if (layer.hiddenWhenItemOwned) result.hiddenWhenItemOwned = String(layer.hiddenWhenItemOwned);
   if (layer.hiddenWhenState) result.hiddenWhenState = String(layer.hiddenWhenState);
   if (layer.animation) result.animation = runtimeAnimation(layer.animation, sourcePath, layer.id);
+  if (layer.idleVariation) {
+    const config = layer.idleVariation;
+    if (!layer.animation || layer.animation.quietOnly !== true || config.npcId !== layer.animation.npcId
+      || !Number.isFinite(config.intervalMinMs) || config.intervalMinMs <= 0
+      || !Number.isFinite(config.intervalMaxMs) || config.intervalMaxMs < config.intervalMinMs
+      || config.animation?.loop !== false) {
+      throw new Error(sourcePath + ' ' + layer.id + ' idleVariation needs quiet idle, matching npcId, bounded interval and one-shot animation');
+    }
+    result.idleVariation = { npcId: config.npcId, intervalMinMs: config.intervalMinMs,
+      intervalMaxMs: config.intervalMaxMs, animation: runtimeAnimation(config.animation, sourcePath, layer.id) };
+  }
   if (layer.stationaryLowerBody) {
     const fixed = layer.stationaryLowerBody;
     if (!layer.animation || !Number.isInteger(fixed.frameIndex) || fixed.frameIndex < 0 || fixed.frameIndex >= layer.animation.frameCount
