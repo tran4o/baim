@@ -52,6 +52,22 @@ function runtimeLayer(layer, sourcePath) {
   if (layer.hiddenWhenItemOwned) result.hiddenWhenItemOwned = String(layer.hiddenWhenItemOwned);
   if (layer.hiddenWhenState) result.hiddenWhenState = String(layer.hiddenWhenState);
   if (layer.animation) result.animation = runtimeAnimation(layer.animation, sourcePath, layer.id);
+  if (layer.speechAnimation) {
+    if (!layer.animation || layer.speechAnimation.npcId !== layer.animation.npcId
+      || layer.speechAnimation.loop !== true) {
+      throw new Error(`${sourcePath} ${layer.id} speechAnimation needs matching NPC idle and loop`);
+    }
+    const speech = layer.speechAnimation;
+    if (!Number.isInteger(speech.listeningFrameIndex) || speech.listeningFrameIndex < 0
+      || speech.listeningFrameIndex >= speech.frameCount || speech.listeningPose?.frameCount !== 1) {
+      throw new Error(`${sourcePath} ${layer.id} speechAnimation needs one listening pose and a valid closed-mouth source frame`);
+    }
+    result.speechAnimation = { ...runtimeAnimation(speech, sourcePath, layer.id),
+      npcId: String(speech.npcId), listeningFrameIndex: speech.listeningFrameIndex,
+      entryDurationMs: boundedTransition(speech.entryDurationMs, sourcePath, layer.id),
+      settleDurationMs: boundedTransition(speech.settleDurationMs, sourcePath, layer.id),
+      listeningPose: runtimeAnimation(speech.listeningPose, sourcePath, layer.id) };
+  }
   if (layer.idleVariation) {
     const config = layer.idleVariation;
     if (!layer.animation || layer.animation.quietOnly !== true || config.npcId !== layer.animation.npcId
@@ -102,6 +118,13 @@ function runtimeLayer(layer, sourcePath) {
   if (!hasNumber(result, "top") && !hasNumber(result, "bottom")) result.top = 0;
   if (!hasNumber(result, "left") && !hasNumber(result, "right")) result.left = 0;
   return result;
+}
+
+function boundedTransition(value, sourcePath, layerId) {
+  if (!Number.isFinite(value) || value <= 0 || value > 1000) {
+    throw new Error(`${sourcePath} ${layerId} speech pose transition must be greater than0 and at most1000ms`);
+  }
+  return value;
 }
 
 function runtimeAnimation(animation, sourcePath, layerId) {

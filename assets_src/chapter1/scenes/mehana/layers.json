@@ -52,6 +52,44 @@
             "h": 512
           }
         }
+      },
+      "speechAnimation": {
+        "asset": "mehanaWaiterTalkingPolishing",
+        "npcId": "npc.mehana_waiter",
+        "frameWidth": 170,
+        "frameHeight": 512,
+        "frameCount": 64,
+        "columns": 8,
+        "frameDurationMs": 73,
+        "loop": true,
+        "transitionDurationMs": 140,
+        "contentBounds": {
+          "x": 0,
+          "y": 0,
+          "w": 170,
+          "h": 512
+        },
+        "listeningFrameIndex": 8,
+        "listeningPose": {
+          "asset": "mehanaWaiterListeningFinal",
+          "frameWidth": 170,
+          "frameHeight": 512,
+          "frameCount": 1,
+          "columns": 1,
+          "frameDurationMs": 73,
+          "loop": false,
+          "contentBounds": {
+            "x": 0,
+            "y": 0,
+            "w": 170,
+            "h": 512
+          }
+        },
+        "entryDurationMs": 360,
+        "settleDurationMs": 280,
+        "loopStartFrame": 8,
+        "loopEndFrame": 55,
+        "interpolateFrames": true
       }
     },
     {

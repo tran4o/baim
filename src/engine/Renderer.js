@@ -662,6 +662,76 @@ export class Renderer {
     return true;
   }
 
+  drawSceneNpcSpeech(scene, layer) {
+    if (!layer.speechAnimation || this.game.devHome || this.game.editMode
+      || this.game.animLab || this.game.simpleAnimTest || this.game.sceneTransitionPending
+      || this.game.state?.chapter1Completed) return false;
+    const view = this.game.sceneNpcSpeech?.presentation(scene.id, layer);
+    if (!view) return false;
+    if (view.phase === 'idle' && view.blendComplete && this.game.sceneIdleVariationPresentation?.(scene, layer)) return false;
+    const idle = layer.animation;
+    const baseImage = this.game.assets.getSceneImage(scene.id, idle.asset);
+    const speech = layer.speechAnimation;
+    const speechImage = this.game.assets.getSceneImage(scene.id, speech.asset);
+    const listening = speech.listeningPose;
+    const listeningImage = this.game.assets.getSceneImage(scene.id, listening.asset);
+    // Prefer the independent still; the identical closed-mouth atlas frame is
+    // a fallback if that still is absent. Never substitute an open-mouth frame.
+    const listener = this.game.assets.isLoaded(listeningImage)
+      ? { animation: listening, image: listeningImage, frameIndex: 0 }
+      : this.game.assets.isLoaded(speechImage)
+        ? { animation: speech, image: speechImage, frameIndex: speech.listeningFrameIndex } : null;
+    const samples = view.samples.flatMap(sample => {
+      if (sample.kind === 'listener') return listener ? [{ ...listener, weight: sample.weight }] : [];
+      const animation = sample.kind === 'speech' ? speech : sample.kind === 'snapshot' ? sample.animation : idle;
+      const image = this.game.assets.getSceneImage(scene.id, animation.asset);
+      if (!this.game.assets.isLoaded(image)) return listener ? [{ ...listener, weight: sample.weight }] : [];
+      const frames = sample.kind === 'speech' ? this.sceneNpcSpeechFrames(animation, sample.time)
+        : [{ frameIndex: sample.kind === 'snapshot' ? sample.frameIndex
+          : sceneLayerAnimationFrame(animation, sample.time), weight: 1 }];
+      return frames.map(frame => ({ animation, image, frameIndex: frame.frameIndex, weight: sample.weight * frame.weight }));
+    }).filter(Boolean);
+    if (!samples.length) return false;
+    const total = samples.reduce((n,s)=>n+s.weight,0);
+    for (const sample of samples) sample.weight /= total;
+    if (this.drawSceneAnimationSamples(layer, samples)) return true;
+    const sample = samples.reduce((a, b) => a.weight >= b.weight ? a : b);
+    const source = sceneLayerAnimationSourceRect(sample.animation, sample.frameIndex);
+    const rect = this.sceneAnimationDrawRect(layer, sample.animation, source);
+    this.ctx.drawImage(sample.image, source.x, source.y, source.w, source.h, rect.x, rect.y, rect.w, rect.h);
+    return true;
+  }
+
+  sceneNpcSpeechIdleSamples(scene, layer) {
+    const view = this.game.sceneIdleVariationPresentation?.(scene, layer);
+    const animation = view?.animation || layer.animation;
+    if (!this.game.assets.isLoaded(this.game.assets.getSceneImage(scene.id, animation.asset))) return null;
+    if (view?.phase === 'playing' && animation.transitionDurationMs > 0) {
+      const blend = sceneReactionBlendSamples(animation, view.elapsed);
+      const duration = animation.frameCount * animation.frameDurationMs;
+      const idleTime = view.elapsed >= duration - animation.transitionDurationMs ? 0 : view.idleTime;
+      return [...blend.frames.map(s => ({ ...s, kind: 'snapshot', animation })),
+        { kind: 'snapshot', animation: layer.animation,
+          frameIndex: sceneLayerAnimationFrame(layer.animation, idleTime), weight: blend.baseWeight }]
+        .filter(s => s.weight > 0);
+    }
+    return [{ kind: 'snapshot', animation,
+      frameIndex: sceneLayerAnimationFrame(animation, view?.idleTime || 0), weight: 1 }];
+  }
+
+  sceneNpcSpeechFrames(animation, timeMs) {
+    // Speech starts inside the facing loop on every reply. Source intro/return
+    // frames remain in the atlas but must not replay while conversation owns gaze.
+    const start = animation.loopStartFrame || 0;
+    const end = animation.loopEndFrame ?? animation.frameCount - 1;
+    const count = end - start + 1;
+    const position = Math.max(0, timeMs) / animation.frameDurationMs;
+    const elapsed = Math.floor(position), index = start + elapsed % count;
+    const fraction = animation.interpolateFrames ? position - elapsed : 0;
+    return [{ frameIndex: index, weight: 1 - fraction },
+      { frameIndex: start + (elapsed + 1) % count, weight: fraction }].filter(s => s.weight > 0);
+  }
+
   sceneLayerIdleAnimation(scene, layer) {
     const animation = layer.animation;
     if (animation?.quietOnly !== true) return animation;
@@ -676,6 +746,7 @@ export class Renderer {
   }
 
   drawSceneRasterLayer(scene, layer) {
+    if (this.drawSceneNpcSpeech(scene, layer)) return;
     if (this.drawSceneIdleVariation(scene, layer)) return;
     const idleAnimation = this.sceneLayerIdleAnimation(scene, layer);
     const fallbackImage = this.game.assets.getSceneImage(scene.id, layer.asset);

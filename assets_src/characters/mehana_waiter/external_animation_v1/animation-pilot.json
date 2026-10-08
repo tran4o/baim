@@ -174,6 +174,202 @@
         "runtimeApprovedAt": "2026-10-08",
         "publicationScope": "Commit reviewed task branch; push zeshad; canonical PR; merge exact-head green CI; synchronize and verify PC preview; remove unchanged merged task branch and task scratch only. No VPS changes or spending."
       }
+    },
+    "kiro_talking_polishing_web_c07": {
+      "label": "kiro-talking-polishing-3s-web-c07",
+      "slot": "Talk",
+      "status": "runtime_review",
+      "use": false,
+      "loop": true,
+      "source": {
+        "exportFilename": "sprite--9px-frames-36-rows-6-cols-6 (2).zip",
+        "storedFilename": "input/kiro-talking-polishing-3s-web-c07/sprite--9px-frames-36-rows-6-cols-6 (2).zip",
+        "sourceZipSha256": "7ebf67f9757702351e22e4dd84fac7c879868971102a71a19818c0b5ca42adb5",
+        "sheetSha256": "576583c76a59275a0b0375ae15b3cd8753c777b2f01ebc3b9de3ca0a7b15eb31",
+        "metadataSha256": "915eb89fec8de149302d5a8d873fe4b29f601b18048ea34b59a4377ff85e9cce",
+        "metadataFile": "input/kiro-talking-polishing-3s-web-c07/sprite--9px-frames-36-rows-6-cols-6.json"
+      },
+      "generation": {
+        "tool": "Ludo.ai website Edit Spritesheet",
+        "model": "Hydra",
+        "prompt": "Adjust only the head and gaze: turn slightly SCREEN-LEFT and lift the chin slightly. Keep both eyes visible, looking horizontally left, with a calm expression. Preserve all existing speaking and polishing motion and everything else.",
+        "settings": {
+          "requestedDurationSeconds": 3,
+          "maxFrames": 36,
+          "spriteSize": "True Size",
+          "loop": true,
+          "trimWhitespace": false
+        },
+        "resultId": null,
+        "creditsSpent": null,
+        "unavailableEvidenceReason": "Owner supplied and approved original ZIP. Model/duration/edit route shown in screenshots; exact submitted short prompt, final export controls, billing, result ID and reference identity not independently verified. Actual exported duration is 2016ms, not nominal3s."
+      },
+      "import": {
+        "runtime": {
+          "asset": "assets/chapter1/characters/mehana_waiter/kiro-talking-polishing-web-c07.webp",
+          "frameWidth": 170,
+          "frameHeight": 512,
+          "frames": 36,
+          "columns": 6,
+          "frameDurationMs": 56,
+          "durationMs": 2016
+        },
+        "timingOrigin": "unchanged original website frame JSON",
+        "derivedOutputHashes": {
+          "assets/chapter1/characters/mehana_waiter/kiro-talking-polishing-web-c07.webp": "491804d07eb25221c3579b44b5f9d3d5673c598b27c87c38d821cc653168b91c"
+        },
+        "optimization": "Per-frame339x1024 to170x512 Lanczos3; lossless WebP; original56ms timing retained. Fixed full-canvas registration, no per-frame alignment changes."
+      },
+      "review": {
+        "candidateStatus": "runtime_review",
+        "decision": "Owner: this worked, approved lets use it",
+        "reviewer": "owner",
+        "sourceSelectedAt": "2026-10-08",
+        "publicationApproved": false,
+        "runtimeFeedback": "Owner requests gentler entry/end and less body sway;360/280ms runtime transitions prepared. Source sway retained; manual edit draft only. Runtime approval pending. Superseded for active runtime by owner-selected final64-frame export; original source and derivative remain preserved."
+      },
+      "playback": {
+        "signal": "existing npcSpeechAnimationTime reading window for matching NPC; parent dialogue NPC owns conversation listening state",
+        "transitionDurationMs": 140,
+        "dialogueChoices": "Hold closed-mouth listening derivative, screen-left gaze; resume speech on next Kiro line. Ordinary polishing only after actual conversation closes.",
+        "listeningMouth": "Fixed approved frame0; no speaking loop during choices/player/other-speaker intervals",
+        "loopBoundary": "Native36-frame c07 loop retains accepted screen-left orientation; no idle sample within speech/listening",
+        "missingArt": "Speech sheet missing: hold independent listener, no late replay. Still missing: exact closed-mouth atlas frame0. Both facing assets missing: existing idle/static fallback cannot preserve corrected gaze; do not claim otherwise.",
+        "pauseMenu": "freeze speech/listening/return clocks",
+        "sceneExit": "discard playback state",
+        "entryDurationMs": 360,
+        "settleDurationMs": 280,
+        "entry": "Eased blend from current idle/swap pose, frozen at entry; no instantaneous listener pose switch",
+        "lineEnd": "Freeze exact current speech composite;280ms eased blend to closed-mouth frame0; no continuing mouth loop"
+      },
+      "listeningPose": {
+        "label": "kiro-listening-c07-frame00-d01",
+        "kind": "pixel-preserving still derivative, not an animation generation",
+        "parentCandidate": "kiro-talking-polishing-3s-web-c07",
+        "sourceFrameIndex": 0,
+        "selection": "Closed mouth, both eyes open, accepted screen-left orientation; reviewed against all36 source face crops. Final frame is blinked and was not selected.",
+        "sourceZipSha256": "7ebf67f9757702351e22e4dd84fac7c879868971102a71a19818c0b5ca42adb5",
+        "sourceSheetSha256": "576583c76a59275a0b0375ae15b3cd8753c777b2f01ebc3b9de3ca0a7b15eb31",
+        "runtimeParent": {
+          "path": "assets/chapter1/characters/mehana_waiter/kiro-talking-polishing-web-c07.webp",
+          "sha256": "491804d07eb25221c3579b44b5f9d3d5673c598b27c87c38d821cc653168b91c"
+        },
+        "extraction": {
+          "x": 0,
+          "y": 0,
+          "width": 170,
+          "height": 512,
+          "resize": false,
+          "repaint": false,
+          "pixelSha256": "9fcae2c563298e5059a61356aea8e321312f307b31cb532d10b2620b65ed5278",
+          "decodedPixelsIdentical": true
+        },
+        "output": {
+          "path": "assets/chapter1/characters/mehana_waiter/kiro-listening-c07-frame00-d01.png",
+          "sha256": "284cb0ec753da8e2d69773f4a853124698ea43e22ee560a66c34a9064f11af10"
+        },
+        "approval": "Derivative of source-approved c07; gameplay runtime review pending"
+      }
+    },
+    "kiro_talking_polishing_web_final": {
+      "label": "kiro-talking-polishing-5s-web-final-12d548cd",
+      "slot": "Talk",
+      "status": "runtime_approved",
+      "use": true,
+      "loop": true,
+      "source": {
+        "exportFilename": "sprite--9px-frames-64-rows-8-cols-8.zip",
+        "storedFilename": "input/kiro-talking-polishing-final-12d548cd/sprite--9px-frames-64-rows-8-cols-8.zip",
+        "sourceZipSha256": "12d548cd481028388ee939dd4c309e621957562ad4867e583008464b4a01cc0f",
+        "sheetSha256": "7245298c84216a09709f365992911fe051d20cd800a5c5e461e19e7e1fa0a6fc",
+        "metadataSha256": "9899bda7114e5620de466fd06dcf32f4194d3738f2e4eab73ddc7b9925e7aceb",
+        "metadataFile": "input/kiro-talking-polishing-final-12d548cd/sprite--9px-frames-64-rows-8-cols-8.json"
+      },
+      "generation": {
+        "tool": "Ludo.ai manual website; final mode/model not independently verified",
+        "model": null,
+        "prompt": "Kiro talks calmly with clear, natural lip and jaw movement while polishing the same glass with tiny, slow cloth strokes and pauses. Head slightly SCREEN-LEFT, both eyes visible, chin level, gaze horizontal left. No blinking. Tiny head movements only; body, feet, hair and glass stay steady.\n\nPrioritize a seamless loop: start and end in the same relaxed, closed-mouth pose, matching head, gaze, hands and props. Ease motion smoothly across the boundary with no snapping, sudden stop or visible reset.\n\nPreserve identity, clothing, painted style, scale and alignment. Fixed camera, transparent background, full character alone.",
+        "settings": {
+          "requestedDurationSeconds": 5,
+          "maxFrames": 64
+        },
+        "resultId": null,
+        "creditsSpent": null,
+        "unavailableEvidenceReason": "Owner supplied final ZIP and reports creative success. Earlier screenshots show Hydra Edit Spritesheet; final submission mode/model not independently verified. Candidate numbering pending whether earlier c08 was generated."
+      },
+      "import": {
+        "runtime": {
+          "asset": "assets/chapter1/characters/mehana_waiter/kiro-talking-polishing-web-final-12d548cd.webp",
+          "frameWidth": 170,
+          "frameHeight": 512,
+          "frames": 64,
+          "columns": 8,
+          "frameDurationMs": 73,
+          "durationMs": 4672
+        },
+        "timingOrigin": "unchanged native website JSON",
+        "derivedOutputHashes": {
+          "assets/chapter1/characters/mehana_waiter/kiro-talking-polishing-web-final-12d548cd.webp": "40dbc29ac0ce1e7010c6b16cfdfaf7899a9e06df6087ed1c0a8849cee2b757f0"
+        },
+        "optimization": "Per-frame Lanczos3 resize339x1024 to170x512; lossless WebP. All64 source frames retained without repaint/alignment changes."
+      },
+      "review": {
+        "candidateStatus": "runtime_approved",
+        "decision": "Owner approved the final local gameplay review in this focused chat: appoved. Publication remains separate.",
+        "reviewer": "owner",
+        "sourceSelectedAt": "2026-10-08",
+        "publicationApproved": true,
+        "runtimeApprovedAt": "2026-10-08",
+        "approvedAt": "2026-10-08",
+        "publicationApprovedAt": "2026-10-08",
+        "publicationScope": "Commit reviewed26-file task; exact committed preservation/regression checks before push; push zeshad feature branch; canonical PR and exact-head green CI merge; synchronize active PCmaster and verify runtime-only rebuild/BG/EN preview; remove unchanged merged task branch and two named task scratch directories. Preserve sources/evidence/runtime. No VPS changes or generation."
+      },
+      "playback": {
+        "signal": "existing npcSpeechAnimationTime reading window for matching NPC; parent dialogue NPC owns conversation listening state",
+        "transitionDurationMs": 140,
+        "dialogueChoices": "Hold closed-mouth listening derivative, screen-left gaze; resume speech on next Kiro line. Ordinary polishing only after actual conversation closes.",
+        "listeningMouth": "Exact closed-mouth frame8 held during choices/player/other-speaker intervals",
+        "loopBoundary": "During speech use facing frames8..55, interpolating including55->8. Intro0..7 and return56..63 preserved in atlas but excluded from conversation playback. Active native loop segment48x73=3504ms; original export4672ms.",
+        "missingArt": "Speech sheet missing: hold independent listener, no late replay. Still missing: exact closed-mouth atlas frame0. Both facing assets missing: existing idle/static fallback cannot preserve corrected gaze; do not claim otherwise.",
+        "pauseMenu": "freeze speech/listening/return clocks",
+        "sceneExit": "discard playback state",
+        "entryDurationMs": 360,
+        "settleDurationMs": 280,
+        "entry": "Eased blend from current idle/swap pose, frozen at entry; no instantaneous listener pose switch",
+        "lineEnd": "Freeze exact current speech composite;280ms eased blend to closed-mouth frame0; no continuing mouth loop",
+        "loopStartFrame": 8,
+        "loopEndFrame": 55,
+        "interpolateFrames": true,
+        "sourceLimitations": "Source contains blinks at26..28 and57..59 despite requested no blinking; accepted final source retained. Return frames face down and are excluded while conversation engaged."
+      },
+      "listeningPose": {
+        "label": "kiro-listening-final-frame08-d01",
+        "kind": "pixel-preserving still derivative, not a generation",
+        "parentCandidate": "kiro-talking-polishing-5s-web-final-12d548cd",
+        "sourceFrameIndex": 8,
+        "selection": "All64 faces reviewed. Frame8 is closed-mouth, open-eyed and screen-left facing; frame0 and final frames face downward.",
+        "sourceZipSha256": "12d548cd481028388ee939dd4c309e621957562ad4867e583008464b4a01cc0f",
+        "sourceSheetSha256": "7245298c84216a09709f365992911fe051d20cd800a5c5e461e19e7e1fa0a6fc",
+        "runtimeParent": {
+          "path": "assets/chapter1/characters/mehana_waiter/kiro-talking-polishing-web-final-12d548cd.webp",
+          "sha256": "40dbc29ac0ce1e7010c6b16cfdfaf7899a9e06df6087ed1c0a8849cee2b757f0"
+        },
+        "extraction": {
+          "x": 0,
+          "y": 512,
+          "width": 170,
+          "height": 512,
+          "resize": false,
+          "repaint": false,
+          "pixelSha256": "d3bc33a932be4d5898b6d1abcb2dad7c107178bfcf17623dc5ba3d516a057ff9",
+          "decodedPixelsIdentical": true
+        },
+        "output": {
+          "path": "assets/chapter1/characters/mehana_waiter/kiro-listening-final-frame08-d01.png",
+          "sha256": "a97010a37335df83d242bded1cb618e6d630deead0f6e7ff016b2f085d819e04"
+        },
+        "approval": "Owner runtime-approved final conversation-facing listening derivative; publication separate"
+      }
     }
   }
 }

@@ -9,6 +9,7 @@ import { eastWestFallbackFacing, facingFromDelta, motionMultiplierAtFrame, Movem
 import { QuestSystem } from "./QuestSystem.js";
 import { Renderer } from "./Renderer.js";
 import { SceneIdleVariations, sceneIdleVariationsBlocked } from "./SceneIdleVariations.js";
+import { SceneNpcSpeech } from "./SceneNpcSpeech.js";
 import { SaveSystem } from "./SaveSystem.js";
 import { SceneEditor } from "./SceneEditor.js";
 import { AnimationPlayer } from "./AnimationPlayer.js";
@@ -141,6 +142,7 @@ export class Game {
     this.movement = new MovementSystem(this.player);
     this.renderer = new Renderer(canvas, this);
     this.sceneIdleVariations = new SceneIdleVariations();
+    this.sceneNpcSpeech = new SceneNpcSpeech();
     this.sceneEditor = this.editMode ? new SceneEditor(this) : null;
     const params = new URLSearchParams(globalThis.location?.search || "");
     this.menuOpen = !this.editMode && !this.simpleAnimTest && !this.animLab && !this.devHome && params.get("play") !== "1" && !params.has("scene") && !params.has("debugGeometry");
@@ -236,6 +238,7 @@ export class Game {
       this.updateNpcSpeechBubble(dt);
     }
     this.updateNpcDialogueSpeech(dt);
+    this.updateSceneNpcSpeech(dt);
     this.updateSceneIdleVariations(dt);
     this.renderer.draw();
     requestAnimationFrame((next) => this.tick(next));
@@ -253,6 +256,24 @@ export class Game {
   sceneIdleVariationPresentation(scene, layer) {
     if (sceneIdleVariationsBlocked(this)) return null;
     return this.sceneIdleVariations?.presentation(scene.id, layer) || null;
+  }
+
+  updateSceneNpcSpeech(dt) {
+    this.sceneNpcSpeech?.update(this.currentScene, dt * 1000, {
+      paused: Boolean(this.paused || this.menuOpen),
+      canceled: Boolean(this.devHome || this.editMode || this.animLab || this.simpleAnimTest
+        || this.sceneTransitionPending || this.state?.chapter1Completed || this.player?.actionSequence),
+      visible: layer => this.renderer.sceneLayerVisible(layer),
+      available: animation => Boolean(animation && this.assets.isLoaded(this.assets.getSceneImage(this.currentScene.id, animation.asset))),
+      conversation: npcId => this.content.dialogues[this.dialogue.current?.id]?.npcId === npcId,
+      idleSamples: layer => this.renderer.sceneNpcSpeechIdleSamples?.(this.currentScene, layer),
+      speech: npcId => {
+        const elapsed = this.npcSpeechAnimationTime(npcId);
+        if (elapsed == null) return null;
+        const token = this.dialogue.current ? this.npcDialogueSpeech : this.npcSpeechBubble;
+        return token ? { token, elapsed } : null;
+      }
+    });
   }
 
   bindInput() {
@@ -1615,6 +1636,7 @@ export class Game {
     this.sceneLoadToken = sceneLoadToken;
     this.sceneTransitionPending = true;
     this.sceneIdleVariations?.reset();
+    this.sceneNpcSpeech?.reset();
     this.audio.resetFootsteps();
     try {
       await this.assets.preloadSceneAssets(sceneId);
