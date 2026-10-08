@@ -85,6 +85,10 @@ test('Skeptical source and timing are bound; original approved assets, systems a
  // Normalize only the explicit mehana redesign mappings; keep the frozen Baba baseline intact.
  const manifest='src/content/art/assetManifest.js';
  const priorManifest=readFileSync(manifest,'utf8')
+ .replace('      mehanaWaiterTalkingPolishing: "assets/chapter1/characters/mehana_waiter/kiro-talking-polishing-web-final-12d548cd.webp",\n','')
+ .replace('      mehanaWaiterTalkingPolishingC07: "assets/chapter1/characters/mehana_waiter/kiro-talking-polishing-web-c07.webp",\n','')
+ .replace('      mehanaWaiterListeningFinal: "assets/chapter1/characters/mehana_waiter/kiro-listening-final-frame08-d01.png",\n','')
+ .replace('      mehanaWaiterListeningC07: "assets/chapter1/characters/mehana_waiter/kiro-listening-c07-frame00-d01.png",\n','')
  .replace('      mehanaWaiterSneakyGlassSwap: "assets/chapter1/characters/mehana_waiter/kiro-sneaky-glass-swap-web-c02.webp",\n','')
  .replace('      mehanaWaiterPolishingIdle: "assets/chapter1/characters/mehana_waiter/kiro-polishing-idle-web-c01.png",\n','')
  .replace('      babaStoyankaSkepticalSeated: "assets/chapter1/characters/baba_stoyanka/skeptical-seated-v1.webp",\n','')

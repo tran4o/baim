@@ -16,6 +16,11 @@ export function stripKiroIdleVariationExtension(path, source) {
     replaceOnce(addition);
   };
   if (path === 'src/engine/Game.js') {
+    replaceOnce('import { SceneNpcSpeech } from "./SceneNpcSpeech.js";\n');
+    replaceOnce('    this.sceneNpcSpeech = new SceneNpcSpeech();\n');
+    replaceOnce('    this.updateSceneNpcSpeech(dt);\n');
+    replaceOnce('    this.sceneNpcSpeech?.reset();\n');
+    method('  updateSceneNpcSpeech(dt) {', '  bindInput() {', '07b3b3689b35eb6ba2be1534ed07633cd502a060febb9fba33801e02af73296f');
     replaceOnce('import { SceneIdleVariations, sceneIdleVariationsBlocked } from "./SceneIdleVariations.js";\n');
     replaceOnce('    this.sceneIdleVariations = new SceneIdleVariations();\n');
     replaceOnce('    this.updateSceneIdleVariations(dt);\n');
@@ -23,6 +28,8 @@ export function stripKiroIdleVariationExtension(path, source) {
     method('  updateSceneIdleVariations(dt) {', '  bindInput() {', '0693de3b630cd0f4d394b77cd7d0602b040bfe3e43e280945b6a4b315c23dfbb');
   }
   if (path === 'src/engine/Renderer.js') {
+    replaceOnce('    if (this.drawSceneNpcSpeech(scene, layer)) return;\n');
+    method('  drawSceneNpcSpeech(scene, layer) {', '  sceneLayerIdleAnimation(scene, layer) {', '0166e175545d46983344656757069a42e8718615b99a66289ce275e2f584f4ea');
     replaceOnce('    if (this.drawSceneIdleVariation(scene, layer)) return;\n');
     method('  drawSceneIdleVariation(scene, layer) {', '  sceneLayerIdleAnimation(scene, layer) {', 'ffd6c05dc3d3cd5c27861d475daddadf8dc46be0c31f291001f419fbb6fb2085');
   }

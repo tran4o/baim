@@ -371,6 +371,44 @@ export const sceneLayerGeometry = {
             "h": 1024
           }
         },
+        "speechAnimation": {
+          "loopStartFrame": 8,
+          "loopEndFrame": 55,
+          "interpolateFrames": true,
+          "transitionDurationMs": 140,
+          "asset": "mehanaWaiterTalkingPolishing",
+          "frameWidth": 170,
+          "frameHeight": 512,
+          "frameCount": 64,
+          "columns": 8,
+          "frameDurationMs": 73,
+          "loop": true,
+          "contentBounds": {
+            "x": 0,
+            "y": 0,
+            "w": 170,
+            "h": 512
+          },
+          "npcId": "npc.mehana_waiter",
+          "listeningFrameIndex": 8,
+          "entryDurationMs": 360,
+          "settleDurationMs": 280,
+          "listeningPose": {
+            "asset": "mehanaWaiterListeningFinal",
+            "frameWidth": 170,
+            "frameHeight": 512,
+            "frameCount": 1,
+            "columns": 1,
+            "frameDurationMs": 73,
+            "loop": false,
+            "contentBounds": {
+              "x": 0,
+              "y": 0,
+              "w": 170,
+              "h": 512
+            }
+          }
+        },
         "idleVariation": {
           "npcId": "npc.mehana_waiter",
           "intervalMinMs": 25000,
