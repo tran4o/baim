@@ -1,0 +1,56 @@
+{
+  "base": "5484767bab0126b0a0504dd2efd97bf208735b07",
+  "derivation": {
+    "input": "assets/chapter1/characters/mehana_waiter/kiro-polishing-idle-web-c01.png",
+    "frame": 0,
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "w": 339,
+      "h": 1024
+    },
+    "operation": "lossless crop and PNG encode; no resize, recolor, trim or generated pixels",
+    "approvedOpeningRgbaEquality": true
+  },
+  "originalReference": {
+    "path": "assets_src/characters/mehana_waiter/external_animation_v1/references/approved-bartender-v2.png",
+    "bytes": 1661137,
+    "sha256": "6511704758fc78b045239dcbf69c4518709bdad0274de79558fac00f0d799152",
+    "width": 698,
+    "height": 2106,
+    "format": "png",
+    "channels": 4,
+    "hasAlpha": true,
+    "transparentPixels": 604682,
+    "visiblePixels": 865306
+  },
+  "sheet": {
+    "path": "assets/chapter1/characters/mehana_waiter/kiro-polishing-idle-web-c01.png",
+    "bytes": 16346885,
+    "sha256": "27b8299759ccf8d9b892459dd1a105c82cc0101e0479ae03eb12e25e8ef280cf",
+    "width": 2034,
+    "height": 6144,
+    "format": "png",
+    "channels": 4,
+    "hasAlpha": true,
+    "transparentPixels": 5032431,
+    "visiblePixels": 7464465
+  },
+  "upload": {
+    "path": "assets_src/characters/mehana_waiter/external_animation_v1/preparation/kiro-sneaky-glass-swap-5s-web-c01/idle-frame-000.png",
+    "bytes": 464278,
+    "sha256": "b435c04743ec41fdb86c5f1df02b1bda50b518fcf094104936ce2861b0c99d9e",
+    "width": 339,
+    "height": 1024,
+    "format": "png",
+    "channels": 4,
+    "hasAlpha": true,
+    "transparentPixels": 141219,
+    "visiblePixels": 205917
+  },
+  "sourceZip": {
+    "path": "assets_src/characters/mehana_waiter/external_animation_v1/input/kiro-polishing-idle-5s-web-c01/sprite--9px-frames-36-rows-6-cols-6.zip",
+    "bytes": 16360637,
+    "sha256": "a055b19454ed1791546db2fc6ac2430cb978ce0bad8a635eb652e33c84771304"
+  }
+}

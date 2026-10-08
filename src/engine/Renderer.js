@@ -637,6 +637,31 @@ export class Renderer {
     return true;
   }
 
+  drawSceneIdleVariation(scene, layer) {
+    const view = this.game.sceneIdleVariationPresentation?.(scene, layer);
+    if (!view) return false;
+    const animation = view.animation;
+    const image = this.game.assets.getSceneImage(scene.id, animation.asset);
+    if (!this.game.assets.isLoaded(image)) return false;
+    if (view.phase === 'playing' && animation.transitionDurationMs > 0) {
+      const blend = sceneReactionBlendSamples(animation, view.elapsed);
+      const duration = animation.frameCount * animation.frameDurationMs;
+      const baseTime = view.elapsed >= duration - animation.transitionDurationMs ? 0 : view.idleTime;
+      const baseImage = this.game.assets.getSceneImage(scene.id, layer.animation.asset);
+      if (this.game.assets.isLoaded(baseImage)) {
+        const samples = blend.frames.map(sample => ({ ...sample, animation, image }));
+        if (blend.baseWeight > 0) samples.push({ animation: layer.animation, image: baseImage,
+          frameIndex: sceneLayerAnimationFrame(layer.animation, baseTime), weight: blend.baseWeight });
+        if (this.drawSceneAnimationSamples(layer, samples)) return true;
+      }
+    }
+    const frameIndex = sceneLayerAnimationFrame(animation, view.phase === 'playing' ? view.elapsed : view.idleTime);
+    const source = sceneLayerAnimationSourceRect(animation, frameIndex);
+    const rect = this.sceneAnimationDrawRect(layer, animation, source);
+    this.ctx.drawImage(image, source.x, source.y, source.w, source.h, rect.x, rect.y, rect.w, rect.h);
+    return true;
+  }
+
   sceneLayerIdleAnimation(scene, layer) {
     const animation = layer.animation;
     if (animation?.quietOnly !== true) return animation;
@@ -651,6 +676,7 @@ export class Renderer {
   }
 
   drawSceneRasterLayer(scene, layer) {
+    if (this.drawSceneIdleVariation(scene, layer)) return;
     const idleAnimation = this.sceneLayerIdleAnimation(scene, layer);
     const fallbackImage = this.game.assets.getSceneImage(scene.id, layer.asset);
     const speechTime = layer.talkAnimation
