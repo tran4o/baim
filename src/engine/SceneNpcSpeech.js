@@ -1,12 +1,12 @@
 // Dialogue timing is owned by Game. This controller only blends fixed poses
 // around that reading window; an ended mouth loop never continues playing.
 export class SceneNpcSpeech {
-  constructor() { this.reset(); }
+  constructor() { this.seenReactionEntries = new WeakSet(); this.reset(); }
   reset() { this.sceneId = null; this.entries = new Map(); this.seenTokens = new WeakSet(); }
 
   update(scene, deltaMs, { paused = false, canceled = false, visible = () => true,
     speech = () => null, conversation = () => false, available = () => true,
-    idleSamples = () => null } = {}) {
+    idleSamples = () => null, reaction = () => null } = {}) {
     if (scene.id !== this.sceneId) { this.reset(); this.sceneId = scene.id; }
     const present = new Set(), dt = Math.max(0, Number(deltaMs) || 0);
     for (const layer of scene.foregroundLayers || []) {
@@ -26,7 +26,10 @@ export class SceneNpcSpeech {
           : this.presentation(scene.id, layer).samples;
         state.phase = phase; state.transitionTime = 0; state.transitionDuration = duration;
       };
+      const cue = reaction(layer);
       if (canceled) {
+        if (cue?.entry) this.seenReactionEntries.add(cue.entry);
+        state.reaction = null;
         state.phase = 'idle'; state.admitted = false; state.fromSamples = [];
         state.transitionDuration = 0;
         state.token = speech(config.npcId)?.token || state.token;
@@ -36,6 +39,40 @@ export class SceneNpcSpeech {
       if (paused) continue;
       const line = speech(config.npcId), engaged = conversation(config.npcId);
       const canListen = available(config.listeningPose) || available(config);
+      // One admission per actual dialogue entry, independent of text/language
+      // tokens. Missing art consumes the entry so a late load cannot replay it.
+      let admittedNow = false;
+      if (cue?.entry && !this.seenReactionEntries.has(cue.entry)) {
+        this.seenReactionEntries.add(cue.entry);
+        if (engaged && line && canListen && available(cue.animation)) {
+          transition('reacting', config.transitionDurationMs);
+          state.reaction = { entry: cue.entry, animation: cue.animation, elapsed: 0 };
+          state.token = line.token;
+          state.admitted = available(config);
+          this.seenTokens.add(line.token);
+          state.speechTime = line.elapsed;
+          admittedNow = true;
+        }
+      }
+      if (state.phase === 'reacting') {
+        const active = state.reaction;
+        const valid = engaged && line && cue?.entry === active.entry && available(active.animation);
+        if (valid && !admittedNow) {
+          active.elapsed += dt;
+          state.transitionTime += dt;
+        }
+        if (!valid || active.elapsed >= active.animation.frameCount * active.animation.frameDurationMs) {
+          const target = line && canListen && available(config) ? 'speaking' : engaged && canListen ? 'listening' : 'returning';
+          transition(target, config.settleDurationMs);
+          state.reaction = null;
+          state.token = line?.token || state.token;
+          if (line) this.seenTokens.add(line.token);
+          state.admitted = target === 'speaking';
+          state.speechTime = line?.elapsed ?? state.speechTime;
+        }
+        state.transitionTime = Math.min(state.transitionTime, state.transitionDuration);
+        continue;
+      }
       const newLine = line && line.token !== state.token;
       if (newLine) {
         state.token = line.token;
@@ -73,7 +110,10 @@ export class SceneNpcSpeech {
     if (!state) return null;
     const t = state.transitionDuration ? Math.min(1, state.transitionTime / state.transitionDuration) : 1;
     const eased = t * t * (3 - 2 * t);
-    const target = state.phase === 'speaking' ? { kind: 'speech', time: state.speechTime }
+    const target = state.phase === 'reacting' ? { kind: 'snapshot', animation: state.reaction.animation,
+      frameIndex: Math.min(state.reaction.animation.frameCount - 1,
+        Math.floor(state.reaction.elapsed / state.reaction.animation.frameDurationMs)) }
+      : state.phase === 'speaking' ? { kind: 'speech', time: state.speechTime }
       : state.phase === 'listening' ? { kind: 'listener', time: 0 } : { kind: 'idle', time: state.idleTime };
     const samples = [...state.fromSamples.map(s => ({ ...s, weight: s.weight * (1 - eased) })),
       { ...target, weight: eased }].filter(s => s.weight > 0);

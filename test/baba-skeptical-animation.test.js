@@ -88,6 +88,7 @@ test('Skeptical source and timing are bound; original approved assets, systems a
  .replace('      mehanaWaiterTalkingPolishing: "assets/chapter1/characters/mehana_waiter/kiro-talking-polishing-web-final-12d548cd.webp",\n','')
  .replace('      mehanaWaiterTalkingPolishingC07: "assets/chapter1/characters/mehana_waiter/kiro-talking-polishing-web-c07.webp",\n','')
  .replace('      mehanaWaiterListeningFinal: "assets/chapter1/characters/mehana_waiter/kiro-listening-final-frame08-d01.png",\n','')
+ .replace('      mehanaWaiterTonyGlanceC05: "assets/chapter1/characters/mehana_waiter/kiro-tony-glance-keyframe-c05.webp",\n','')
  .replace('      mehanaWaiterListeningC07: "assets/chapter1/characters/mehana_waiter/kiro-listening-c07-frame00-d01.png",\n','')
  .replace('      mehanaWaiterSneakyGlassSwap: "assets/chapter1/characters/mehana_waiter/kiro-sneaky-glass-swap-web-c02.webp",\n','')
  .replace('      mehanaWaiterPolishingIdle: "assets/chapter1/characters/mehana_waiter/kiro-polishing-idle-web-c01.png",\n','')

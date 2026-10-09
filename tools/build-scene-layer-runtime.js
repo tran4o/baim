@@ -67,6 +67,14 @@ function runtimeLayer(layer, sourcePath) {
       entryDurationMs: boundedTransition(speech.entryDurationMs, sourcePath, layer.id),
       settleDurationMs: boundedTransition(speech.settleDurationMs, sourcePath, layer.id),
       listeningPose: runtimeAnimation(speech.listeningPose, sourcePath, layer.id) };
+    if (speech.nodeReactions) {
+      result.speechAnimation.nodeReactions = Object.fromEntries(Object.entries(speech.nodeReactions).map(([nodeId, animation]) => {
+        if (!animation.dialogueId || animation.loop !== false) {
+          throw new Error(`${sourcePath} ${layer.id} node reaction needs dialogueId and one-shot animation`);
+        }
+        return [nodeId, { ...runtimeAnimation(animation, sourcePath, layer.id), dialogueId: String(animation.dialogueId) }];
+      }));
+    }
   }
   if (layer.idleVariation) {
     const config = layer.idleVariation;

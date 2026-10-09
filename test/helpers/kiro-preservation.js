@@ -16,11 +16,14 @@ export function stripKiroIdleVariationExtension(path, source) {
     replaceOnce(addition);
   };
   if (path === 'src/engine/Game.js') {
+    replaceOnce('  protectCurrentAssetWorkingSet(sceneIds = [this.currentScene.id]) {', '  protectCurrentAssetWorkingSet() {');
+    replaceOnce('      sceneIds,\n', '      sceneIds: [this.currentScene.id],\n');
+    replaceOnce('      // Retain incoming art while loading; eviction before protection can leave\n      // a scene-return NPC without its approved idle/animation on the first tick.\n      this.protectCurrentAssetWorkingSet([this.currentScene.id, sceneId]);\n');
     replaceOnce('import { SceneNpcSpeech } from "./SceneNpcSpeech.js";\n');
     replaceOnce('    this.sceneNpcSpeech = new SceneNpcSpeech();\n');
     replaceOnce('    this.updateSceneNpcSpeech(dt);\n');
     replaceOnce('    this.sceneNpcSpeech?.reset();\n');
-    method('  updateSceneNpcSpeech(dt) {', '  bindInput() {', '07b3b3689b35eb6ba2be1534ed07633cd502a060febb9fba33801e02af73296f');
+    method('  updateSceneNpcSpeech(dt) {', '  bindInput() {', '979eab842e0137cb7d028314a49380e3d8b6dcf16f672e1ad2084a193a8e48e4');
     replaceOnce('import { SceneIdleVariations, sceneIdleVariationsBlocked } from "./SceneIdleVariations.js";\n');
     replaceOnce('    this.sceneIdleVariations = new SceneIdleVariations();\n');
     replaceOnce('    this.updateSceneIdleVariations(dt);\n');
