@@ -180,9 +180,9 @@ export class Game {
     return [...new Set([parts.start?.slot, parts.loop?.slot, parts.short?.slot, parts.stop?.slot].filter(Boolean))];
   }
 
-  protectCurrentAssetWorkingSet() {
+  protectCurrentAssetWorkingSet(sceneIds = [this.currentScene.id]) {
     this.assets.protectWorkingSet?.({
-      sceneIds: [this.currentScene.id],
+      sceneIds,
       characterId: this.player.id,
       characterSlots: this.bootstrapCharacterSlots(),
       itemIds: this.state.inventory || []
@@ -267,6 +267,13 @@ export class Game {
       available: animation => Boolean(animation && this.assets.isLoaded(this.assets.getSceneImage(this.currentScene.id, animation.asset))),
       conversation: npcId => this.content.dialogues[this.dialogue.current?.id]?.npcId === npcId,
       idleSamples: layer => this.renderer.sceneNpcSpeechIdleSamples?.(this.currentScene, layer),
+      reaction: layer => {
+        const entry = this.dialogue.entry;
+        const animation = layer.speechAnimation?.nodeReactions?.[entry?.nodeId];
+        return animation && entry.session === this.dialogue.current
+          && entry.nodeId === this.dialogue.current.nodeId
+          && animation.dialogueId === entry.session.id ? { entry, animation } : null;
+      },
       speech: npcId => {
         const elapsed = this.npcSpeechAnimationTime(npcId);
         if (elapsed == null) return null;
@@ -1639,6 +1646,9 @@ export class Game {
     this.sceneNpcSpeech?.reset();
     this.audio.resetFootsteps();
     try {
+      // Retain incoming art while loading; eviction before protection can leave
+      // a scene-return NPC without its approved idle/animation on the first tick.
+      this.protectCurrentAssetWorkingSet([this.currentScene.id, sceneId]);
       await this.assets.preloadSceneAssets(sceneId);
       if (this.sceneLoadToken !== sceneLoadToken) return;
       this.currentScene = this.sceneWithDroppedItems(this.content.scenes[sceneId]);

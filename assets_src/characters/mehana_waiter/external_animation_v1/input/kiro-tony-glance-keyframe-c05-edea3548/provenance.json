@@ -1,0 +1,72 @@
+{
+  "label": "kiro-conspiratorial-tony-glance-4s-web-keyframe-c05",
+  "status": "runtime_approved",
+  "sourceZip": {
+    "path": "assets_src/characters/mehana_waiter/external_animation_v1/input/kiro-tony-glance-keyframe-c05-edea3548/sprite--9px-frames-64-rows-8-cols-8 (1).zip",
+    "sha256": "edea354808c5af3d93043349b19599c53e8b37a0a7fe52e285125091e56ecdc5"
+  },
+  "sourceSheetSha256": "dd9fc5de570a7ffd9bf67f1c4b1671dead1cafa42cfea47aef57a71a5142ce89",
+  "sourceMetadataSha256": "15bb66cdf4c5ec430eeb4096c4017a97146a6ae9e0209b7d22fe257e040300f1",
+  "nativeFrames": 64,
+  "nativeFrameDurationMs": 63,
+  "nativeDurationMs": 4032,
+  "runtime": {
+    "path": "assets/chapter1/characters/mehana_waiter/kiro-tony-glance-keyframe-c05.webp",
+    "sha256": "b826d4b0bd87e7e5038dae212bdd5692f88f295fb203ca025ca32d0fd5624d0e",
+    "frameSize": [
+      212,
+      550
+    ],
+    "derivation": "Each native424x1100frame resized independently to half dimensions; losslessWebP, sourcebytesunchanged",
+    "registrationBounds": {
+      "x": 21,
+      "y": 20,
+      "w": 170,
+      "h": 512
+    }
+  },
+  "preparation": {
+    "date": "2026-10-09",
+    "state": "three slots populated per screenshot; revised prompt prepared; no animation submission evidenced",
+    "animationId": "kiro-conspiratorial-tony-glance-4s-web-keyframe-c05",
+    "middleStillId": "kiro-tony-down-right-keyframe-ref03",
+    "pose": {
+      "text": "Turn the head slightly SCREEN-RIGHT and dip the chin; eyes look down-right toward seated Tony, both eyes visible. Keep mouth closed, body, hands, props and framing unchanged.",
+      "words": 27,
+      "sha256": "c971c47d3c574fd8cc03014e855fe8b9317263efcccc3a98120d50dd9cd8f0af"
+    },
+    "motion": {
+      "text": "Starting from the first listening pose, Kiro pauses polishing and briefly glances slightly down SCREEN-RIGHT toward seated Tony, following the middle keyframe. He then returns smoothly to the final listening pose toward the player on SCREEN-LEFT, using minimal head rotation, with a subtle upper-body lean and knowing half-smile. Keep his mouth closed and glass, cloth, hands and feet steady. Match both endpoints without snapping; preserve appearance, scale and framing, with fixed camera and transparent background.",
+      "words": 75,
+      "sha256": "68da496dc4db33dc961e86f3693cea92e8e7fb72359b71849c9cedaeb40debbf"
+    },
+    "firstFinal": {
+      "path": "kiro-listening-keyframe-ref02.png",
+      "sha256": "bb9b477399d4b21aab62bf60468d0dd7e90176fc0aeb400b73849ccd1dcf6640"
+    },
+    "settings": {
+      "route": "Keyframe Animation",
+      "type": "Sprite",
+      "model": "Hydra",
+      "requestedSeconds": 4,
+      "maxFrames": 64,
+      "spriteSize": "True Size",
+      "loop": false,
+      "trim": false,
+      "margin": "Auto",
+      "status": "values visually confirmed by owner screenshot; revised text not yet confirmed applied"
+    },
+    "sourceDocs": "https://ludo.ai/docs/sprite-generator",
+    "nextAction": "Historical preparation only; candidate received, gameplay reviewed and owner-approved"
+  },
+  "submissionEvidence": "Owner screenshots and suppliedZIP; providerjobID and finalsubmittedtext not independently verified",
+  "visualReview": "All64heads/bodies reviewed: player-left to down-rightTony to player-left; closed mouth; blinks occur;0sideclipping; end smile differs from initialpose",
+  "approval": {
+    "reviewer": "owner",
+    "date": "2026-10-09",
+    "visual": "Actual gameplay GIF accepted in focused Kiro chat",
+    "publication": "Explicit owner yes to commit, push, create PR and merge only after green checks",
+    "scope": "scene.chapter1.mehana; dialogue.mehana_waiter/tony_weakness; unchanged c05 native timing and runtime asset",
+    "verification": "427 tests passed; zero failed/skipped; owner administrator Windows run; candidate hashes unchanged"
+  }
+}

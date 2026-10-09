@@ -407,6 +407,30 @@ export const sceneLayerGeometry = {
               "w": 170,
               "h": 512
             }
+          },
+          "nodeReactions": {
+            "tony_weakness": {
+              "registrationBounds": {
+                "x": 21,
+                "y": 20,
+                "w": 170,
+                "h": 512
+              },
+              "asset": "mehanaWaiterTonyGlanceC05",
+              "frameWidth": 212,
+              "frameHeight": 550,
+              "frameCount": 64,
+              "columns": 8,
+              "frameDurationMs": 63,
+              "loop": false,
+              "contentBounds": {
+                "x": 0,
+                "y": 0,
+                "w": 212,
+                "h": 550
+              },
+              "dialogueId": "dialogue.mehana_waiter"
+            }
           }
         },
         "idleVariation": {

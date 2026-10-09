@@ -47,6 +47,7 @@ export const assetManifest = {
       mehanaWaiterListeningC07: "assets/chapter1/characters/mehana_waiter/kiro-listening-c07-frame00-d01.png",
       mehanaWaiterListeningFinal: "assets/chapter1/characters/mehana_waiter/kiro-listening-final-frame08-d01.png",
       mehanaWaiterTalkingPolishing: "assets/chapter1/characters/mehana_waiter/kiro-talking-polishing-web-final-12d548cd.webp",
+      mehanaWaiterTonyGlanceC05: "assets/chapter1/characters/mehana_waiter/kiro-tony-glance-keyframe-c05.webp",
       mehanaWaiterSneakyGlassSwap: "assets/chapter1/characters/mehana_waiter/kiro-sneaky-glass-swap-web-c02.webp",
       tonyFridgeSeated: "assets/chapter1/characters/tony_fridge/seated-v1.png",
       tonyFridgeIdleSeated: "assets/chapter1/characters/tony_fridge/idle-seated-v1.webp",

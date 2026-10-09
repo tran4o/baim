@@ -98,8 +98,8 @@ test('Original PR50 baseline assets/content, prior Kiro records and layer geomet
   for(const [p,expected]of Object.entries(baseline.files))if(!exceptions.has(p))assert.equal(sha(readFileSync(p)),expected,p);
   const layers=JSON.parse(readFileSync('assets_src/chapter1/scenes/mehana/layers.json'));delete layers.layers.find(l=>l.id===layer.id).speechAnimation;assert.deepEqual(layers,baseline.layers);
   const pilot=JSON.parse(readFileSync('assets_src/characters/mehana_waiter/external_animation_v1/animation-pilot.json'));
-  const c=pilot.animations.kiro_talking_polishing_web_final;delete pilot.animations.kiro_talking_polishing_web_final;delete pilot.animations.kiro_talking_polishing_web_c07;assert.deepEqual(pilot,baseline.pilot);
-  const manifest=structuredClone(assetManifest);for(const key of ['mehanaWaiterTalkingPolishing','mehanaWaiterTalkingPolishingC07','mehanaWaiterListeningC07','mehanaWaiterListeningFinal'])delete manifest.scenes[scene.id][key];assert.deepEqual(manifest,baseline.manifest);
+  const c=pilot.animations.kiro_talking_polishing_web_final;delete pilot.animations.kiro_talking_polishing_web_final;delete pilot.animations.kiro_talking_polishing_web_c07;delete pilot.animations.kiro_tony_glance_keyframe_web_c05;assert.deepEqual(pilot,baseline.pilot);
+  const manifest=structuredClone(assetManifest);for(const key of ['mehanaWaiterTonyGlanceC05','mehanaWaiterTalkingPolishing','mehanaWaiterTalkingPolishingC07','mehanaWaiterListeningC07','mehanaWaiterListeningFinal'])delete manifest.scenes[scene.id][key];assert.deepEqual(manifest,baseline.manifest);
   const runtime=structuredClone(sceneLayerGeometry);delete runtime[scene.id].foregroundLayers.find(l=>l.id===layer.id).speechAnimation;assert.deepEqual(runtime,baseline.runtimeScenes);
   const input='assets_src/characters/mehana_waiter/external_animation_v1/';assert.equal(sha(readFileSync(input+c.source.storedFilename)),c.source.sourceZipSha256);
   assert.equal(sha(readFileSync(input+c.source.metadataFile)),c.source.metadataSha256);

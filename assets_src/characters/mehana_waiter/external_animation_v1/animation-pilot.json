@@ -370,6 +370,70 @@
         },
         "approval": "Owner runtime-approved final conversation-facing listening derivative; publication separate"
       }
+    },
+    "kiro_tony_glance_keyframe_web_c05": {
+      "label": "kiro-conspiratorial-tony-glance-4s-web-keyframe-c05",
+      "slot": "Reaction",
+      "status": "runtime_approved",
+      "use": true,
+      "loop": false,
+      "source": {
+        "exportFilename": "sprite--9px-frames-64-rows-8-cols-8 (1).zip",
+        "storedFilename": "input/kiro-tony-glance-keyframe-c05-edea3548/sprite--9px-frames-64-rows-8-cols-8 (1).zip",
+        "sourceZipSha256": "edea354808c5af3d93043349b19599c53e8b37a0a7fe52e285125091e56ecdc5",
+        "sheetSha256": "dd9fc5de570a7ffd9bf67f1c4b1671dead1cafa42cfea47aef57a71a5142ce89",
+        "metadataSha256": "15bb66cdf4c5ec430eeb4096c4017a97146a6ae9e0209b7d22fe257e040300f1",
+        "metadataFile": "input/kiro-tony-glance-keyframe-c05-edea3548/sprite--9px-frames-64-rows-8-cols-8.json"
+      },
+      "generation": {
+        "tool": "Ludo.ai manual website Keyframe Animation",
+        "model": "Hydra",
+        "prompt": "Starting from the first listening pose, Kiro pauses polishing and briefly glances slightly down SCREEN-RIGHT toward seated Tony, following the middle keyframe. He then returns smoothly to the final listening pose toward the player on SCREEN-LEFT, using minimal head rotation, with a subtle upper-body lean and knowing half-smile. Keep his mouth closed and glass, cloth, hands and feet steady. Match both endpoints without snapping; preserve appearance, scale and framing, with fixed camera and transparent background.",
+        "settings": {
+          "route": "Keyframe Animation",
+          "type": "Sprite",
+          "model": "Hydra",
+          "requestedSeconds": 4,
+          "maxFrames": 64,
+          "spriteSize": "True Size",
+          "loop": false,
+          "trim": false,
+          "margin": "Auto",
+          "status": "values visually confirmed by owner screenshot; revised text not yet confirmed applied"
+        },
+        "resultId": null,
+        "creditsSpent": null,
+        "unavailableEvidenceReason": "Owner supplied ZIP after prepared keyframe setup; final submitted text, provider job ID and actual credit receipt not independently verified"
+      },
+      "review": {
+        "candidateStatus": "runtime_approved",
+        "decision": "Owner approved actual-gameplay GIF and explicitly authorized commit, push, PR and merge-if-green in the focused Kiro chat on 2026-10-09",
+        "reviewer": "owner",
+        "publicationApproved": true,
+        "approvedAt": "2026-10-09",
+        "sceneId": "scene.chapter1.mehana"
+      },
+      "trigger": {
+        "dialogueId": "dialogue.mehana_waiter",
+        "nodeId": "tony_weakness",
+        "oncePerEntry": true
+      },
+      "import": {
+        "runtime": {
+          "asset": "assets/chapter1/characters/mehana_waiter/kiro-tony-glance-keyframe-c05.webp",
+          "frameWidth": 212,
+          "frameHeight": 550,
+          "frames": 64,
+          "columns": 8,
+          "frameDurationMs": 63,
+          "durationMs": 4032
+        },
+        "timingOrigin": "unchanged native website JSON",
+        "derivedOutputHashes": {
+          "assets/chapter1/characters/mehana_waiter/kiro-tony-glance-keyframe-c05.webp": "b826d4b0bd87e7e5038dae212bdd5692f88f295fb203ca025ca32d0fd5624d0e"
+        },
+        "optimization": "Independent per-frame half-size Lanczos resize; losslessWebP; padded canvas registration retains265px actor height"
+      }
     }
   }
 }

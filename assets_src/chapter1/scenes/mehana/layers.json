@@ -89,7 +89,31 @@
         "settleDurationMs": 280,
         "loopStartFrame": 8,
         "loopEndFrame": 55,
-        "interpolateFrames": true
+        "interpolateFrames": true,
+        "nodeReactions": {
+          "tony_weakness": {
+            "asset": "mehanaWaiterTonyGlanceC05",
+            "dialogueId": "dialogue.mehana_waiter",
+            "frameWidth": 212,
+            "frameHeight": 550,
+            "frameCount": 64,
+            "columns": 8,
+            "frameDurationMs": 63,
+            "loop": false,
+            "contentBounds": {
+              "x": 0,
+              "y": 0,
+              "w": 212,
+              "h": 550
+            },
+            "registrationBounds": {
+              "x": 21,
+              "y": 20,
+              "w": 170,
+              "h": 512
+            }
+          }
+        }
       }
     },
     {
