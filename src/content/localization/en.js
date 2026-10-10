@@ -5,6 +5,24 @@ import { campaignEn } from "./chapter1Campaign.js";
 import { fountainEn } from "./chapter1Fountain.js";
 
 export const en = {
+  "ui.received_oil.controls": "Click and drag to tilt the bottle. Scroll to zoom in and out.",
+  "ui.received_oil.reset": "Front",
+  "ui.received_oil.loading": "Loading bottle…",
+  "ui.received_oil.unavailable": "3D view unavailable. Bottle illustration shown.",
+  "ui.received_oil.itemTitle": "200 ml sunflower oil",
+  "ui.received_oil.rotate": "Inspect the bottle",
+  "ui.received_oil.left": "Turn left",
+  "ui.received_oil.right": "Turn right",
+  "ui.received_oil.up": "Turn up",
+  "ui.received_oil.down": "Turn down",
+  "ui.received_oil.rollLeft": "Tilt left",
+  "ui.received_oil.rollRight": "Tilt right",
+  "ui.received_oil.zoomIn": "Zoom in",
+  "ui.received_oil.zoomOut": "Zoom out",
+  "ui.received_oil.title": "Received",
+  "ui.received_oil.description": "In a reused rakia bottle. Added to your tab.",
+  "ui.received_oil.close": "Put away",
+
   "ui.sound.volume": "Volume",
   "ui.sound.on": "Sound: on",
   "ui.sound.off": "Sound: off",

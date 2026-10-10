@@ -1,0 +1,11 @@
+# Kiro oil handover — local runtime review
+
+Owner approved combined motion in Codex on10October2026 (“works”). Stable motion labels: kiro-put-away-walk-combined-web-c01-r07, kiro-oil-mixing-3s-web-c01, kiro-walk-mixing-connected-web-c01-r01. No publication approval. Workshop bottle delivered: original r08 GLB with r07 PNG fallback/inventory icon. Owner approved limited tilt, wheel zoom and r12 thick-base rendering on10October2026. Older recipe status mentioning pending bottle art is historical; source recipe bytes remain preserved.
+
+Preserved ZIPs: original Max put-away64x56ms; owner-approved walking36x81ms; mixing36x78ms. Recipe selects original0-22, walk0-23 (three steps), original38-63, mixing0-35. Walk r07 position-only subframes retain source poses; local turn timing changes only combined21-25. Recipe154timed samples/7371ms,109unique original PNGs/hash bindings. Final counter body center880; exact positions in recipe. One constant mixing offset aligns first-frame head bounds. Original pixels/exports unchanged.
+
+Build from repository root: node tools/build-kiro-oil-handover.mjs. Verifies original PNG hashes, resamples each to252x448 (2x runtime scale), packs8columns14rows into2016x6272 lossless WebP; original504x896source remains. No generative rerender, image morph or crossfade. Exact source hashes remain in every runtime frame record. Scale cutout original1280x720RGBA SHA25670d2e85dbbd6f94892bcb13f4bef276b4ed8880cc7e193b01f64f3bd6c197fe9, separate z44 occluder.
+
+Runtime: order200ml on tab (existing refill contract), walk and mix, once-only grant, opaque received screen with200ml description, Kiro reset beneath cover, close returns to original actor. Take hotspot uses same sequence. No save schema or stable ID migration. Cancellation discards transient motion before grant; missing art uses an immediate received-screen fallback without late replay. Pause/menu freezes; scene exit/re-entry cancels. Existing dialogue states and previous NPC art remain.
+
+Detailed local BG/EN review, provenance and permission-test limitations are retained outside repository in extraFixes/10_Bar/kiro-oil-bottle-handover-preparation/runtime-review-r02 and runtime-integration-report.md. Not pushed, merged or activated elsewhere.

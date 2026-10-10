@@ -746,6 +746,15 @@ export class Renderer {
   }
 
   drawSceneRasterLayer(scene, layer) {
+    const performance = this.game.sceneAction?.presentation(scene.id, layer.id);
+    if (performance) {
+      const image = this.game.assets.getSceneImage(scene.id, performance.asset);
+      if (this.game.assets.isLoaded(image)) {
+        const r = performance.sourceRect;
+        this.ctx.drawImage(image, r.x, r.y, r.w, r.h, performance.left, performance.top, performance.height * 504 / 896, performance.height);
+        return;
+      }
+    }
     if (this.drawSceneNpcSpeech(scene, layer)) return;
     if (this.drawSceneIdleVariation(scene, layer)) return;
     const idleAnimation = this.sceneLayerIdleAnimation(scene, layer);

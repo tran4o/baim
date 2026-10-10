@@ -1,3 +1,4 @@
+import { stripKiroOilIntegration } from './helpers/kiro-oil-preservation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -120,7 +121,7 @@ test('The real Game hook cancels any dialogue and Renderer reads state without a
 test('Candidate geometry, original timing, source hashes and every fixed approved baseline file are preserved', () => {
   const baseline=JSON.parse(readFileSync('test/fixtures/kiro-sneaky-glass-swap-approved-baseline.json'));
   assert.equal(baseline.approvedBaseline,'5484767bab0126b0a0504dd2efd97bf208735b07');
-  for(const [path,expected] of Object.entries(baseline.files)) assert.equal(sha(readFileSync(path)),expected,path);
+  for(const [path,expected] of Object.entries(baseline.files)) assert.equal(sha(stripKiroOilIntegration(path,readFileSync(path))),expected,path);
   const root='assets_src/characters/mehana_waiter/external_animation_v1/';
   const pilot=JSON.parse(readFileSync(root+'animation-pilot.json'));
   assert.equal(sha(JSON.stringify(pilot.animations.kiro_polishing_idle_web_c01)),baseline.polishingRecordSha256);

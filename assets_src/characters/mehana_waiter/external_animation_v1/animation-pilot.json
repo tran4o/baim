@@ -434,6 +434,27 @@
         },
         "optimization": "Independent per-frame half-size Lanczos resize; losslessWebP; padded canvas registration retains265px actor height"
       }
+    },
+    "kiro_oil_handover_web_c01": {
+      "slot": "Oil preparation",
+      "status": "runtime_review",
+      "use": true,
+      "generation": {
+        "route": "manual website; owner supplied sources",
+        "requestedDurationSeconds": null
+      },
+      "import": {
+        "runtime": {
+          "asset": "assets/chapter1/characters/mehana_waiter/oil-handover-web-c01/atlas.webp"
+        },
+        "frameCount": 154,
+        "durationSeconds": 7.371,
+        "timingOrigin": "per-frame approved combination recipe; movement subframes preserve pose durations"
+      },
+      "review": {
+        "candidateStatus": "runtime_review",
+        "notes": "Owner visually approved connected Kiro motion, full flow, limited tilt/wheel zoom and r12 thicker glass base on10October2026. Workshop r08 actual 200ml oil GLB and r07 fallback are unchanged. Native security verification passed27/27; publication approval remains separate."
+      }
     }
   }
 }

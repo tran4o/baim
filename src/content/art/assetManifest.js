@@ -1,3 +1,4 @@
+import { kiroOilAssets } from "./kiroOilHandover.generated.js";
 import { externalAnimationV1 } from "./externalAnimationRuntime.generated.js";
 
 export const assetManifest = {
@@ -40,6 +41,7 @@ export const assetManifest = {
       tableGroupLeft: "assets/chapter1/scenes/mehana/table-group-left-redesign-v1.png",
       tableGroupRight: "assets/chapter1/scenes/mehana/table-group-right-redesign-v1.png",
       mehanaRearChairs: "assets/chapter1/scenes/mehana/rear-chairs-redesign-v1.png",
+      ...kiroOilAssets,
       mehanaCounterFront: "assets/chapter1/scenes/mehana/counter-front-redesign-v1.png",
       mehanaCellarHatch: "assets/chapter1/scenes/mehana/cellar-hatch-preserved-v1.png",
       mehanaWaiterIdle: "assets/chapter1/characters/mehana_waiter/idle-bartender-v2.png",
@@ -124,7 +126,7 @@ export const assetManifest = {
       icon: "assets/chapter1/items/empty_envelope.png"
     },
     "item.sunflower_oil": {
-      icon: "assets/chapter1/items/sunflower-oil-v1.png"
+      icon: "assets/chapter1/items/kiro-bottle/oil-200ml-r07.png"
     },
     "item.glass_of_water": {
       icon: "assets/chapter1/items/glass-of-water-v1.png"

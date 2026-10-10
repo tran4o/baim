@@ -385,7 +385,7 @@ const rawScenes = [
       waiter: { x: 705, y: 465 },
       exit: { x: 170, y: 505 }
     },
-    foregroundLayers: sceneLayerGeometry["scene.chapter1.mehana"]?.foregroundLayers || [],
+    foregroundLayers: [...(sceneLayerGeometry["scene.chapter1.mehana"]?.foregroundLayers || []), { id: "layer.mehana.oil_scale", asset: "kiroOilScale", left: 0, top: 0, width: 1280, height: 720, zIndex: 44 }],
     exits: [
       {
         id: "exit.mehana.to_square",
@@ -473,6 +473,10 @@ const rawScenes = [
         lookKey: "look.mehana.oil",
         takeItemId: "item.sunflower_oil",
         flagOnTake: "hasSunflowerOil",
+        takeRules: [{ sceneSequence: "kiro-oil-handover", effects: [
+          { type: "addItem", itemId: "item.sunflower_oil" },
+          { type: "setState", key: "hasSunflowerOil", value: true }
+        ] }],
         requirements: { state: { hasSunflowerOil: false }, absentItems: ["item.sunflower_oil"] },
         useRules: [
           {
@@ -541,6 +545,9 @@ const rawScenes = [
         rect: { x: 727, y: 222, w: 88, h: 121 },
         speechAnchor: { x: 773, y: 208 },
         itemRejectKey: "msg.inventory.npc_reject.mehana_waiter",
+        interactionApproach: { x: 660, y: 580 },
+        interactionApproachExact: true,
+        interactionFacingPoint: { x: 771, y: 270 },
         dialogueId: "dialogue.mehana_waiter",
         lookKey: "look.npc.mehana_waiter",
         itemUseRules: ["item.rakia", "item.shopska_salad", "item.tripe_soup", "item.village_wine"].map(

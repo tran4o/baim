@@ -5,6 +5,24 @@ import { campaignBg } from "./chapter1Campaign.js";
 import { fountainBg } from "./chapter1Fountain.js";
 
 export const bg = {
+  "ui.received_oil.controls": "Натисни и плъзни, за да наклониш бутилката. Приближи и отдалечи с колелцето.",
+  "ui.received_oil.reset": "Отпред",
+  "ui.received_oil.loading": "Бутилката се зарежда…",
+  "ui.received_oil.unavailable": "3D изгледът не е достъпен. Показана е илюстрация на бутилката.",
+  "ui.received_oil.itemTitle": "200 мл слънчогледово олио",
+  "ui.received_oil.rotate": "Огледай бутилката",
+  "ui.received_oil.left": "Завърти наляво",
+  "ui.received_oil.right": "Завърти надясно",
+  "ui.received_oil.up": "Завърти нагоре",
+  "ui.received_oil.down": "Завърти надолу",
+  "ui.received_oil.rollLeft": "Наклони наляво",
+  "ui.received_oil.rollRight": "Наклони надясно",
+  "ui.received_oil.zoomIn": "Приближи",
+  "ui.received_oil.zoomOut": "Отдалечи",
+  "ui.received_oil.title": "Получено",
+  "ui.received_oil.description": "В бутилка от ракия. Записано на вересия.",
+  "ui.received_oil.close": "Прибери",
+
   "ui.sound.volume": "Сила на звука",
   "ui.sound.on": "Звук: включен",
   "ui.sound.off": "Звук: изключен",
