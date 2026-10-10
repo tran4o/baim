@@ -39,10 +39,12 @@ test('received 3D item rotates, rests without rendering, disposes and falls back
       g.startSceneAction(effect);g.updateSceneAction(8);
     },language);}
     for(const language of ['bg','en']){
+      t.diagnostic(`${language}: load received bottle`);
       await receive(language);
       const viewer=page.locator('.item-model-viewer[data-model-state=ready]'); await viewer.waitFor();
       assert.equal(await viewer.getAttribute('data-draw-calls'),'10');
       assert.equal(await viewer.getAttribute('data-triangles'),'176880');
+      t.diagnostic(`${language}: verify pointer, zoom and idle behavior`);
       const canvas=viewer.locator('canvas');await canvas.focus();
       assert.equal(await page.locator('.item-model-toolbar').count(),0);
       assert.equal(await page.locator('.received-item-screen button').count(),1,'only Put away remains');
@@ -51,7 +53,9 @@ test('received 3D item rotates, rests without rendering, disposes and falls back
       assert.ok(Math.abs(box.height-453.6)<2,'bottle viewing area is50percent taller at720px');
       async function drag(dx,dy){
         await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();
-        await page.mouse.move(box.x+box.width/2+dx,box.y+box.height/2+dy,{steps:6});await page.mouse.up();
+        // Two actual pointer samples exercise each drag; clamp assertions below
+        // remain identical without six expensive software-WebGL renders per drag.
+        await page.mouse.move(box.x+box.width/2+dx,box.y+box.height/2+dy,{steps:2});await page.mouse.up();
       }
       for(const [dx,dy] of [[900,900],[900,900],[-900,-900],[-900,-900]]){
         await drag(dx,dy);
@@ -77,6 +81,7 @@ test('received 3D item rotates, rests without rendering, disposes and falls back
       assert.equal(await viewer.getAttribute('data-distance'),distance,'zoom keeps camera position fixed');
       await page.waitForTimeout(100);const renders=await viewer.getAttribute('data-renders');await page.waitForTimeout(150);
       assert.equal(await viewer.getAttribute('data-renders'),renders,'no idle rendering loop');
+      t.diagnostic(`${language}: verify remount and context-loss fallback`);
       await page.evaluate(()=>window.__comradeCandidateTest.game.renderUi());
       await page.locator('.item-model-viewer[data-model-state=ready]').waitFor();assert.equal(await page.locator('.item-model-viewer canvas').count(),1);
       await page.locator('.item-model-viewer canvas').evaluate(c=>c.dispatchEvent(new Event('webglcontextlost',{cancelable:true})));
@@ -86,6 +91,7 @@ test('received 3D item rotates, rests without rendering, disposes and falls back
       assert.equal(await page.locator('.item-model-viewer').count(),0);
       assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.state.inventory.filter(id=>id==='item.sunflower_oil').length),1);
     }
+    t.diagnostic('verify late model disposal and failed-request fallback');
     // Close while a model request is pending: its late result must not resurrect a viewer.
     let release;const hold=new Promise(resolve=>release=resolve);
     await page.route('**/oil-200ml-r08.glb',async route=>{await hold;await route.continue();});
