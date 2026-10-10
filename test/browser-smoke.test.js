@@ -469,6 +469,7 @@ test("fresh Chapter 1 journeys reach all three endings through real clicks in Bu
         await verb("take");
         await clickTarget("hotspot.mehana.oil");
         await waitFor(() => window.__comradeCandidateTest.game.inventory.has("item.sunflower_oil"));
+    await page.locator(".received-item-screen > button:last-child").click();
         await go("exit.mehana.to_square", "scene.chapter1.village_square");
         await useItem("item.sunflower_oil");
         await clickTarget("hotspot.square.fountain");
@@ -574,12 +575,14 @@ test("fountain repair supports real clicks, consumed-oil recovery and mid-puzzle
     await verb("take");
     await click("hotspot.mehana.oil");
     await waitFor(() => window.__comradeCandidateTest.game.inventory.has("item.sunflower_oil"));
+    await page.locator(".received-item-screen > button:last-child").click();
     await oilAction("ui.inventory.use_on_self");
     await waitFor(() => !window.__comradeCandidateTest.game.inventory.has("item.sunflower_oil"));
     await verb("talk");
     await click("npc.mehana_waiter");
     await choice("fountain.kiro.choice.refill");
     await waitFor(() => window.__comradeCandidateTest.game.inventory.has("item.sunflower_oil"));
+    await page.locator(".received-item-screen > button:last-child").click();
     await click("exit.mehana.to_square");
     await waitFor(() => window.__comradeCandidateTest.game.currentScene.id === "scene.chapter1.village_square");
     await oilAction("ui.inventory.use");

@@ -1,3 +1,4 @@
+import { stripKiroOilIntegration } from './helpers/kiro-oil-preservation.js';
 import test from 'node:test';
 import {stripKiroIdleVariationExtension} from './helpers/kiro-preservation.js';
 import assert from 'node:assert/strict';
@@ -56,7 +57,7 @@ test('Skeptical source and timing are bound; original approved assets, systems a
  // Retain the original baseline hash; remove only the reviewed opt-in idle extension.
  const preservedBytes=p=>{
   if(p==='src/engine/Game.js')return stripKiroIdleVariationExtension(p,readFileSync(p,'utf8'));
-  if(p!=='src/engine/Renderer.js')return readFileSync(p);
+  if(p!=='src/engine/Renderer.js')return stripKiroOilIntegration(p,readFileSync(p));
   let source=stripKiroIdleVariationExtension(p,readFileSync(p,'utf8'));
   const hook="  sceneLayerIdleAnimation(scene, layer) {\n    const animation = layer.animation;\n    if (animation?.quietOnly !== true) return animation;\n    const npcId = animation.npcId;\n    const game = this.game;\n    if (!npcId || !scene.npcs?.some(npc => npc.id === npcId)\n      || game.paused || game.menuOpen || game.devHome || game.editMode\n      || game.content?.dialogues?.[game.dialogue?.current?.id]?.npcId === npcId\n      || game.npcSpeechBubble?.npcId === npcId\n      || game.npcSpeechAnimationTime?.(npcId) != null) return null;\n    return animation;\n  }\n\n";
   for(const [added,original]of [[hook,''],['    const idleAnimation = this.sceneLayerIdleAnimation(scene, layer);\n',''],['const baseAnimation = talking ? layer.talkAnimation : idleAnimation;','const baseAnimation = talking ? layer.talkAnimation : layer.animation;'],['const animation = reacting ? reaction : talking ? layer.talkAnimation : idleAnimation;','const animation = reacting ? reaction : talking ? layer.talkAnimation : layer.animation;']]){
@@ -84,7 +85,7 @@ test('Skeptical source and timing are bound; original approved assets, systems a
  assert.equal(sha(JSON.stringify(layers)),baseline.semantic.layers,'prior layers/geometry and delighted reaction remain unchanged');
  // Normalize only the explicit mehana redesign mappings; keep the frozen Baba baseline intact.
  const manifest='src/content/art/assetManifest.js';
- const priorManifest=readFileSync(manifest,'utf8')
+ const priorManifest=stripKiroOilIntegration(manifest,readFileSync(manifest,'utf8'))
  .replace('      mehanaWaiterTalkingPolishing: "assets/chapter1/characters/mehana_waiter/kiro-talking-polishing-web-final-12d548cd.webp",\n','')
  .replace('      mehanaWaiterTalkingPolishingC07: "assets/chapter1/characters/mehana_waiter/kiro-talking-polishing-web-c07.webp",\n','')
  .replace('      mehanaWaiterListeningFinal: "assets/chapter1/characters/mehana_waiter/kiro-listening-final-frame08-d01.png",\n','')

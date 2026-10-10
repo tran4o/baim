@@ -83,7 +83,7 @@ export class SceneIdleVariations {
 }
 
 export function sceneIdleVariationsBlocked(game) {
-  return Boolean(game.dialogue?.current || game.speechBubble || game.pendingSpeechBubble
+  return Boolean(game.sceneAction?.active || game.dialogue?.current || game.speechBubble || game.pendingSpeechBubble
     || game.npcSpeechBubble || game.player?.speaking || game.player?.actionSequence
     || game.player?.animation === 'action' || game.sceneTransitionPending
     || game.devHome || game.editMode || game.animLab || game.simpleAnimTest || game.state?.chapter1Completed);

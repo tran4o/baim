@@ -1,9 +1,11 @@
+import { stripKiroOilIntegration } from './kiro-oil-preservation.js';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 
 // Strip only the named, hash-bound Kiro opt-in additions before comparison
 // with the ORIGINAL Baba baseline. Baseline hashes are never advanced to HEAD.
 export function stripKiroIdleVariationExtension(path, source) {
+  source = stripKiroOilIntegration(path, source);
   const replaceOnce = (text, original = '') => {
     assert.equal(source.split(text).length, 2, 'exact Kiro extension: ' + path);
     source = source.replace(text, original);

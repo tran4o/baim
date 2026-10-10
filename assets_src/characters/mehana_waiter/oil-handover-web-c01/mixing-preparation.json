@@ -1,0 +1,37 @@
+{
+  "label": "kiro-oil-mixing-3s-web-c01",
+  "status": "reserved, prepared for manual owner generation; not submitted",
+  "prompt": "The bartender stays planted, head bowed straight down, watching his hands at waist level. He makes quick, compact circular mixing movements with both hands, with small alternating wrist and forearm motions. Keep his hands low and centered directly in front of his body.\n\nStart from the supplied pose, ease naturally into the action, then settle back into that same still pose. Keep his head down throughout, without turning or stepping.\n\nPreserve his face, moustache, hair, clothing, proportions and painted style. Keep scale, alignment and camera fixed, background transparent; add no objects or scenery.",
+  "promptWords": 93,
+  "settings": {
+    "route": "Sprite Generator > Animate",
+    "type": "Sprite",
+    "model": "Hydra",
+    "requestedDurationSeconds": 3,
+    "animationMargin": "Auto",
+    "maxFrames": 36,
+    "spriteSize": "Max",
+    "loopAnimation": false,
+    "trimAnimationWhitespace": false,
+    "firstFrame": "kiro-mixing-first-final-frame.png",
+    "finalFrame": "Copy 1st Frame"
+  },
+  "reference": {
+    "file": "kiro-mixing-first-final-frame.png",
+    "sha256": "51987ed657c527196a2cb436217891790218b6d687d4eceaecdd7d63a28e8194",
+    "dimensions": [
+      504,
+      896
+    ],
+    "source": "extraFixes\\10_Bar\\kiro-oil-bottle-handover-preparation\\combined-walk-web-c01-review\\shared-arrival-pose-source63.png",
+    "sourceAnimation": "kiro-put-away-turn-walk-4s-web-c01",
+    "sourceIndex": 63
+  },
+  "walkApproval": {
+    "label": "kiro-put-away-walk-combined-web-c01-r07",
+    "ownerMessage": "works , continue",
+    "date": "2026-10-10",
+    "scope": "Visual walk review approved; continue preparation, no publication"
+  },
+  "actualExport": null
+}

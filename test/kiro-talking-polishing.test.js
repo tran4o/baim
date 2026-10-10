@@ -1,3 +1,4 @@
+import { stripKiroOilIntegration } from './helpers/kiro-oil-preservation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -95,11 +96,11 @@ test('Original PR50 baseline assets/content, prior Kiro records and layer geomet
   const baseline=JSON.parse(readFileSync('test/fixtures/kiro-talking-polishing-approved-baseline.json'));
   assert.equal(baseline.approvedBaseline,'47698763642003236f8a6cd4ec7994ece5a98e4e');
   const exceptions=new Set(['assets_src/chapter1/scenes/mehana/layers.json','assets_src/characters/mehana_waiter/external_animation_v1/animation-pilot.json','src/content/chapter1/sceneLayers.generated.js','src/content/art/assetManifest.js']);
-  for(const [p,expected]of Object.entries(baseline.files))if(!exceptions.has(p))assert.equal(sha(readFileSync(p)),expected,p);
+  for(const [p,expected]of Object.entries(baseline.files))if(!exceptions.has(p))assert.equal(sha(stripKiroOilIntegration(p,readFileSync(p))),expected,p);
   const layers=JSON.parse(readFileSync('assets_src/chapter1/scenes/mehana/layers.json'));delete layers.layers.find(l=>l.id===layer.id).speechAnimation;assert.deepEqual(layers,baseline.layers);
-  const pilot=JSON.parse(readFileSync('assets_src/characters/mehana_waiter/external_animation_v1/animation-pilot.json'));
+  const pilot=JSON.parse(stripKiroOilIntegration('assets_src/characters/mehana_waiter/external_animation_v1/animation-pilot.json',readFileSync('assets_src/characters/mehana_waiter/external_animation_v1/animation-pilot.json')));
   const c=pilot.animations.kiro_talking_polishing_web_final;delete pilot.animations.kiro_talking_polishing_web_final;delete pilot.animations.kiro_talking_polishing_web_c07;delete pilot.animations.kiro_tony_glance_keyframe_web_c05;assert.deepEqual(pilot,baseline.pilot);
-  const manifest=structuredClone(assetManifest);for(const key of ['mehanaWaiterTonyGlanceC05','mehanaWaiterTalkingPolishing','mehanaWaiterTalkingPolishingC07','mehanaWaiterListeningC07','mehanaWaiterListeningFinal'])delete manifest.scenes[scene.id][key];assert.deepEqual(manifest,baseline.manifest);
+  const manifest=structuredClone(assetManifest);for(const key of ['kiroOilScale','kiroOilHandover','mehanaWaiterTonyGlanceC05','mehanaWaiterTalkingPolishing','mehanaWaiterTalkingPolishingC07','mehanaWaiterListeningC07','mehanaWaiterListeningFinal'])delete manifest.scenes[scene.id][key];assert.equal(manifest.items['item.sunflower_oil'].icon,'assets/chapter1/items/kiro-bottle/oil-200ml-r07.png');manifest.items['item.sunflower_oil']=structuredClone(baseline.manifest.items['item.sunflower_oil']);assert.deepEqual(manifest,baseline.manifest);
   const runtime=structuredClone(sceneLayerGeometry);delete runtime[scene.id].foregroundLayers.find(l=>l.id===layer.id).speechAnimation;assert.deepEqual(runtime,baseline.runtimeScenes);
   const input='assets_src/characters/mehana_waiter/external_animation_v1/';assert.equal(sha(readFileSync(input+c.source.storedFilename)),c.source.sourceZipSha256);
   assert.equal(sha(readFileSync(input+c.source.metadataFile)),c.source.metadataSha256);
@@ -109,7 +110,7 @@ test('Original PR50 baseline assets/content, prior Kiro records and layer geomet
   assert.equal(sha(readFileSync('assets/chapter1/characters/mehana_waiter/kiro-listening-c07-frame00-d01.png')),'284cb0ec753da8e2d69773f4a853124698ea43e22ee560a66c34a9064f11af10');
 });
 test('Final listening derivative is exactly source frame8 pixels, with truthful source/hash provenance',async()=>{
-  const pilot=JSON.parse(readFileSync('assets_src/characters/mehana_waiter/external_animation_v1/animation-pilot.json'));
+  const pilot=JSON.parse(stripKiroOilIntegration('assets_src/characters/mehana_waiter/external_animation_v1/animation-pilot.json',readFileSync('assets_src/characters/mehana_waiter/external_animation_v1/animation-pilot.json')));
   const p=pilot.animations.kiro_talking_polishing_web_final.listeningPose;
   const crop=await sharp(p.runtimeParent.path).extract({left:0,top:512,width:170,height:512}).ensureAlpha().raw().toBuffer();
   const still=await sharp(p.output.path).ensureAlpha().raw().toBuffer();

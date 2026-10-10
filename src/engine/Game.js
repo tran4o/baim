@@ -9,6 +9,9 @@ import { eastWestFallbackFacing, facingFromDelta, motionMultiplierAtFrame, Movem
 import { QuestSystem } from "./QuestSystem.js";
 import { Renderer } from "./Renderer.js";
 import { SceneIdleVariations, sceneIdleVariationsBlocked } from "./SceneIdleVariations.js";
+import { mountItemModelViewer } from "./ItemModelViewer.js";
+import { SceneActionSequence } from "./SceneActionSequence.js";
+import { kiroOilSequence } from "../content/art/kiroOilHandover.generated.js";
 import { SceneNpcSpeech } from "./SceneNpcSpeech.js";
 import { SaveSystem } from "./SaveSystem.js";
 import { SceneEditor } from "./SceneEditor.js";
@@ -143,6 +146,7 @@ export class Game {
     this.renderer = new Renderer(canvas, this);
     this.sceneIdleVariations = new SceneIdleVariations();
     this.sceneNpcSpeech = new SceneNpcSpeech();
+    this.sceneAction = new SceneActionSequence();
     this.sceneEditor = this.editMode ? new SceneEditor(this) : null;
     const params = new URLSearchParams(globalThis.location?.search || "");
     this.menuOpen = !this.editMode && !this.simpleAnimTest && !this.animLab && !this.devHome && params.get("play") !== "1" && !params.has("scene") && !params.has("debugGeometry");
@@ -209,7 +213,7 @@ export class Game {
       this.updateSimpleAnim(dt);
     } else if (this.animLab) {
       this.player.animationTime += dt;
-    } else if (!this.paused && !this.menuOpen && !this.dialogue.current) {
+    } else if (!this.paused && !this.menuOpen && !this.dialogue.current && !this.sceneAction?.active) {
       this.player.animator.beginTick();
       const finishingStopFrame = this.finishingStopFrame();
       const feetBefore = { ...this.player.position };
@@ -237,6 +241,7 @@ export class Game {
       this.updateSpeechBubble(dt);
       this.updateNpcSpeechBubble(dt);
     }
+    this.updateSceneAction(dt);
     this.updateNpcDialogueSpeech(dt);
     this.updateSceneNpcSpeech(dt);
     this.updateSceneIdleVariations(dt);
@@ -262,7 +267,7 @@ export class Game {
     this.sceneNpcSpeech?.update(this.currentScene, dt * 1000, {
       paused: Boolean(this.paused || this.menuOpen),
       canceled: Boolean(this.devHome || this.editMode || this.animLab || this.simpleAnimTest
-        || this.sceneTransitionPending || this.state?.chapter1Completed || this.player?.actionSequence),
+        || this.sceneTransitionPending || this.state?.chapter1Completed || this.player?.actionSequence || this.sceneAction?.active),
       visible: layer => this.renderer.sceneLayerVisible(layer),
       available: animation => Boolean(animation && this.assets.isLoaded(this.assets.getSceneImage(this.currentScene.id, animation.asset))),
       conversation: npcId => this.content.dialogues[this.dialogue.current?.id]?.npcId === npcId,
@@ -330,6 +335,7 @@ export class Game {
     });
     window.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
+        if (this.sceneAction?.state?.phase === 'received') { this.closeReceivedItem(); return; }
         if (this.selectedInventoryItemId || this.inventoryUseItemId) {
           this.clearInventoryInteraction();
           this.renderUi();
@@ -1141,7 +1147,7 @@ export class Game {
   }
 
   handleWorldClick(point) {
-    if (this.sceneTransitionPending || this.player?.actionSequence || this.player?.animation === "action") return;
+    if (this.sceneAction?.active || this.sceneTransitionPending || this.player?.actionSequence || this.player?.animation === "action") return;
     if (this.selectedInventoryItemId && !this.inventoryUseItemId) {
       this.selectedInventoryItemId = null;
       this.renderUi();
@@ -1174,7 +1180,7 @@ export class Game {
   }
 
   updateHoveredTarget(point) {
-    const blocked = this.menuOpen || this.paused || this.dialogue.current
+    const blocked = this.sceneAction?.active || this.menuOpen || this.paused || this.dialogue.current
       || this.sceneTransitionPending || this.player?.actionSequence || this.player?.animation === "action";
     const previousTargetId = this.hoveredTarget?.id || null;
     this.hoveredTarget = !blocked && point
@@ -1192,13 +1198,14 @@ export class Game {
   }
 
   handleTarget(target, clickPoint = null) {
+    if (this.sceneAction?.active) return;
     if (this.shouldApproachTargetBeforeAction(target, clickPoint)) return;
     this.performTargetAction(target);
   }
 
   shouldApproachTargetBeforeAction(target, clickPoint = null) {
     if (target.kind === "exit") return false;
-    if (["seated", "closeup"].includes(this.currentScene?.playerMode)) return false;
+    if (this.currentScene?.playerMode === "closeup" || (this.currentScene?.playerMode === "seated" && !target.interactionApproach)) return false;
     const actionSequence = this.actionSequenceForTarget(target, this.selectedVerb);
     const actionApproach = this.actionSequenceApproachPoint(actionSequence);
     if (actionApproach) {
@@ -1254,7 +1261,7 @@ export class Game {
         feetGoal: { ...rawApproach },
         feet: approach ? { ...approach } : null
       };
-      if (!approach || distance(this.player.position, approach) <= TARGET_APPROACH_FEET_CANCEL_DISTANCE) return false;
+      if (!approach || distance(this.player.position, approach) <= (target.interactionApproachExact ? EXACT_ACTION_APPROACH_EPSILON : TARGET_APPROACH_FEET_CANCEL_DISTANCE)) return false;
       this.player.pendingFacingPoint = { ...reachPoint };
       this.player.pendingInteraction = {
         target,
@@ -1380,6 +1387,7 @@ export class Game {
   }
 
   walkToPoint(point, facingPoint = point) {
+    if (this.sceneAction?.active) return;
     const path = findWalkPath(this.currentScene, this.player.position, point);
     const route = path.length ? path : [{ ...point }];
     const routeDistance = walkPathDistance(this.player.position, route);
@@ -1392,6 +1400,7 @@ export class Game {
   }
 
   performTargetAction(target, forcedActionSequence = null) {
+    if (this.sceneAction?.active) return;
     if (this.inventoryUseItemId) {
       this.useInventoryItemOnTarget(this.inventoryUseItemId, target);
       return;
@@ -1481,6 +1490,7 @@ export class Game {
   }
 
   beginInventoryItemUse(itemId) {
+    if (this.sceneAction?.active) return false;
     if (!itemId || !this.inventory.has(itemId)) return false;
     this.selectedInventoryItemId = null;
     this.inventoryUseItemId = itemId;
@@ -1576,6 +1586,7 @@ export class Game {
   }
 
   applyContentEffect(definition = {}, options = {}) {
+    if (definition.sceneSequence) return this.startSceneAction(definition);
     if (definition.endingTrigger) return this.requestEnding(definition.endingTrigger);
     applyEffects(definition.effects, this.effectContext());
     this.audio?.play(definition.soundCue);
@@ -1596,6 +1607,68 @@ export class Game {
     if (options.render !== false) this.renderUi();
     if (definition.sceneTransition) return this.changeScene(definition.sceneTransition.sceneId, definition.sceneTransition.position);
     return true;
+  }
+
+  startSceneAction(effect) {
+    if (!requirementsMet(effect.requirements, this.effectContext())) return false;
+    const definition = effect.sceneSequence === kiroOilSequence.id ? kiroOilSequence : null;
+    if (!definition || !this.sceneAction.start(this.currentScene.id, definition, frame => this.sceneActionFrameAvailable(frame))) return false;
+    this.sceneActionEffect = effect;
+    this.player.target = null; this.player.walkPath = []; this.player.animation = 'idle';
+    this.player.pendingInteraction = null; this.player.pendingFacingPoint = null;
+    this.hideSpeechBubble(true); this.npcSpeechBubble = null; this.hoveredTarget = null;
+    this.sceneIdleVariations?.reset(); this.sceneNpcSpeech?.reset();
+    this.assets.getItemImage('item.sunflower_oil');
+    this.updateSceneAction(0);
+    this.renderUi();
+    return true;
+  }
+
+  sceneActionFrameAvailable(frame) {
+    return this.assets.isLoaded(this.assets.getSceneImage(this.currentScene.id, frame.asset))
+      && this.assets.isLoaded(this.assets.getSceneImage(this.currentScene.id, 'kiroOilScale'));
+  }
+
+  updateSceneAction(dt) {
+    if (!this.sceneAction?.active) return;
+    this.sceneAction.update(this.currentScene.id, dt * 1000, {
+      paused: this.paused || this.menuOpen,
+      canceled: this.sceneTransitionPending || this.devHome || this.editMode || this.state.chapter1Completed,
+      available: frame => this.sceneActionFrameAvailable(frame)
+    });
+    if (!this.sceneAction.active) { this.sceneActionEffect = null; return; }
+    if (this.sceneAction.state.phase === 'received' && this.sceneActionEffect) {
+      const { sceneSequence, ...effect } = this.sceneActionEffect;
+      this.sceneActionEffect = null; // Consume before effects/UI: one grant per accepted order.
+      applyEffects(effect.effects, this.effectContext());
+      this.protectCurrentAssetWorkingSet(); this.save();
+      this.renderUi();
+    }
+  }
+
+  closeReceivedItem() {
+    if (this.sceneAction?.state?.phase !== 'received') return;
+    this.sceneAction.reset(); this.sceneActionEffect = null;
+    this.sceneIdleVariations?.reset(); this.sceneNpcSpeech?.reset();
+    this.renderUi();
+  }
+
+  createReceivedItem() {
+    const panel = element('section', 'received-item-screen');
+    panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-modal', 'true');
+    panel.setAttribute('aria-label', this.t('ui.received_oil.title'));
+    const title = document.createElement('h2'); title.textContent = this.t('ui.received_oil.title');
+    const itemTitle = document.createElement('h3'); itemTitle.textContent = this.t('ui.received_oil.itemTitle');
+    const viewer = element('div', 'item-model-viewer');
+    const modelText = Object.fromEntries(['loading','unavailable','controls'].map(key => [key,this.t('ui.received_oil.'+key)]));
+    modelText.name = this.t('item.sunflower_oil.name');
+    this.receivedItemViewer = mountItemModelViewer(viewer, {
+      modelUrl: 'assets/chapter1/items/kiro-bottle/oil-200ml-r08.glb',
+      fallbackUrl: 'assets/chapter1/items/kiro-bottle/oil-200ml-r07.png', text: modelText
+    });
+    const description = document.createElement('p'); description.textContent = this.t('ui.received_oil.description');
+    panel.append(title, itemTitle, viewer, description, button(this.t('ui.received_oil.close'), () => this.closeReceivedItem()));
+    return panel;
   }
 
   requestEnding(trigger = {}) {
@@ -1641,6 +1714,7 @@ export class Game {
     }
     const sceneLoadToken = Symbol(sceneId);
     this.sceneLoadToken = sceneLoadToken;
+    this.sceneAction?.reset(); this.sceneActionEffect = null;
     this.sceneTransitionPending = true;
     this.sceneIdleVariations?.reset();
     this.sceneNpcSpeech?.reset();
@@ -1691,6 +1765,7 @@ export class Game {
   }
 
   reset() {
+    this.sceneAction?.reset(); this.sceneActionEffect = null;
     this.state = this.saveSystem.reset();
     this.localization.setLanguage(this.state.language);
     this.currentScene = this.sceneWithDroppedItems(this.content.scenes[this.state.currentSceneId]);
@@ -1749,6 +1824,7 @@ export class Game {
   }
 
   renderUi() {
+    this.receivedItemViewer?.dispose(); this.receivedItemViewer = null;
     if (this.simpleAnimTest) {
       this.renderSimpleAnimControls();
       return;
@@ -1781,11 +1857,12 @@ export class Game {
       if (reaction) this.uiRoot.appendChild(reaction);
     }
     if (this.speechBubble && !this.menuOpen && !this.paused && !dialogueNode) this.uiRoot.appendChild(this.createSpeechBubble());
-    if (!this.editMode && !this.devHome && !this.menuOpen && !this.paused && !dialogueNode) this.uiRoot.appendChild(this.createHud());
+    if (!this.editMode && !this.devHome && !this.menuOpen && !this.paused && !dialogueNode && !this.sceneAction?.active) this.uiRoot.appendChild(this.createHud());
     if (this.droppedItemsOpen && !this.menuOpen && !this.paused && !dialogueNode) {
       this.uiRoot.appendChild(this.createDroppedItemsPanel());
     }
     this.uiRoot.appendChild(this.createTopBar());
+    if (this.sceneAction?.state?.phase === 'received') this.uiRoot.appendChild(this.createReceivedItem());
   }
 
   createHud() {
@@ -2870,6 +2947,7 @@ node tools/build-external-runtime-staging.js</pre>
   }
 
   chooseDialogueChoice(choice, event) {
+    if (this.sceneAction?.active || !this.dialogueChoiceAvailable(choice)) return false;
     if (this.dialogueChoicePointerLock !== null && event?.detail !== 0) return false;
     this.dialogue.choose(choice);
     this.renderUi();

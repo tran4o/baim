@@ -197,7 +197,7 @@ const baseDialogues = [
           {
             textKey: "fountain.kiro.choice.refill",
             requirements: oilRefillRule.requirements,
-            effect: oilRefillRule
+            effect: { ...oilRefillRule, sceneSequence: "kiro-oil-handover" }
           },
           { textKey: "fountain.kiro.choice.hint", next: "fountain_oil_hint" },
           {

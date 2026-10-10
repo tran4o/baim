@@ -1,0 +1,247 @@
+{
+  "src/content/art/assetManifest.js": {
+    "baseRevision": "6b0b93411bd1714beef127ad46a003c856d73519",
+    "patches": [
+      {
+        "before": "import { externalAnimationV1 } from \"./externalAnimationRuntime.generated.js\";\n\nexport const assetManifest = {\n",
+        "after": "import { kiroOilAssets } from \"./kiroOilHandover.generated.js\";\nimport { externalAnimationV1 } from \"./externalAnimationRuntime.generated.js\";\n\nexport const assetManifest = {\n",
+        "afterSHA256": "e54139583ad6f766cde3a7bfd0de03c123770deee009e2a476209ffab10938de"
+      },
+      {
+        "before": "      tableGroupLeft: \"assets/chapter1/scenes/mehana/table-group-left-redesign-v1.png\",\n      tableGroupRight: \"assets/chapter1/scenes/mehana/table-group-right-redesign-v1.png\",\n      mehanaRearChairs: \"assets/chapter1/scenes/mehana/rear-chairs-redesign-v1.png\",\n      mehanaCounterFront: \"assets/chapter1/scenes/mehana/counter-front-redesign-v1.png\",\n      mehanaCellarHatch: \"assets/chapter1/scenes/mehana/cellar-hatch-preserved-v1.png\",\n      mehanaWaiterIdle: \"assets/chapter1/characters/mehana_waiter/idle-bartender-v2.png\",\n",
+        "after": "      tableGroupLeft: \"assets/chapter1/scenes/mehana/table-group-left-redesign-v1.png\",\n      tableGroupRight: \"assets/chapter1/scenes/mehana/table-group-right-redesign-v1.png\",\n      mehanaRearChairs: \"assets/chapter1/scenes/mehana/rear-chairs-redesign-v1.png\",\n      ...kiroOilAssets,\n      mehanaCounterFront: \"assets/chapter1/scenes/mehana/counter-front-redesign-v1.png\",\n      mehanaCellarHatch: \"assets/chapter1/scenes/mehana/cellar-hatch-preserved-v1.png\",\n      mehanaWaiterIdle: \"assets/chapter1/characters/mehana_waiter/idle-bartender-v2.png\",\n",
+        "afterSHA256": "b35eee8914ca3e56a3308ef8cc73128d42ddba1afa3445fd0b320cc2e4cec27e"
+      },
+      {
+        "before": "      icon: \"assets/chapter1/items/empty_envelope.png\"\n    },\n    \"item.sunflower_oil\": {\n      icon: \"assets/chapter1/items/sunflower-oil-v1.png\"\n    },\n    \"item.glass_of_water\": {\n      icon: \"assets/chapter1/items/glass-of-water-v1.png\"\n",
+        "after": "      icon: \"assets/chapter1/items/empty_envelope.png\"\n    },\n    \"item.sunflower_oil\": {\n      icon: \"assets/chapter1/items/kiro-bottle/oil-200ml-r07.png\"\n    },\n    \"item.glass_of_water\": {\n      icon: \"assets/chapter1/items/glass-of-water-v1.png\"\n",
+        "afterSHA256": "d61a8953cf00f44871d22411b33629addbc91c87d42dbe437d68028cee2f4941"
+      }
+    ]
+  },
+  "src/content/chapter1/dialogues.js": {
+    "baseRevision": "6b0b93411bd1714beef127ad46a003c856d73519",
+    "patches": [
+      {
+        "before": "          {\n            textKey: \"fountain.kiro.choice.refill\",\n            requirements: oilRefillRule.requirements,\n            effect: oilRefillRule\n          },\n          { textKey: \"fountain.kiro.choice.hint\", next: \"fountain_oil_hint\" },\n          {\n",
+        "after": "          {\n            textKey: \"fountain.kiro.choice.refill\",\n            requirements: oilRefillRule.requirements,\n            effect: { ...oilRefillRule, sceneSequence: \"kiro-oil-handover\" }\n          },\n          { textKey: \"fountain.kiro.choice.hint\", next: \"fountain_oil_hint\" },\n          {\n",
+        "afterSHA256": "d452fce5c9d74e5d9cebdba50a1c28a360bc457a3a680f7595e7411c36549fd2"
+      }
+    ]
+  },
+  "src/content/chapter1/scenes.js": {
+    "baseRevision": "6b0b93411bd1714beef127ad46a003c856d73519",
+    "patches": [
+      {
+        "before": "      waiter: { x: 705, y: 465 },\n      exit: { x: 170, y: 505 }\n    },\n    foregroundLayers: sceneLayerGeometry[\"scene.chapter1.mehana\"]?.foregroundLayers || [],\n    exits: [\n      {\n        id: \"exit.mehana.to_square\",\n",
+        "after": "      waiter: { x: 705, y: 465 },\n      exit: { x: 170, y: 505 }\n    },\n    foregroundLayers: [...(sceneLayerGeometry[\"scene.chapter1.mehana\"]?.foregroundLayers || []), { id: \"layer.mehana.oil_scale\", asset: \"kiroOilScale\", left: 0, top: 0, width: 1280, height: 720, zIndex: 44 }],\n    exits: [\n      {\n        id: \"exit.mehana.to_square\",\n",
+        "afterSHA256": "cb6e60c3b3e2af3f828369b054926f91318196f6b38fc6553ff1e2348f806d5c"
+      },
+      {
+        "before": "        lookKey: \"look.mehana.oil\",\n        takeItemId: \"item.sunflower_oil\",\n        flagOnTake: \"hasSunflowerOil\",\n        requirements: { state: { hasSunflowerOil: false }, absentItems: [\"item.sunflower_oil\"] },\n        useRules: [\n          {\n",
+        "after": "        lookKey: \"look.mehana.oil\",\n        takeItemId: \"item.sunflower_oil\",\n        flagOnTake: \"hasSunflowerOil\",\n        takeRules: [{ sceneSequence: \"kiro-oil-handover\", effects: [\n          { type: \"addItem\", itemId: \"item.sunflower_oil\" },\n          { type: \"setState\", key: \"hasSunflowerOil\", value: true }\n        ] }],\n        requirements: { state: { hasSunflowerOil: false }, absentItems: [\"item.sunflower_oil\"] },\n        useRules: [\n          {\n",
+        "afterSHA256": "849058aa69a048dab295729fd7e685625650d3c5b017cb212038463d1827eecb"
+      },
+      {
+        "before": "        rect: { x: 727, y: 222, w: 88, h: 121 },\n        speechAnchor: { x: 773, y: 208 },\n        itemRejectKey: \"msg.inventory.npc_reject.mehana_waiter\",\n        dialogueId: \"dialogue.mehana_waiter\",\n        lookKey: \"look.npc.mehana_waiter\",\n        itemUseRules: [\"item.rakia\", \"item.shopska_salad\", \"item.tripe_soup\", \"item.village_wine\"].map(\n",
+        "after": "        rect: { x: 727, y: 222, w: 88, h: 121 },\n        speechAnchor: { x: 773, y: 208 },\n        itemRejectKey: \"msg.inventory.npc_reject.mehana_waiter\",\n        interactionApproach: { x: 660, y: 580 },\n        interactionApproachExact: true,\n        interactionFacingPoint: { x: 771, y: 270 },\n        dialogueId: \"dialogue.mehana_waiter\",\n        lookKey: \"look.npc.mehana_waiter\",\n        itemUseRules: [\"item.rakia\", \"item.shopska_salad\", \"item.tripe_soup\", \"item.village_wine\"].map(\n",
+        "afterSHA256": "a21d70a4585f398b028f190a79310dc8ad87639cd52e36970b54d0171602cdbb"
+      }
+    ]
+  },
+  "src/content/localization/bg.js": {
+    "baseRevision": "6b0b93411bd1714beef127ad46a003c856d73519",
+    "patches": [
+      {
+        "before": "import { fountainBg } from \"./chapter1Fountain.js\";\n\nexport const bg = {\n  \"ui.sound.volume\": \"Сила на звука\",\n  \"ui.sound.on\": \"Звук: включен\",\n  \"ui.sound.off\": \"Звук: изключен\",\n",
+        "after": "import { fountainBg } from \"./chapter1Fountain.js\";\n\nexport const bg = {\n  \"ui.received_oil.controls\": \"Натисни и плъзни, за да наклониш бутилката. Приближи и отдалечи с колелцето.\",\n  \"ui.received_oil.reset\": \"Отпред\",\n  \"ui.received_oil.loading\": \"Бутилката се зарежда…\",\n  \"ui.received_oil.unavailable\": \"3D изгледът не е достъпен. Показана е илюстрация на бутилката.\",\n  \"ui.received_oil.itemTitle\": \"200 мл слънчогледово олио\",\n  \"ui.received_oil.rotate\": \"Огледай бутилката\",\n  \"ui.received_oil.left\": \"Завърти наляво\",\n  \"ui.received_oil.right\": \"Завърти надясно\",\n  \"ui.received_oil.up\": \"Завърти нагоре\",\n  \"ui.received_oil.down\": \"Завърти надолу\",\n  \"ui.received_oil.rollLeft\": \"Наклони наляво\",\n  \"ui.received_oil.rollRight\": \"Наклони надясно\",\n  \"ui.received_oil.zoomIn\": \"Приближи\",\n  \"ui.received_oil.zoomOut\": \"Отдалечи\",\n  \"ui.received_oil.title\": \"Получено\",\n  \"ui.received_oil.description\": \"В бутилка от ракия. Записано на вересия.\",\n  \"ui.received_oil.close\": \"Прибери\",\n\n  \"ui.sound.volume\": \"Сила на звука\",\n  \"ui.sound.on\": \"Звук: включен\",\n  \"ui.sound.off\": \"Звук: изключен\",\n",
+        "afterSHA256": "9bd1c7e3428c691843f4705e58b0dbb22e714cd2ec19e0b09c71d3abff457aea"
+      }
+    ]
+  },
+  "src/content/localization/chapter1Fountain.js": {
+    "baseRevision": "6b0b93411bd1714beef127ad46a003c856d73519",
+    "patches": [
+      {
+        "before": "  \"fountain.baba.choice.report\": \"Фонтанът вече работи. Ела да видиш.\",\n  \"fountain.baba.support\": \"Баба Стоянка: Не е много вода. Ама е повече от обещание. Имаш гласа ми.\",\n  \"fountain.baba.confirmed\": \"Баба Стоянка: Дала съм си думата. Не ме карай да я заверявам всеки път.\",\n  \"fountain.kiro.choice.refill\": \"Трябва ми олио за заялия кран на фонтана.\",\n  \"fountain.kiro.choice.hint\": \"Откъде да взема олио за ремонта?\",\n  \"fountain.kiro.refill\": \"Киро: Ето резервна бутилка. За крана, Митко. Той скърца, не ти.\",\n  \"fountain.kiro.hint\": \"Киро: На шкафа има олио. Ако си го изпил, ще дам друго. Ако си го оставил на земята, прибери си го — не е изчезнало по процедура.\",\n",
+        "after": "  \"fountain.baba.choice.report\": \"Фонтанът вече работи. Ела да видиш.\",\n  \"fountain.baba.support\": \"Баба Стоянка: Не е много вода. Ама е повече от обещание. Имаш гласа ми.\",\n  \"fountain.baba.confirmed\": \"Баба Стоянка: Дала съм си думата. Не ме карай да я заверявам всеки път.\",\n  \"fountain.kiro.choice.refill\": \"Дай ми 200 мл олио и ги пиши на сметката ми.\",\n  \"fountain.kiro.choice.hint\": \"Откъде да взема олио за ремонта?\",\n  \"fountain.kiro.refill\": \"Киро: Ето резервна бутилка. За крана, Митко. Той скърца, не ти.\",\n  \"fountain.kiro.hint\": \"Киро: На шкафа има олио. Ако си го изпил, ще дам друго. Ако си го оставил на земята, прибери си го — не е изчезнало по процедура.\",\n",
+        "afterSHA256": "54bd3877ee92843c5a022bd6b6bd95cc6bc3cd2393595fd3ae5244f6d5a22c28"
+      },
+      {
+        "before": "  \"fountain.baba.choice.report\": \"The fountain works now. Come and see.\",\n  \"fountain.baba.support\": \"Baba Stoyanka: It isn't much water. But it's more than a promise. You have my vote.\",\n  \"fountain.baba.confirmed\": \"Baba Stoyanka: I gave you my word. Stop asking me to notarize it.\",\n  \"fountain.kiro.choice.refill\": \"I need cooking oil for the fountain's stuck valve.\",\n  \"fountain.kiro.choice.hint\": \"Where can I get oil for the repair?\",\n  \"fountain.kiro.refill\": \"Kiro: Here's a spare bottle. For the valve, Mitko. It's the one squeaking.\",\n  \"fountain.kiro.hint\": \"Kiro: There's oil on the sideboard. Drank it? I'll replace it. Dropped it? Pick it up. It hasn't vanished into the filing system.\",\n",
+        "after": "  \"fountain.baba.choice.report\": \"The fountain works now. Come and see.\",\n  \"fountain.baba.support\": \"Baba Stoyanka: It isn't much water. But it's more than a promise. You have my vote.\",\n  \"fountain.baba.confirmed\": \"Baba Stoyanka: I gave you my word. Stop asking me to notarize it.\",\n  \"fountain.kiro.choice.refill\": \"Give me 200 ml of cooking oil and put it on my tab.\",\n  \"fountain.kiro.choice.hint\": \"Where can I get oil for the repair?\",\n  \"fountain.kiro.refill\": \"Kiro: Here's a spare bottle. For the valve, Mitko. It's the one squeaking.\",\n  \"fountain.kiro.hint\": \"Kiro: There's oil on the sideboard. Drank it? I'll replace it. Dropped it? Pick it up. It hasn't vanished into the filing system.\",\n",
+        "afterSHA256": "02f16c95a212ee7045e399e04f9771a4b50992aa3b4e76984bbc8f1518763a80"
+      }
+    ]
+  },
+  "src/content/localization/en.js": {
+    "baseRevision": "6b0b93411bd1714beef127ad46a003c856d73519",
+    "patches": [
+      {
+        "before": "import { fountainEn } from \"./chapter1Fountain.js\";\n\nexport const en = {\n  \"ui.sound.volume\": \"Volume\",\n  \"ui.sound.on\": \"Sound: on\",\n  \"ui.sound.off\": \"Sound: off\",\n",
+        "after": "import { fountainEn } from \"./chapter1Fountain.js\";\n\nexport const en = {\n  \"ui.received_oil.controls\": \"Click and drag to tilt the bottle. Scroll to zoom in and out.\",\n  \"ui.received_oil.reset\": \"Front\",\n  \"ui.received_oil.loading\": \"Loading bottle…\",\n  \"ui.received_oil.unavailable\": \"3D view unavailable. Bottle illustration shown.\",\n  \"ui.received_oil.itemTitle\": \"200 ml sunflower oil\",\n  \"ui.received_oil.rotate\": \"Inspect the bottle\",\n  \"ui.received_oil.left\": \"Turn left\",\n  \"ui.received_oil.right\": \"Turn right\",\n  \"ui.received_oil.up\": \"Turn up\",\n  \"ui.received_oil.down\": \"Turn down\",\n  \"ui.received_oil.rollLeft\": \"Tilt left\",\n  \"ui.received_oil.rollRight\": \"Tilt right\",\n  \"ui.received_oil.zoomIn\": \"Zoom in\",\n  \"ui.received_oil.zoomOut\": \"Zoom out\",\n  \"ui.received_oil.title\": \"Received\",\n  \"ui.received_oil.description\": \"In a reused rakia bottle. Added to your tab.\",\n  \"ui.received_oil.close\": \"Put away\",\n\n  \"ui.sound.volume\": \"Volume\",\n  \"ui.sound.on\": \"Sound: on\",\n  \"ui.sound.off\": \"Sound: off\",\n",
+        "afterSHA256": "6aef1ac0bd38b11b66bdbe4133bab55eb206e95a3e3ab13860f7ff942c5166f7"
+      }
+    ]
+  },
+  "src/engine/Game.js": {
+    "baseRevision": "6b0b93411bd1714beef127ad46a003c856d73519",
+    "patches": [
+      {
+        "before": "import { QuestSystem } from \"./QuestSystem.js\";\nimport { Renderer } from \"./Renderer.js\";\nimport { SceneIdleVariations, sceneIdleVariationsBlocked } from \"./SceneIdleVariations.js\";\nimport { SceneNpcSpeech } from \"./SceneNpcSpeech.js\";\nimport { SaveSystem } from \"./SaveSystem.js\";\nimport { SceneEditor } from \"./SceneEditor.js\";\n",
+        "after": "import { QuestSystem } from \"./QuestSystem.js\";\nimport { Renderer } from \"./Renderer.js\";\nimport { SceneIdleVariations, sceneIdleVariationsBlocked } from \"./SceneIdleVariations.js\";\nimport { mountItemModelViewer } from \"./ItemModelViewer.js\";\nimport { SceneActionSequence } from \"./SceneActionSequence.js\";\nimport { kiroOilSequence } from \"../content/art/kiroOilHandover.generated.js\";\nimport { SceneNpcSpeech } from \"./SceneNpcSpeech.js\";\nimport { SaveSystem } from \"./SaveSystem.js\";\nimport { SceneEditor } from \"./SceneEditor.js\";\n",
+        "afterSHA256": "1ec416632bc6fdb6739d6f768571b40a1f5efa193f764d5c7fe9b5f292d3db51"
+      },
+      {
+        "before": "    this.renderer = new Renderer(canvas, this);\n    this.sceneIdleVariations = new SceneIdleVariations();\n    this.sceneNpcSpeech = new SceneNpcSpeech();\n    this.sceneEditor = this.editMode ? new SceneEditor(this) : null;\n    const params = new URLSearchParams(globalThis.location?.search || \"\");\n    this.menuOpen = !this.editMode && !this.simpleAnimTest && !this.animLab && !this.devHome && params.get(\"play\") !== \"1\" && !params.has(\"scene\") && !params.has(\"debugGeometry\");\n",
+        "after": "    this.renderer = new Renderer(canvas, this);\n    this.sceneIdleVariations = new SceneIdleVariations();\n    this.sceneNpcSpeech = new SceneNpcSpeech();\n    this.sceneAction = new SceneActionSequence();\n    this.sceneEditor = this.editMode ? new SceneEditor(this) : null;\n    const params = new URLSearchParams(globalThis.location?.search || \"\");\n    this.menuOpen = !this.editMode && !this.simpleAnimTest && !this.animLab && !this.devHome && params.get(\"play\") !== \"1\" && !params.has(\"scene\") && !params.has(\"debugGeometry\");\n",
+        "afterSHA256": "e3b4e0fc67765136e1e454c5269c13a27b74edc5cd627a8f5e11b5f1bacd93af"
+      },
+      {
+        "before": "      this.updateSimpleAnim(dt);\n    } else if (this.animLab) {\n      this.player.animationTime += dt;\n    } else if (!this.paused && !this.menuOpen && !this.dialogue.current) {\n      this.player.animator.beginTick();\n      const finishingStopFrame = this.finishingStopFrame();\n      const feetBefore = { ...this.player.position };\n",
+        "after": "      this.updateSimpleAnim(dt);\n    } else if (this.animLab) {\n      this.player.animationTime += dt;\n    } else if (!this.paused && !this.menuOpen && !this.dialogue.current && !this.sceneAction?.active) {\n      this.player.animator.beginTick();\n      const finishingStopFrame = this.finishingStopFrame();\n      const feetBefore = { ...this.player.position };\n",
+        "afterSHA256": "dedd74ee8f574ab4278804b35eaf047701d89f1dd85dde50b5d3087e73b1466c"
+      },
+      {
+        "before": "      this.updateSpeechBubble(dt);\n      this.updateNpcSpeechBubble(dt);\n    }\n    this.updateNpcDialogueSpeech(dt);\n    this.updateSceneNpcSpeech(dt);\n    this.updateSceneIdleVariations(dt);\n",
+        "after": "      this.updateSpeechBubble(dt);\n      this.updateNpcSpeechBubble(dt);\n    }\n    this.updateSceneAction(dt);\n    this.updateNpcDialogueSpeech(dt);\n    this.updateSceneNpcSpeech(dt);\n    this.updateSceneIdleVariations(dt);\n",
+        "afterSHA256": "bf8ed401824727dc8766c96b745d6769e2d685cb70e48dcd0da3ce6a2deece98"
+      },
+      {
+        "before": "    this.sceneNpcSpeech?.update(this.currentScene, dt * 1000, {\n      paused: Boolean(this.paused || this.menuOpen),\n      canceled: Boolean(this.devHome || this.editMode || this.animLab || this.simpleAnimTest\n        || this.sceneTransitionPending || this.state?.chapter1Completed || this.player?.actionSequence),\n      visible: layer => this.renderer.sceneLayerVisible(layer),\n      available: animation => Boolean(animation && this.assets.isLoaded(this.assets.getSceneImage(this.currentScene.id, animation.asset))),\n      conversation: npcId => this.content.dialogues[this.dialogue.current?.id]?.npcId === npcId,\n",
+        "after": "    this.sceneNpcSpeech?.update(this.currentScene, dt * 1000, {\n      paused: Boolean(this.paused || this.menuOpen),\n      canceled: Boolean(this.devHome || this.editMode || this.animLab || this.simpleAnimTest\n        || this.sceneTransitionPending || this.state?.chapter1Completed || this.player?.actionSequence || this.sceneAction?.active),\n      visible: layer => this.renderer.sceneLayerVisible(layer),\n      available: animation => Boolean(animation && this.assets.isLoaded(this.assets.getSceneImage(this.currentScene.id, animation.asset))),\n      conversation: npcId => this.content.dialogues[this.dialogue.current?.id]?.npcId === npcId,\n",
+        "afterSHA256": "3ae59d655336a271518c86dd4c00484b97ab1b2396df21f4d6029f136cda350f"
+      },
+      {
+        "before": "    });\n    window.addEventListener(\"keydown\", (event) => {\n      if (event.key === \"Escape\") {\n        if (this.selectedInventoryItemId || this.inventoryUseItemId) {\n          this.clearInventoryInteraction();\n          this.renderUi();\n",
+        "after": "    });\n    window.addEventListener(\"keydown\", (event) => {\n      if (event.key === \"Escape\") {\n        if (this.sceneAction?.state?.phase === 'received') { this.closeReceivedItem(); return; }\n        if (this.selectedInventoryItemId || this.inventoryUseItemId) {\n          this.clearInventoryInteraction();\n          this.renderUi();\n",
+        "afterSHA256": "503ac548013e6225d7328e695d738e13cb0533edb8212c4f4564eac670380aad"
+      },
+      {
+        "before": "  }\n\n  handleWorldClick(point) {\n    if (this.sceneTransitionPending || this.player?.actionSequence || this.player?.animation === \"action\") return;\n    if (this.selectedInventoryItemId && !this.inventoryUseItemId) {\n      this.selectedInventoryItemId = null;\n      this.renderUi();\n",
+        "after": "  }\n\n  handleWorldClick(point) {\n    if (this.sceneAction?.active || this.sceneTransitionPending || this.player?.actionSequence || this.player?.animation === \"action\") return;\n    if (this.selectedInventoryItemId && !this.inventoryUseItemId) {\n      this.selectedInventoryItemId = null;\n      this.renderUi();\n",
+        "afterSHA256": "bd6599cffff922a510bcae284c7421c0b5cd26ec08996e777dd8d523471c06d4"
+      },
+      {
+        "before": "  }\n\n  updateHoveredTarget(point) {\n    const blocked = this.menuOpen || this.paused || this.dialogue.current\n      || this.sceneTransitionPending || this.player?.actionSequence || this.player?.animation === \"action\";\n    const previousTargetId = this.hoveredTarget?.id || null;\n    this.hoveredTarget = !blocked && point\n",
+        "after": "  }\n\n  updateHoveredTarget(point) {\n    const blocked = this.sceneAction?.active || this.menuOpen || this.paused || this.dialogue.current\n      || this.sceneTransitionPending || this.player?.actionSequence || this.player?.animation === \"action\";\n    const previousTargetId = this.hoveredTarget?.id || null;\n    this.hoveredTarget = !blocked && point\n",
+        "afterSHA256": "af28013b1a4a450b9c803a7a85f3c6bbcfde318c4c51db4cb7081ddb9880f394"
+      },
+      {
+        "before": "  }\n\n  handleTarget(target, clickPoint = null) {\n    if (this.shouldApproachTargetBeforeAction(target, clickPoint)) return;\n    this.performTargetAction(target);\n  }\n\n  shouldApproachTargetBeforeAction(target, clickPoint = null) {\n    if (target.kind === \"exit\") return false;\n    if ([\"seated\", \"closeup\"].includes(this.currentScene?.playerMode)) return false;\n    const actionSequence = this.actionSequenceForTarget(target, this.selectedVerb);\n    const actionApproach = this.actionSequenceApproachPoint(actionSequence);\n    if (actionApproach) {\n",
+        "after": "  }\n\n  handleTarget(target, clickPoint = null) {\n    if (this.sceneAction?.active) return;\n    if (this.shouldApproachTargetBeforeAction(target, clickPoint)) return;\n    this.performTargetAction(target);\n  }\n\n  shouldApproachTargetBeforeAction(target, clickPoint = null) {\n    if (target.kind === \"exit\") return false;\n    if (this.currentScene?.playerMode === \"closeup\" || (this.currentScene?.playerMode === \"seated\" && !target.interactionApproach)) return false;\n    const actionSequence = this.actionSequenceForTarget(target, this.selectedVerb);\n    const actionApproach = this.actionSequenceApproachPoint(actionSequence);\n    if (actionApproach) {\n",
+        "afterSHA256": "407d187d75cf973fc2ed39cbb3f4fcec7df0b460a365dc7ac1b567db16dd735b"
+      },
+      {
+        "before": "        feetGoal: { ...rawApproach },\n        feet: approach ? { ...approach } : null\n      };\n      if (!approach || distance(this.player.position, approach) <= TARGET_APPROACH_FEET_CANCEL_DISTANCE) return false;\n      this.player.pendingFacingPoint = { ...reachPoint };\n      this.player.pendingInteraction = {\n        target,\n",
+        "after": "        feetGoal: { ...rawApproach },\n        feet: approach ? { ...approach } : null\n      };\n      if (!approach || distance(this.player.position, approach) <= (target.interactionApproachExact ? EXACT_ACTION_APPROACH_EPSILON : TARGET_APPROACH_FEET_CANCEL_DISTANCE)) return false;\n      this.player.pendingFacingPoint = { ...reachPoint };\n      this.player.pendingInteraction = {\n        target,\n",
+        "afterSHA256": "90ace3db564458293bb799cc0a1af5649b256aacae07fe9ece99331420baaae1"
+      },
+      {
+        "before": "  }\n\n  walkToPoint(point, facingPoint = point) {\n    const path = findWalkPath(this.currentScene, this.player.position, point);\n    const route = path.length ? path : [{ ...point }];\n    const routeDistance = walkPathDistance(this.player.position, route);\n",
+        "after": "  }\n\n  walkToPoint(point, facingPoint = point) {\n    if (this.sceneAction?.active) return;\n    const path = findWalkPath(this.currentScene, this.player.position, point);\n    const route = path.length ? path : [{ ...point }];\n    const routeDistance = walkPathDistance(this.player.position, route);\n",
+        "afterSHA256": "068f720f228e797cff24d32b9fe523ec79b1b0bdb787ab83bfbc7abcd202cfbd"
+      },
+      {
+        "before": "  }\n\n  performTargetAction(target, forcedActionSequence = null) {\n    if (this.inventoryUseItemId) {\n      this.useInventoryItemOnTarget(this.inventoryUseItemId, target);\n      return;\n",
+        "after": "  }\n\n  performTargetAction(target, forcedActionSequence = null) {\n    if (this.sceneAction?.active) return;\n    if (this.inventoryUseItemId) {\n      this.useInventoryItemOnTarget(this.inventoryUseItemId, target);\n      return;\n",
+        "afterSHA256": "0053b81d4db6263fa729f9396e3802d59646a5ffdfc3afca79ce97b28de97e9f"
+      },
+      {
+        "before": "  }\n\n  beginInventoryItemUse(itemId) {\n    if (!itemId || !this.inventory.has(itemId)) return false;\n    this.selectedInventoryItemId = null;\n    this.inventoryUseItemId = itemId;\n",
+        "after": "  }\n\n  beginInventoryItemUse(itemId) {\n    if (this.sceneAction?.active) return false;\n    if (!itemId || !this.inventory.has(itemId)) return false;\n    this.selectedInventoryItemId = null;\n    this.inventoryUseItemId = itemId;\n",
+        "afterSHA256": "ac0d9841310210c79e2b88abe537b63183f53112ed2ff0d004e5988f08966bde"
+      },
+      {
+        "before": "  }\n\n  applyContentEffect(definition = {}, options = {}) {\n    if (definition.endingTrigger) return this.requestEnding(definition.endingTrigger);\n    applyEffects(definition.effects, this.effectContext());\n    this.audio?.play(definition.soundCue);\n",
+        "after": "  }\n\n  applyContentEffect(definition = {}, options = {}) {\n    if (definition.sceneSequence) return this.startSceneAction(definition);\n    if (definition.endingTrigger) return this.requestEnding(definition.endingTrigger);\n    applyEffects(definition.effects, this.effectContext());\n    this.audio?.play(definition.soundCue);\n",
+        "afterSHA256": "f7067b12f994230e76e80ac54c251254e8a115d6ee1e78a8b5a71f6815956076"
+      },
+      {
+        "before": "    if (options.render !== false) this.renderUi();\n    if (definition.sceneTransition) return this.changeScene(definition.sceneTransition.sceneId, definition.sceneTransition.position);\n    return true;\n  }\n\n  requestEnding(trigger = {}) {\n",
+        "after": "    if (options.render !== false) this.renderUi();\n    if (definition.sceneTransition) return this.changeScene(definition.sceneTransition.sceneId, definition.sceneTransition.position);\n    return true;\n  }\n\n  startSceneAction(effect) {\n    if (!requirementsMet(effect.requirements, this.effectContext())) return false;\n    const definition = effect.sceneSequence === kiroOilSequence.id ? kiroOilSequence : null;\n    if (!definition || !this.sceneAction.start(this.currentScene.id, definition, frame => this.sceneActionFrameAvailable(frame))) return false;\n    this.sceneActionEffect = effect;\n    this.player.target = null; this.player.walkPath = []; this.player.animation = 'idle';\n    this.player.pendingInteraction = null; this.player.pendingFacingPoint = null;\n    this.hideSpeechBubble(true); this.npcSpeechBubble = null; this.hoveredTarget = null;\n    this.sceneIdleVariations?.reset(); this.sceneNpcSpeech?.reset();\n    this.assets.getItemImage('item.sunflower_oil');\n    this.updateSceneAction(0);\n    this.renderUi();\n    return true;\n  }\n\n  sceneActionFrameAvailable(frame) {\n    return this.assets.isLoaded(this.assets.getSceneImage(this.currentScene.id, frame.asset))\n      && this.assets.isLoaded(this.assets.getSceneImage(this.currentScene.id, 'kiroOilScale'));\n  }\n\n  updateSceneAction(dt) {\n    if (!this.sceneAction?.active) return;\n    this.sceneAction.update(this.currentScene.id, dt * 1000, {\n      paused: this.paused || this.menuOpen,\n      canceled: this.sceneTransitionPending || this.devHome || this.editMode || this.state.chapter1Completed,\n      available: frame => this.sceneActionFrameAvailable(frame)\n    });\n    if (!this.sceneAction.active) { this.sceneActionEffect = null; return; }\n    if (this.sceneAction.state.phase === 'received' && this.sceneActionEffect) {\n      const { sceneSequence, ...effect } = this.sceneActionEffect;\n      this.sceneActionEffect = null; // Consume before effects/UI: one grant per accepted order.\n      applyEffects(effect.effects, this.effectContext());\n      this.protectCurrentAssetWorkingSet(); this.save();\n      this.renderUi();\n    }\n  }\n\n  closeReceivedItem() {\n    if (this.sceneAction?.state?.phase !== 'received') return;\n    this.sceneAction.reset(); this.sceneActionEffect = null;\n    this.sceneIdleVariations?.reset(); this.sceneNpcSpeech?.reset();\n    this.renderUi();\n  }\n\n  createReceivedItem() {\n    const panel = element('section', 'received-item-screen');\n    panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-modal', 'true');\n    panel.setAttribute('aria-label', this.t('ui.received_oil.title'));\n    const title = document.createElement('h2'); title.textContent = this.t('ui.received_oil.title');\n    const itemTitle = document.createElement('h3'); itemTitle.textContent = this.t('ui.received_oil.itemTitle');\n    const viewer = element('div', 'item-model-viewer');\n    const modelText = Object.fromEntries(['loading','unavailable','controls'].map(key => [key,this.t('ui.received_oil.'+key)]));\n    modelText.name = this.t('item.sunflower_oil.name');\n    this.receivedItemViewer = mountItemModelViewer(viewer, {\n      modelUrl: 'assets/chapter1/items/kiro-bottle/oil-200ml-r08.glb',\n      fallbackUrl: 'assets/chapter1/items/kiro-bottle/oil-200ml-r07.png', text: modelText\n    });\n    const description = document.createElement('p'); description.textContent = this.t('ui.received_oil.description');\n    panel.append(title, itemTitle, viewer, description, button(this.t('ui.received_oil.close'), () => this.closeReceivedItem()));\n    return panel;\n  }\n\n  requestEnding(trigger = {}) {\n",
+        "afterSHA256": "b06ea72eea5957ef8bf3bb06e79439f20b190140e034dbf4ee0a17040a5ad643"
+      },
+      {
+        "before": "    }\n    const sceneLoadToken = Symbol(sceneId);\n    this.sceneLoadToken = sceneLoadToken;\n    this.sceneTransitionPending = true;\n    this.sceneIdleVariations?.reset();\n    this.sceneNpcSpeech?.reset();\n",
+        "after": "    }\n    const sceneLoadToken = Symbol(sceneId);\n    this.sceneLoadToken = sceneLoadToken;\n    this.sceneAction?.reset(); this.sceneActionEffect = null;\n    this.sceneTransitionPending = true;\n    this.sceneIdleVariations?.reset();\n    this.sceneNpcSpeech?.reset();\n",
+        "afterSHA256": "ffe297ace80bb82edefa63bb7dc25b7c25ccf93de844150a500023e5bb8942e5"
+      },
+      {
+        "before": "  }\n\n  reset() {\n    this.state = this.saveSystem.reset();\n    this.localization.setLanguage(this.state.language);\n    this.currentScene = this.sceneWithDroppedItems(this.content.scenes[this.state.currentSceneId]);\n",
+        "after": "  }\n\n  reset() {\n    this.sceneAction?.reset(); this.sceneActionEffect = null;\n    this.state = this.saveSystem.reset();\n    this.localization.setLanguage(this.state.language);\n    this.currentScene = this.sceneWithDroppedItems(this.content.scenes[this.state.currentSceneId]);\n",
+        "afterSHA256": "c43fe01ddb1c4c92858c11494606af6360e3a89a50096df7b88a8420f66bf025"
+      },
+      {
+        "before": "  }\n\n  renderUi() {\n    if (this.simpleAnimTest) {\n      this.renderSimpleAnimControls();\n      return;\n",
+        "after": "  }\n\n  renderUi() {\n    this.receivedItemViewer?.dispose(); this.receivedItemViewer = null;\n    if (this.simpleAnimTest) {\n      this.renderSimpleAnimControls();\n      return;\n",
+        "afterSHA256": "49915a54d7c7984808e458bd09a0c604dc030e8c14e640c18124e0829c3b15e4"
+      },
+      {
+        "before": "      if (reaction) this.uiRoot.appendChild(reaction);\n    }\n    if (this.speechBubble && !this.menuOpen && !this.paused && !dialogueNode) this.uiRoot.appendChild(this.createSpeechBubble());\n    if (!this.editMode && !this.devHome && !this.menuOpen && !this.paused && !dialogueNode) this.uiRoot.appendChild(this.createHud());\n    if (this.droppedItemsOpen && !this.menuOpen && !this.paused && !dialogueNode) {\n      this.uiRoot.appendChild(this.createDroppedItemsPanel());\n    }\n    this.uiRoot.appendChild(this.createTopBar());\n  }\n\n  createHud() {\n",
+        "after": "      if (reaction) this.uiRoot.appendChild(reaction);\n    }\n    if (this.speechBubble && !this.menuOpen && !this.paused && !dialogueNode) this.uiRoot.appendChild(this.createSpeechBubble());\n    if (!this.editMode && !this.devHome && !this.menuOpen && !this.paused && !dialogueNode && !this.sceneAction?.active) this.uiRoot.appendChild(this.createHud());\n    if (this.droppedItemsOpen && !this.menuOpen && !this.paused && !dialogueNode) {\n      this.uiRoot.appendChild(this.createDroppedItemsPanel());\n    }\n    this.uiRoot.appendChild(this.createTopBar());\n    if (this.sceneAction?.state?.phase === 'received') this.uiRoot.appendChild(this.createReceivedItem());\n  }\n\n  createHud() {\n",
+        "afterSHA256": "e5fbf0e0ea822ed793d5e71665c3d4ebe90bf03e3bf54dc2df15c476738ccd2c"
+      },
+      {
+        "before": "  }\n\n  chooseDialogueChoice(choice, event) {\n    if (this.dialogueChoicePointerLock !== null && event?.detail !== 0) return false;\n    this.dialogue.choose(choice);\n    this.renderUi();\n",
+        "after": "  }\n\n  chooseDialogueChoice(choice, event) {\n    if (this.sceneAction?.active || !this.dialogueChoiceAvailable(choice)) return false;\n    if (this.dialogueChoicePointerLock !== null && event?.detail !== 0) return false;\n    this.dialogue.choose(choice);\n    this.renderUi();\n",
+        "afterSHA256": "cfa52fdc8e2b2aa16286ccaecb5a32c7ba46debd11460d4f313a9bee1a02a6d0"
+      }
+    ]
+  },
+  "src/engine/Renderer.js": {
+    "baseRevision": "6b0b93411bd1714beef127ad46a003c856d73519",
+    "patches": [
+      {
+        "before": "  }\n\n  drawSceneRasterLayer(scene, layer) {\n    if (this.drawSceneNpcSpeech(scene, layer)) return;\n    if (this.drawSceneIdleVariation(scene, layer)) return;\n    const idleAnimation = this.sceneLayerIdleAnimation(scene, layer);\n",
+        "after": "  }\n\n  drawSceneRasterLayer(scene, layer) {\n    const performance = this.game.sceneAction?.presentation(scene.id, layer.id);\n    if (performance) {\n      const image = this.game.assets.getSceneImage(scene.id, performance.asset);\n      if (this.game.assets.isLoaded(image)) {\n        const r = performance.sourceRect;\n        this.ctx.drawImage(image, r.x, r.y, r.w, r.h, performance.left, performance.top, performance.height * 504 / 896, performance.height);\n        return;\n      }\n    }\n    if (this.drawSceneNpcSpeech(scene, layer)) return;\n    if (this.drawSceneIdleVariation(scene, layer)) return;\n    const idleAnimation = this.sceneLayerIdleAnimation(scene, layer);\n",
+        "afterSHA256": "6bc920ac409579c9226c70dad3abc65e5bfcc21ebba177890431b6599e2e05d5"
+      }
+    ]
+  },
+  "src/engine/SceneIdleVariations.js": {
+    "baseRevision": "6b0b93411bd1714beef127ad46a003c856d73519",
+    "patches": [
+      {
+        "before": "}\n\nexport function sceneIdleVariationsBlocked(game) {\n  return Boolean(game.dialogue?.current || game.speechBubble || game.pendingSpeechBubble\n    || game.npcSpeechBubble || game.player?.speaking || game.player?.actionSequence\n    || game.player?.animation === 'action' || game.sceneTransitionPending\n    || game.devHome || game.editMode || game.animLab || game.simpleAnimTest || game.state?.chapter1Completed);\n",
+        "after": "}\n\nexport function sceneIdleVariationsBlocked(game) {\n  return Boolean(game.sceneAction?.active || game.dialogue?.current || game.speechBubble || game.pendingSpeechBubble\n    || game.npcSpeechBubble || game.player?.speaking || game.player?.actionSequence\n    || game.player?.animation === 'action' || game.sceneTransitionPending\n    || game.devHome || game.editMode || game.animLab || game.simpleAnimTest || game.state?.chapter1Completed);\n",
+        "afterSHA256": "ba2bdb1d0876b15b1d192170de8cdb61c23a06dd0909079c638a4a11e9c4f0f1"
+      }
+    ]
+  },
+  "src/styles.css": {
+    "baseRevision": "6b0b93411bd1714beef127ad46a003c856d73519",
+    "patches": [
+      {
+        "before": "  scrollbar-gutter: stable;\n}\n.dialogue-panel-with-line .dialogue-choice-list button { white-space: normal; overflow-wrap: anywhere; }\n",
+        "after": "  scrollbar-gutter: stable;\n}\n.dialogue-panel-with-line .dialogue-choice-list button { white-space: normal; overflow-wrap: anywhere; }\n\n.received-item-screen { position:absolute; inset:0; z-index:500; background:radial-gradient(ellipse at 50% 38%,#3b2d20,#1d1712 72%); color:#f6e7c8; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; pointer-events:auto; text-align:center; padding:20px; overflow-y:auto; }\n.received-item-screen h2 { font-size:16px; text-transform:uppercase; letter-spacing:3px; color:#ccb28a; margin:0; }\n.received-item-screen h3 { font-size:30px; font-weight:500; margin:0; }\n.received-item-screen p { max-width:620px; font-size:18px; margin:6px 0; color:#dbc7a8; }\n.received-item-screen > button { padding:12px 36px; font-size:20px; margin-top:5px; }\n.item-model-viewer { width:min(520px,85vw); height:clamp(270px,63vh,510px); position:relative; flex-shrink:0; }\n.item-model-viewer canvas { width:100%; height:100%; display:block; touch-action:none; cursor:grab; }\n.item-model-viewer canvas:active { cursor:grabbing; }\n.item-model-viewer canvas:focus-visible { outline:2px solid #e1c48c; outline-offset:2px; }\n.item-model-viewer img { height:100%; width:100%; object-fit:contain; }\n.item-model-status { position:absolute; inset:45% 0 auto; }\n.received-item-screen small { font-size:14px; color:#bfa886; }\n@media (max-height:550px) { .received-item-screen { justify-content:flex-start; } .received-item-screen h3 { font-size:23px; } }\n",
+        "afterSHA256": "bd7c7d5565c946cf32a451eb4a05ee868bc64effbc035cb41b015aed30b0fe9d"
+      }
+    ]
+  },
+  "assets_src/characters/mehana_waiter/external_animation_v1/animation-pilot.json": {
+    "baseRevision": "6b0b93411bd1714beef127ad46a003c856d73519",
+    "patches": [
+      {
+        "before": "        },\n        \"optimization\": \"Independent per-frame half-size Lanczos resize; losslessWebP; padded canvas registration retains265px actor height\"\n      }\n    }\n  }\n}\n",
+        "after": "        },\n        \"optimization\": \"Independent per-frame half-size Lanczos resize; losslessWebP; padded canvas registration retains265px actor height\"\n      }\n    },\n    \"kiro_oil_handover_web_c01\": {\n      \"slot\": \"Oil preparation\",\n      \"status\": \"runtime_review\",\n      \"use\": true,\n      \"generation\": {\n        \"route\": \"manual website; owner supplied sources\",\n        \"requestedDurationSeconds\": null\n      },\n      \"import\": {\n        \"runtime\": {\n          \"asset\": \"assets/chapter1/characters/mehana_waiter/oil-handover-web-c01/atlas.webp\"\n        },\n        \"frameCount\": 154,\n        \"durationSeconds\": 7.371,\n        \"timingOrigin\": \"per-frame approved combination recipe; movement subframes preserve pose durations\"\n      },\n      \"review\": {\n        \"candidateStatus\": \"runtime_review\",\n        \"notes\": \"Owner visually approved connected Kiro motion, full flow, limited tilt/wheel zoom and r12 thicker glass base on10October2026. Workshop r08 actual 200ml oil GLB and r07 fallback are unchanged. Native security verification passed27/27; publication approval remains separate.\"\n      }\n    }\n  }\n}\n",
+        "afterSHA256": "29c78aca8861dfa55a4f2966dd50109e4003e52c5cb768105f505c800e032e9d"
+      }
+    ]
+  },
+  "test/browser-smoke.test.js": {
+    "baseRevision": "6b0b93411bd1714beef127ad46a003c856d73519",
+    "patches": [
+      {
+        "before": "        await verb(\"take\");\n        await clickTarget(\"hotspot.mehana.oil\");\n        await waitFor(() => window.__comradeCandidateTest.game.inventory.has(\"item.sunflower_oil\"));\n        await go(\"exit.mehana.to_square\", \"scene.chapter1.village_square\");\n        await useItem(\"item.sunflower_oil\");\n        await clickTarget(\"hotspot.square.fountain\");\n",
+        "after": "        await verb(\"take\");\n        await clickTarget(\"hotspot.mehana.oil\");\n        await waitFor(() => window.__comradeCandidateTest.game.inventory.has(\"item.sunflower_oil\"));\n    await page.locator(\".received-item-screen > button:last-child\").click();\n        await go(\"exit.mehana.to_square\", \"scene.chapter1.village_square\");\n        await useItem(\"item.sunflower_oil\");\n        await clickTarget(\"hotspot.square.fountain\");\n",
+        "afterSHA256": "1ddc86b6972c534f25bcd48a782916316a17dc92411026acb39084cc27fe62af"
+      },
+      {
+        "before": "    await verb(\"take\");\n    await click(\"hotspot.mehana.oil\");\n    await waitFor(() => window.__comradeCandidateTest.game.inventory.has(\"item.sunflower_oil\"));\n    await oilAction(\"ui.inventory.use_on_self\");\n    await waitFor(() => !window.__comradeCandidateTest.game.inventory.has(\"item.sunflower_oil\"));\n    await verb(\"talk\");\n    await click(\"npc.mehana_waiter\");\n    await choice(\"fountain.kiro.choice.refill\");\n    await waitFor(() => window.__comradeCandidateTest.game.inventory.has(\"item.sunflower_oil\"));\n    await click(\"exit.mehana.to_square\");\n    await waitFor(() => window.__comradeCandidateTest.game.currentScene.id === \"scene.chapter1.village_square\");\n    await oilAction(\"ui.inventory.use\");\n",
+        "after": "    await verb(\"take\");\n    await click(\"hotspot.mehana.oil\");\n    await waitFor(() => window.__comradeCandidateTest.game.inventory.has(\"item.sunflower_oil\"));\n    await page.locator(\".received-item-screen > button:last-child\").click();\n    await oilAction(\"ui.inventory.use_on_self\");\n    await waitFor(() => !window.__comradeCandidateTest.game.inventory.has(\"item.sunflower_oil\"));\n    await verb(\"talk\");\n    await click(\"npc.mehana_waiter\");\n    await choice(\"fountain.kiro.choice.refill\");\n    await waitFor(() => window.__comradeCandidateTest.game.inventory.has(\"item.sunflower_oil\"));\n    await page.locator(\".received-item-screen > button:last-child\").click();\n    await click(\"exit.mehana.to_square\");\n    await waitFor(() => window.__comradeCandidateTest.game.currentScene.id === \"scene.chapter1.village_square\");\n    await oilAction(\"ui.inventory.use\");\n",
+        "afterSHA256": "c39a357fd8b66b8cfca95dca63f8d8a5ec81691b052fb26a6656f26e7ecc19c0"
+      }
+    ]
+  }
+}
