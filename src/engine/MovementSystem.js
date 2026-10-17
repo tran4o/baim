@@ -90,7 +90,8 @@ export class MovementSystem {
     const previousStart = this.player.locomotionStartFrame || previousParts?.start;
     const previousStop = this.player.directionalStopFrame || previousParts?.stop;
     const previousIndex = this.player.animator?.frameIndex || 0;
-    const wasTurning = this.player.arrivalTurn?.phase === "turn";
+    const wasTurning = this.player.arrivalTurn?.phase === "turn"
+      && (!Number.isInteger(previousStop?.pocketEntryFrame) || previousIndex < previousStop.pocketEntryFrame);
     const wasStopping = this.player.animation === "walk" && previousPart === "stop";
     const wasWalking = this.player.animation === "walk" && (this.player.target || this.player.walkPart === "start" || this.player.walkPart === "loop" || this.player.walkPart === "short");
     const waypoints = Array.isArray(path) && path.length ? path.map((waypoint) => ({ ...waypoint })) : [{ ...point }];

@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+import {createHash} from 'node:crypto';
+import sharp from 'sharp';
+const dir='assets_src/characters/bai_mitko/turning_front_west_pocket_c05_20261017/';
+const sha=b=>createHash('sha256').update(b).digest('hex'),r=JSON.parse(fs.readFileSync(dir+'provenance.json'));
+for(const[file,key]of [['original-export.zip','sprite-max-px-frames-36-rows-6-cols-6.zip'],['original-preview.gif','sprite-max-px-frames-36-rows-6-cols-6.gif'],['sheet.png','sprite-max-px-frames-36-rows-6-cols-6.png'],['sheet.json','sprite-max-px-frames-36-rows-6-cols-6.json']])if(sha(fs.readFileSync(dir+file))!==r.hashes[key])throw Error('Source changed: '+file);
+const frames=Object.values(JSON.parse(fs.readFileSync(dir+'sheet.json')).frames);
+if(frames.length!==36||frames.some(f=>f.duration!==76))throw Error('Unexpected c05 native timing');
+const rects=frames.map((f,i)=>({x:f.frame.x/2,y:f.frame.y/2,w:f.frame.w/2,h:f.frame.h/2,duration:f.duration,sourceFrameIndex:i}));
+const bounds=r.frames.map(f=>{const b=f.alphaBoundsThreshold8;return{x:b[0]/2,y:b[1]/2,w:(b[2]-b[0])/2,h:(b[3]-b[1])/2};});
+const frame={slot:'turn_front_west_pocket_c05',facing:'south',role:'stop',loop:false,frameCount:36,fps:1000/76,initialFrame:0,frameWidth:288,frameHeight:512,usesOriginalLudoLayout:true,anchor:{x:.5,y:1},contentBounds:bounds[0],registration:{visualHeight:438.5,baselineY:474},frameRects:rects,frameContentBounds:bounds,movementSpeedMultipliers:rects.map(()=>0),pocketEntryFrame:14,flipX:false};
+const pilot={id:r.candidate,from:'south',to:'west',entryFrameIndices:[0],continuous:true,nativeDurationMs:2736,runtimeDurationMs:2736,sourceRange:[0,35],reviewStatus:'runtime_review',frame};
+const asset='assets/chapter1/characters/bai_mitko/turn-front-west-pocket-c05.webp',bytes=await sharp(dir+'sheet.png').resize(1728,3072).webp({lossless:true,effort:4}).toBuffer();
+const module='// c05 complete continuous turn/pocket at source-native76ms/frame. Original exports retained.\nexport const mitkoTurnPocket = '+JSON.stringify(pilot,null,2)+';\nexport const mitkoTurnPocketAssets = '+JSON.stringify({[frame.slot]:asset},null,2)+';\n';
+for(const[file,b]of [[asset,bytes],['src/content/art/mitkoTurnPocket.generated.js',Buffer.from(module)]])if(process.argv.includes('--check')){if(sha(fs.readFileSync(file))!==sha(b))throw Error('Derivative stale: '+file);}else fs.writeFileSync(file,b);
+console.log(JSON.stringify({asset,SHA256:sha(bytes),bytes:bytes.length,nativeMs:2736,frames:36}));

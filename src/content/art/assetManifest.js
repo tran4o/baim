@@ -1,5 +1,6 @@
 import { kiroOilAssets } from "./kiroOilHandover.generated.js";
 import { externalAnimationV1 } from "./externalAnimationRuntime.generated.js";
+import { mitkoTurnPocketAssets } from "./mitkoTurnPocket.generated.js";
 import { mitkoTurnAssets } from "./mitkoTurnPilot.generated.js";
 
 export const assetManifest = {
@@ -103,7 +104,8 @@ export const assetManifest = {
     "npc.bai_mitko": {
       type: "externalAnimation",
       ...externalAnimationV1.characterAssets,
-      ...mitkoTurnAssets
+      ...mitkoTurnAssets,
+      ...mitkoTurnPocketAssets
     }
   },
   items: {

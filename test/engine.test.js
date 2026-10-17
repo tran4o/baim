@@ -130,7 +130,7 @@ test("game start waits only for bootstrap character, current scene, and owned it
       "external_walk_east_short",
       "external_walk_east_stop",
       "external_walk_north_loop", "external_walk_north_loop_rest",
-      "external_walk_south_loop", "external_walk_south_loop_rest", "turn_front_east_c01"
+      "external_walk_south_loop", "external_walk_south_loop_rest", "turn_front_east_c01", "turn_front_west_pocket_c05"
     ]);
     assert.equal(requestedSceneId, "scene.chapter1.apartment");
     assert.deepEqual(requestedItemIds, ["item.unpaid_bills"]);

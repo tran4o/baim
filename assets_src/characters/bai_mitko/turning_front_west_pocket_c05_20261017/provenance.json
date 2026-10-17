@@ -1,0 +1,700 @@
+{
+  "candidate": "mitko-turn-front-to-west-pocket-c05",
+  "ownerReview": {
+    "text": "looks good",
+    "scope": "Source visual/motion acceptance; not gameplay join, integration or publication acceptance."
+  },
+  "observedSetup": {
+    "route": "Animate",
+    "type": "Sprite",
+    "model": "Hydra+",
+    "maxDurationSeconds": 3,
+    "margin": "Auto",
+    "maxFrames": 36,
+    "spriteSize": "Max",
+    "loop": false,
+    "trimWhitespace": false
+  },
+  "setupEvidence": "Owner screenshot codex-clipboard-7db1d25d-d4cb-420a-87d4-31ef5d3d2ff2.png; submitted job/card ID unknown. Current source received in direct continuation of c05 instruction, not inferred from filename numbering.",
+  "hashes": {
+    "sprite-max-px-frames-36-rows-6-cols-6.zip": "b47fdc59f79ba5d28e856843590b828336cb469b2ac6c05acc86da32af772867",
+    "sprite-max-px-frames-36-rows-6-cols-6.gif": "eaf54077c4b8200a9a874f0fb241a5b0afd6ec6a9601fb4a87b611dc7f93df71",
+    "sprite-max-px-frames-36-rows-6-cols-6.png": "aa721c061e3d5690f954293b866262c54212a1975d9fa1b4fee4f79b4525caa4",
+    "sprite-max-px-frames-36-rows-6-cols-6.json": "25c361f7989181f1de995f0d7a17d55d93bd89b51145e1fcd226aec0b5e022b4"
+  },
+  "sheetSize": [
+    3456,
+    6144
+  ],
+  "frames": [
+    {
+      "index": 0,
+      "name": "frame_000",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        79,
+        71,
+        506,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 1,
+      "name": "frame_001",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        80,
+        71,
+        506,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 2,
+      "name": "frame_002",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        82,
+        73,
+        505,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 3,
+      "name": "frame_003",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        82,
+        74,
+        496,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 4,
+      "name": "frame_004",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        81,
+        75,
+        488,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 5,
+      "name": "frame_005",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        77,
+        79,
+        472,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 6,
+      "name": "frame_006",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        71,
+        85,
+        443,
+        951
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 7,
+      "name": "frame_007",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        70,
+        88,
+        432,
+        952
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 8,
+      "name": "frame_008",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        81,
+        86,
+        423,
+        947
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 9,
+      "name": "frame_009",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        94,
+        85,
+        420,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 10,
+      "name": "frame_010",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        110,
+        84,
+        420,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 11,
+      "name": "frame_011",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        118,
+        82,
+        421,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 12,
+      "name": "frame_012",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        133,
+        79,
+        428,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 13,
+      "name": "frame_013",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        133,
+        79,
+        438,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 14,
+      "name": "frame_014",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        132,
+        79,
+        453,
+        949
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 15,
+      "name": "frame_015",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        131,
+        78,
+        468,
+        949
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 16,
+      "name": "frame_016",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        131,
+        77,
+        480,
+        949
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 17,
+      "name": "frame_017",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        132,
+        77,
+        487,
+        949
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 18,
+      "name": "frame_018",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        132,
+        77,
+        488,
+        949
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 19,
+      "name": "frame_019",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        132,
+        77,
+        485,
+        949
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 20,
+      "name": "frame_020",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        126,
+        77,
+        480,
+        949
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 21,
+      "name": "frame_021",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        119,
+        78,
+        472,
+        949
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 22,
+      "name": "frame_022",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        115,
+        80,
+        461,
+        949
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 23,
+      "name": "frame_023",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        116,
+        81,
+        446,
+        949
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 24,
+      "name": "frame_024",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        117,
+        81,
+        435,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 25,
+      "name": "frame_025",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        117,
+        82,
+        432,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 26,
+      "name": "frame_026",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        122,
+        81,
+        427,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 27,
+      "name": "frame_027",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        131,
+        79,
+        423,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 28,
+      "name": "frame_028",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        132,
+        77,
+        422,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 29,
+      "name": "frame_029",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        132,
+        75,
+        426,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 30,
+      "name": "frame_030",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        132,
+        74,
+        432,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 31,
+      "name": "frame_031",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        132,
+        73,
+        439,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 32,
+      "name": "frame_032",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        132,
+        73,
+        443,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 33,
+      "name": "frame_033",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        131,
+        73,
+        447,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 34,
+      "name": "frame_034",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        129,
+        73,
+        448,
+        948
+      ],
+      "touchesEdge": false
+    },
+    {
+      "index": 35,
+      "name": "frame_035",
+      "durationMs": 76,
+      "size": [
+        576,
+        1024
+      ],
+      "alphaBoundsThreshold8": [
+        129,
+        73,
+        444,
+        947
+      ],
+      "touchesEdge": false
+    }
+  ],
+  "frameCount": 36,
+  "sheetDurationMs": 2736,
+  "gifFrameCount": 36,
+  "gifDurationsMs": [
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70
+  ],
+  "gifDurationMs": 2520,
+  "touchesEdgeIndices": [],
+  "runtimeChanges": false,
+  "publication": false,
+  "next": "Inspect complete source, compare full-body first/final against gameplay entry/idle and prepare bounded runtime review without another middle clip switch.",
+  "reviewStatus": "runtime_review",
+  "ownerRuntimeAuthority": "Owner approved native source gameplay appearance for local integration and interruption testing; publication not approved.",
+  "preparedInputReceipt": {
+    "at": "2026-10-17T06:16:37.708Z",
+    "candidate": "mitko-turn-front-to-west-pocket-c05",
+    "state": "Prepared only; no job submitted, generation not authorized by preparation.",
+    "trigger": "Ordinary final south/front arrival on right half, contact0, no higher-priority action; centre-facing west rest.",
+    "entry": "Accepted front c11 contact0, hands outside pockets.",
+    "exit": "Existing west side-stop15 pocket idle, held after one continuous turn/pocket one-shot.",
+    "reason": "Owner rejected whole-body twitch at turn20 to pocket8 and diagnostic turn20 to pocket6. Different source poses plus restored upward settling. Do not fix by per-frame deformation, dissolve, runtime feet assertion, or rejected shuffle.",
+    "method": "Single continuous turn and pocket action eliminates the middle source switch. Exact final exit compatibility still needs full-pose visual review; endpoint reference is not a guarantee.",
+    "settings": {
+      "route": "Animate",
+      "type": "Sprite",
+      "model": "Hydra+",
+      "maxDurationSeconds": 3,
+      "margin": "Auto",
+      "maxFrames": 36,
+      "spriteSize": "Max",
+      "loop": false,
+      "trimWhitespace": false
+    },
+    "words": 81,
+    "first": {
+      "source": "references/first-front-contact.png",
+      "SHA256": "f43a7a2dd7ad42fd6e2356a312fa72294d23b971bd9ad956fc1ba0359e7d46f1"
+    },
+    "final": {
+      "source": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\mitko-turning-pilot-20261016\\source-review\\side-stop-f15.png",
+      "sourceSHA256": "cc8417d77d2cff324b53f0900fae2ac12a4dba40060cd5252b076370077db19f",
+      "bounds": {
+        "left": 228,
+        "top": 158,
+        "width": 310,
+        "height": 855
+      },
+      "operation": "Current gameplay west-facing mirror, uniform scale and transparent placement. No redraw or warp.",
+      "SHA256": "da4294b02daf40407a44c7c2d995a3cb8026ac64c59a4382f43cdf00b093d3c4",
+      "canvas": [
+        768,
+        1024
+      ],
+      "visibleHeight": 880,
+      "ground": 960
+    },
+    "runtime": "No shared source or art writes. If accepted later, one-shot must retain responsive cancel, hand-entry state, priority and phase0 restriction. Integration/publication remain separate."
+  }
+}

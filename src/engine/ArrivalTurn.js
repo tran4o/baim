@@ -17,9 +17,10 @@ function priorityOwnsPose(player) {
 }
 
 export function beginArrivalTurn(player, side) {
-  const pilot = player.arrivalTurnPilot;
+  const pilot = (player.arrivalTurnPilots || [player.arrivalTurnPilot])
+    .find(candidate => candidate?.from === player.lastLocomotionFacing && candidate.to === side);
   const stop = player.walkPartsByFacing?.[side]?.stop;
-  if (!pilot || !player.arrivalTurnArtReady || priorityOwnsPose(player)
+  if (!pilot || !turnArtReady(player, pilot) || priorityOwnsPose(player)
     || player.lastLocomotionFacing !== pilot.from || side !== pilot.to
     || !pilot.entryFrameIndices.includes(player.animator?.frameIndex ?? -1)
     || !stop?.sourceFrameRects?.length) return false;
@@ -45,7 +46,7 @@ export function updateArrivalTurn(player) {
     cancelArrivalTurn(player);
     return false;
   }
-  if (!player.arrivalTurnArtReady) {
+  if (!turnArtReady(player, state.pilot)) {
     const stop = player.walkPartsByFacing?.[state.side]?.stop;
     cancelArrivalTurn(player);
     player.facing = state.side;
@@ -55,6 +56,20 @@ export function updateArrivalTurn(player) {
   }
   const frame = player.directionalStopFrame;
   if ((player.animator?.elapsed || 0) * frame.fps + 1e-9 < frame.frameCount) return true;
+  if (state.pilot.continuous) {
+    // No middle atlas or pose switch: hold the exact final source frame.
+    player.facing = state.side;
+    player.lastHorizontalFacing = state.side;
+    player.idleHoldFrame = {frame, slot:frame.slot, mirrored:Boolean(frame.mirrored), frameIndex:frame.frameCount-1};
+    player.arrivalTurn = null;
+    player.directionalStopFrame = null;
+    player.animation = 'idle';
+    player.walkPart = null;
+    player.movementStopping = false;
+    player.pendingStop = false;
+    player.stopAnimationFinished = true;
+    return true;
+  }
   if (state.phase === 'turn') {
     const stop = player.walkPartsByFacing[state.side].stop;
     const first = state.pilot.exitSourceFrame;
@@ -79,4 +94,8 @@ export function updateArrivalTurn(player) {
   }
   player.arrivalTurn = null;
   return false; // Existing stop completion holds the accepted final pocket pose.
+}
+
+function turnArtReady(player, pilot) {
+  return player.arrivalTurnReadySlots?.[pilot.frame.slot] ?? player.arrivalTurnArtReady;
 }
