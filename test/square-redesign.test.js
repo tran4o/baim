@@ -37,7 +37,7 @@ test('basin blocks feet, all approach anchors have connected paths and targets r
   'hotspot.square.kiosk':{x:1180,y:390},'hotspot.square.poster_board':{x:1070,y:300},
   'npc.baba_stoyanka':{x:360,y:390},
   'npc.journalist':{x:970,y:380},'exit.square.to_mehana':{x:90,y:350},
-  'exit.square.to_municipality':{x:890,y:300},'exit.square.to_apartment':{x:420,y:200}
+  'exit.square.to_municipality':{x:890,y:300},'exit.square.to_apartment':{x:450,y:150}
  }))assert.equal(findTargetAt(square,p)?.id,id);
 });
 test('only kiosk display names change; stable dialogue and quest transaction IDs remain',()=>{

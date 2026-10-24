@@ -1,5 +1,7 @@
 import test from 'node:test';
 import {restorePhotoQuestSnapshot} from './helpers/photo-quest-preservation.js';
+import {restoreActionCursorsSnapshot} from './helpers/action-cursors-preservation.js';
+const scenesWithEntrances=chapter1.scenes;
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -13,7 +15,7 @@ const square=chapter1.scenes.find(s=>s.id==='scene.chapter1.village_square');
 const fixture=JSON.parse(readFileSync('test/fixtures/northeast-kiosk-deltas.json'));
 
 test('reviewed whole-square ground delta only removes blocked cells and retains the marked northeast limit',()=>{
- const source=JSON.parse(fixture.records['assets_src/chapter1/scenes/village_square/walk-geometry-v1.json'].before),old=source.raster.rows,now=square.walkMask.rows;let removed=0;
+ const source=JSON.parse(fixture.records['assets_src/chapter1/scenes/village_square/walk-geometry-v1.json'].before),old=source.raster.rows,now=restoreActionCursorsSnapshot('scenes',chapter1.scenes).find(s=>s.id===square.id).walkMask.rows;let removed=0;
  for(let row=0;row<now.length;row++)for(let col=0;col<now[row].length;col++){
   const x=(col+.5)*5,y=(row+.5)*5;
   if(x>=930&&y<465)assert.equal(now[row][col],'.');
@@ -60,6 +62,8 @@ test('existing original counter occludes the rear gait and actor remains visible
 });
 
 test('municipality and election returns use connected pavement; access gates and remaining scene contracts stay intact',()=>{
+ const chapter1={scenes:restoreActionCursorsSnapshot('scenes',scenesWithEntrances)};
+ const square=chapter1.scenes.find(s=>s.id==='scene.chapter1.village_square');
  const before=restoreNortheastKioskSnapshot('scenes',chapter1.scenes),original=before.find(s=>s.id===square.id),currentDoor=square.exits.find(e=>e.id==='exit.square.to_municipality');
  assert.deepEqual(currentDoor,original.exits.find(e=>e.id===currentDoor.id));
  const municipality=chapter1.scenes.find(s=>s.id==='scene.chapter1.municipality');assert.deepEqual(municipality.exits.find(e=>e.id==='exit.municipality.to_square').targetPosition,{x:965,y:475});

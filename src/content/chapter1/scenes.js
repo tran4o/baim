@@ -13,6 +13,7 @@ import { mayorOfficeScene } from "./mayorOffice.js";
 import { mayorOfficeObjectGeometry } from "./sceneObjectGeometry.generated.js";
 import { pepaItemRules, diplomaTakeRule } from './photoQuest.js';
 import { stageToniTable } from './toniTable.js';
+import { wireEntrances } from './entrances.js';
 
 const rawScenes = [
   archiveScene,
@@ -868,4 +869,4 @@ function applyObjectGeometry(objects = [], geometryByObjectId) {
     });
 }
 
-export const scenes = stageToniTable(geometryScenes);
+export const scenes = wireEntrances(stageToniTable(geometryScenes));

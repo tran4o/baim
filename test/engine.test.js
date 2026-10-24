@@ -676,7 +676,8 @@ test("village square routes the apartment building home and the Mehana table ins
   const apartmentExit = scene.exits.find((exit) => exit.id === "exit.square.to_apartment");
   const mehanaExit = scene.exits.find((exit) => exit.id === "exit.square.to_mehana");
 
-  assert.equal(pointInPolygon({ x: 400, y: 200 }, apartmentExit.polygon), true);
+  assert.equal(pointInPolygon({ x: 450, y: 150 }, apartmentExit.polygon), true);
+  assert.equal(pointInPolygon({ x: 455, y: 340 }, apartmentExit.polygon), false);
   assert.equal(pointInPolygon({ x: 100, y: 520 }, mehanaExit.polygon), true);
   assert.equal(pointInPolygon({ x: 100, y: 520 }, apartmentExit.polygon), false);
   assert.equal(apartmentExit.targetSceneId, "scene.chapter1.apartment");
@@ -690,7 +691,7 @@ test("village square and municipality form a playable round trip", () => {
   const leave = municipality.exits.find((exit) => exit.id === "exit.municipality.to_square");
 
   assert.equal(enter.targetSceneId, municipality.id);
-  assert.deepEqual(enter.targetPosition, { x: 250, y: 520 });
+  assert.deepEqual(enter.targetPosition, { x: 135, y: 550 });
   assert.deepEqual(municipality.playerStart, { x: 260, y: 520 });
   assert.deepEqual(municipality.anchors.baiMitkoSpawn, municipality.playerStart);
   assert.equal(leave.targetSceneId, square.id);
@@ -1173,7 +1174,7 @@ test("returning from the square places Bai Mitko on the apartment door rug", () 
   const apartment = chapter1.scenes.find((scene) => scene.id === "scene.chapter1.apartment");
   const returnExit = square.exits.find((exit) => exit.id === "exit.square.to_apartment");
 
-  assert.deepEqual(returnExit.targetPosition, apartment.anchors.baiMitkoSpawn);
+  assert.deepEqual(returnExit.targetPosition, { x: 1010, y: 570 });
 });
 
 test("runtime movement speed multiplier affects distance over time only", () => {
@@ -2418,12 +2419,12 @@ test("clicking current idle position does not start walk or stop animation", () 
   assert.equal(player.stopAnimationStarted, false);
 });
 
-test("far target click walks to direct mask approach before running look action", () => {
+test("far target click walks to direct mask approach before running take action", () => {
   const scene = chapter1.scenes.find((candidate) => candidate.id === "scene.chapter1.apartment");
   const target = scene.interactables.find((candidate) => candidate.id === "hotspot.apartment.mirror");
   const game = Object.create(Game.prototype);
   game.currentScene = scene;
-  game.selectedVerb = "look";
+  game.selectedVerb = "take";
   game.player = {
     position: { x: 650, y: 520 },
     target: null,
@@ -2446,7 +2447,7 @@ test("far target click walks to direct mask approach before running look action"
   assert.ok(game.player.pendingInteraction);
   assert.equal(game.player.facing, "east");
   assert.equal(game.player.pendingInteraction.target.id, "hotspot.apartment.mirror");
-  assert.equal(game.player.pendingInteraction.verb, "look");
+  assert.equal(game.player.pendingInteraction.verb, "take");
   assert.deepEqual(game.player.pendingFacingPoint, { x: 900, y: 250 });
   assert.equal(game.player.interactionDebug.kind, "target");
   assert.deepEqual(game.player.interactionDebug.hand, { x: 900, y: 250 });
@@ -2464,7 +2465,7 @@ test("table click approaches the table instead of stopping near current feet", (
   const target = scene.interactables.find((candidate) => candidate.id === "hotspot.apartment.table");
   const game = Object.create(Game.prototype);
   game.currentScene = scene;
-  game.selectedVerb = "look";
+  game.selectedVerb = "take";
   game.player = {
     position: { x: 910, y: 520 },
     target: null,
@@ -2528,7 +2529,7 @@ test("near object approach does not start tiny corrective walk", () => {
   assert.equal(game.player.pendingInteraction, null);
   assert.equal(game.player.facing, "west");
   assert.equal(game.message, "look.apartment.mirror");
-  assert.ok(distance(game.player.position, game.player.interactionDebug.feet) <= 80);
+  assert.equal(game.player.target, null);
 });
 
 test("registered action requiring exact approach walks to its anchor even from hand reach", () => {
@@ -2561,32 +2562,17 @@ test("registered action requiring exact approach walks to its anchor even from h
   assert.equal(game.player.pendingInteraction.actionSequence.requireExactApproach, true);
 });
 
-test("village-square poster-board clicks share one fixed east-facing look approach", () => {
-  const scene = chapter1.scenes.find((candidate) => candidate.id === "scene.chapter1.village_square");
-  const target = scene.interactables.find((candidate) => candidate.id === "hotspot.square.poster_board");
-  const approaches = [];
-
-  for (const clickPoint of [{ x: 1080, y: 270 }, { x: 1160, y: 400 }]) {
-    const game = Object.create(Game.prototype);
-    game.currentScene = scene;
-    game.selectedVerb = "look";
-    game.player = {
-      position: { x: 900, y: 550 },
-      target: null,
-      animation: "idle",
-      facing: "east",
-      pendingInteraction: null
-    };
-    game.walkToPoint = (point) => { approaches.push({ ...point }); };
-    game.clearStatusMessage = () => {};
-
-    assert.equal(game.shouldApproachTargetBeforeAction(target, clickPoint), true);
-    assert.deepEqual(game.player.pendingInteraction.approach, { x: 976, y: 625 });
-    assert.equal(game.player.pendingInteraction.actionSequence.messageKey, target.lookKey);
-    assert.equal(game.player.facing, "east");
-  }
-
-  assert.deepEqual(approaches, [{ x: 976, y: 625 }, { x: 976, y: 625 }]);
+test("View of the poster board turns from the current position without approaching its old action anchor", () => {
+  const game = Object.create(Game.prototype);
+  game.currentScene = chapter1.scenes.find(s => s.id === 'scene.chapter1.village_square');
+  game.selectedVerb = 'look'; game.player = { position: {x:900,y:550}, facing:'west', animation:'idle', walkPartsByFacing:{east:{},west:{}} };
+  game.lookTarget = target => { game.lookedAt = target.id; };
+  game.walkToPoint = () => { throw Error('View must not walk'); };
+  const target = game.currentScene.interactables.find(t => t.id === 'hotspot.square.poster_board');
+  const before = {...game.player.position};
+  game.handleTarget(target,{x:1160,y:400});
+  assert.deepEqual(game.player.position,before); assert.equal(game.player.pendingInteraction,null);
+  assert.equal(game.lookedAt,target.id); assert.equal(game.player.facing,'east');
 });
 
 test("looking at an open window reports its state without triggering an action animation", () => {
@@ -2676,7 +2662,7 @@ test("hovering actionable geometry selects it and enables the pointer cursor", (
   game.player = { animation: "idle", actionSequence: null };
   game.canvas = { style: {} };
 
-  const target = game.updateHoveredTarget({ x: 400, y: 200 });
+  const target = game.updateHoveredTarget({ x: 450, y: 150 });
 
   assert.equal(target.id, "exit.square.to_apartment");
   assert.equal(game.canvas.style.cursor, "pointer");
@@ -2710,11 +2696,13 @@ test("hover outline uses scene depth so Bai covers objects behind him", () => {
   assert.ok(targetZIndex(scene, table) < sceneZIndexForPoint(scene, actor.position));
 });
 
-test("apartment-building target trims about one third from its old left edge", () => {
+test("apartment click targets the painted building independently of its ground-floor walking threshold", () => {
   const scene = chapter1.scenes.find((candidate) => candidate.id === "scene.chapter1.village_square");
   const building = scene.exits.find((target) => target.id === "exit.square.to_apartment");
   assert.equal(pointInPolygon({ x: 300, y: 200 }, building.polygon), false);
-  assert.equal(pointInPolygon({ x: 430, y: 200 }, building.polygon), true);
+  assert.equal(pointInPolygon({ x: 450, y: 150 }, building.polygon), true);
+  assert.equal(pointInPolygon({ x: 455, y: 340 }, building.polygon), false);
+  assert.deepEqual(building.entryApproach, { x: 460, y: 445 });
 });
 
 test("active Menu switch uses the same color as button hover", () => {

@@ -1,5 +1,6 @@
 import { createReviewSaveSystem } from "./ReviewState.js";
 import { AudioSystem } from "./AudioSystem.js";
+import { ActionCursor } from './ActionCursor.js';
 import { DialogueSystem } from "./DialogueSystem.js";
 import { applyEffects, firstMatchingRule, requirementsMet } from "./EffectSystem.js";
 import { resolveEnding } from "./EndingSystem.js";
@@ -157,6 +158,7 @@ export class Game {
     this.dialogue = new DialogueSystem(this.content.dialogues, this.localization, (effect) => this.applyDialogueEffect(effect));
     this.movement = new MovementSystem(this.player);
     this.renderer = new Renderer(canvas, this);
+    this.actionCursor = new ActionCursor(canvas);
     this.sceneIdleVariations = new SceneIdleVariations();
     this.sceneNpcSpeech = new SceneNpcSpeech();
     this.sceneAction = new SceneActionSequence();
@@ -265,6 +267,7 @@ export class Game {
     this.updateSceneNpcSpeech(dt);
     this.updateSceneIdleVariations(dt);
     this.renderer.draw();
+    this.actionCursor?.update(this);
     requestAnimationFrame((next) => this.tick(next));
   }
 
@@ -1264,6 +1267,7 @@ export class Game {
       ? this.sceneTargetAt(point)
       : null;
     if (this.canvas?.style) this.canvas.style.cursor = this.hoveredTarget ? "pointer" : "default";
+    this.actionCursor?.update(this);
     if (this.inventoryUseItemId && previousTargetId !== (this.hoveredTarget?.id || null)) this.renderUi();
     return this.hoveredTarget;
   }
@@ -1289,12 +1293,21 @@ export class Game {
 
   handleTarget(target, clickPoint = null) {
     if (this.puzzleOpen || this.inspectedItemId || this.sceneAction?.active) return;
+    if (this.selectedVerb === VERBS.LOOK && !this.inventoryUseItemId && target.kind !== 'exit') {
+      this.player.pendingInteraction = null;
+      this.player.pendingFacingPoint = null;
+      if (this.player.target || this.player.animation === 'walk') requestWalkStop(this.player);
+      this.facePoint(this.targetReachPoint(target, clickPoint));
+      this.lookTarget(target);
+      return;
+    }
     if (this.shouldApproachTargetBeforeAction(target, clickPoint)) return;
     this.performTargetAction(target);
   }
 
   shouldApproachTargetBeforeAction(target, clickPoint = null) {
-    if (target.kind === "exit") return false;
+    if (target.kind === "exit") return this.approachExit(target);
+    if (this.selectedVerb === VERBS.LOOK && !this.inventoryUseItemId) return false;
     const characterTarget = this.interactionCharacterTarget(target);
     if (characterTarget && !this.actionSequenceApproachPoint(this.actionSequenceForTarget(target, this.selectedVerb))) {
       return this.approachCharacter(target, characterTarget);
@@ -1414,10 +1427,32 @@ export class Game {
     this.facePoint(point);
   }
 
+  approachExit(target) {
+    if (this.inventoryUseItemId || this.currentScene.playerMode === 'closeup') return false;
+    if (!requirementsMet(target.accessRequirements, this.effectContext())) return false;
+    const approach = target.entryApproach;
+    if (!approach || !isWalkable(this.currentScene, approach)) return true;
+    if (distance(this.player.position, approach) <= EXACT_ACTION_APPROACH_EPSILON && !this.player.target && this.player.animation !== 'walk') {
+      const offsets = { north: [0, -100], south: [0, 100], east: [100, 0], west: [-100, 0] };
+      const offset = offsets[target.entryFacing];
+      if (offset) this.facePoint({ x: approach.x + offset[0], y: approach.y + offset[1] });
+      return false;
+    }
+    const path = findWalkPath(this.currentScene, this.player.position, approach);
+    if (!path.length) return true;
+    if (!this.walkToPoint(approach, approach, { path, arrivalFacing: target.entryFacing })) return true;
+    this.player.pendingFacingPoint = null;
+    this.player.pendingInteraction = { target, verb: this.selectedVerb, approach, entryFacing: target.entryFacing };
+    this.clearStatusMessage();
+    return true;
+  }
+
   resolvePendingInteraction() {
     const pending = this.player.pendingInteraction;
     if (!pending || this.player.target || this.player.animation === "walk") return;
     this.player.pendingInteraction = null;
+    if (pending.target.kind === 'exit' && distance(this.player.position, pending.approach) > EXACT_ACTION_APPROACH_EPSILON) return;
+    if (pending.entryFacing) this.player.facing = pending.entryFacing;
     if (pending.sideFacing) this.faceInteractionSide(pending.sideFacing);
     else if (pending.hand) this.facePoint(pending.hand);
     const previousVerb = this.selectedVerb;

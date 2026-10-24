@@ -1,0 +1,23 @@
+{
+  "id": "N-C",
+  "sourceSHA256": "79d65d567d27586d13e8f3257e944fab3a14f629a2237c797f7d9db25cf6d379",
+  "atlasSHA256": "1efdfe4ea0d716bdd89218f289509f7fabee8f918f5536461c8406871f115c90",
+  "width": 96,
+  "height": 96,
+  "frames": 1,
+  "hotspot": [
+    4,
+    3
+  ],
+  "ownerSelection": "C",
+  "ownerImplementationApproval": "That is correct. I approve it. Proceed.",
+  "semantics": {
+    "emptyAreas": "Static N-C neutral pointer.",
+    "interactiveTarget": "Selected action symbol; animate only when the selected action is meaningfully available in the current game state.",
+    "unsupportedVerb": "Keep the selected action symbol still, for example Talk over the statue.",
+    "look": "Animate on examinable objects.",
+    "talk": "Animate on targets that can be spoken to.",
+    "use": "Animate where the selected Use interaction/item is applicable.",
+    "take": "Animate on currently collectible items."
+  }
+}

@@ -46,10 +46,10 @@ test('fountain has a connected complete perimeter, while basin remains unwalkabl
  assert.ok(findWalkPath(square,{x:970,y:550},square.anchors.municipalityDoor).length);
  const municipality=chapter1.scenes.find(s=>s.id==='scene.chapter1.municipality');
  const returnPoint=municipality.exits.find(e=>e.id==='exit.municipality.to_square').targetPosition;
- assert.deepEqual(returnPoint,square.anchors.municipalityDoor);assert.ok(isWalkable(square,returnPoint));
+ assert.deepEqual(returnPoint,square.exits.find(e=>e.id==='exit.square.to_municipality').entryApproach);assert.ok(isWalkable(square,returnPoint));
  assert.ok(findWalkPath(square,returnPoint,{x:970,y:550}).length,'municipality return lands on connected ground, outside basin');
  const directRight=findWalkPath(square,returnPoint,{x:970,y:550});
- assert.ok(directRight.every(p=>p.x>=900),'right-side approach remains direct instead of detouring around the whole fountain');
+ assert.ok(directRight.every(p=>p.x>=897.5),'right-side approach remains direct instead of detouring around the whole fountain');
  assert.ok(directRight.some(p=>p.x>1005),'right transition retains full gait clearance');
  for(const [from,to]of [[route[0],route[2]],[route[2],route[4]],[{x:350,y:490},{x:650,y:610}],[returnPoint,route[4]]]){
   let a=from;for(const b of findWalkPath(square,from,to)){

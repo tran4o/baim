@@ -1,0 +1,57 @@
+{
+  "version": "approved-r06",
+  "frameWidth": 96,
+  "frameHeight": 96,
+  "columns": 8,
+  "frames": 48,
+  "frameMs": 50,
+  "displayPx": 32,
+  "approvalScope": "R06 motion approved in Codex; local integration approved separately. Not published.",
+  "approvalReply": "Okay, approved.",
+  "cursors": [
+    {
+      "verb": "look",
+      "id": "LOOK-A",
+      "originalSHA256": "dad67e67d9a820b6a34992048122e898e967815bfb91f611c934c2797154a941",
+      "framesSHA256": "1c49830d0027b10b6e8b5f90fc100e5bac63018ed904b281a58054ae770981ba",
+      "atlasSHA256": "d9ed6c456cff7d6198fe775898a88f487118604f2f7a78b61cea793b0d38a93e",
+      "hotspot": [
+        2,
+        2
+      ]
+    },
+    {
+      "verb": "talk",
+      "id": "SPEAK-A",
+      "originalSHA256": "4d8348848774e8c32b08a68d7cf91bed294f2aeb9191c0391f82b10ebb666836",
+      "framesSHA256": "41e21aa977e6c65a780e5f726312431405032447c26b728f3e7f31b99f8dc5e2",
+      "atlasSHA256": "4582da4f6f6c0db02413ba60dfdadc5caedde5c40e00a163116c23cb7178b23b",
+      "hotspot": [
+        2,
+        2
+      ]
+    },
+    {
+      "verb": "use",
+      "id": "USE-I",
+      "originalSHA256": "65fab391e9777679bf6f6d26e2cfba16a54e47b670dffee676406814c1da470a",
+      "framesSHA256": "fe338810d22c03ee874e83e46c38198e9d77a496a2245707ff2424ad21c1097c",
+      "atlasSHA256": "a09cfd4ea66151e76c7511bdf6152d153e3b8507b84006d9f484fba0a22c0b74",
+      "hotspot": [
+        16,
+        16
+      ]
+    },
+    {
+      "verb": "take",
+      "id": "TAKE-A",
+      "originalSHA256": "5b8d64c1a31560b11bbaa8c4ce5e2767dbd9b5bd6b69947cb961045c5157b96e",
+      "framesSHA256": "d6ef6a95805ded43c017e8ef399c5c5e0c3193cf19656d5a8c791ce209d5ddec",
+      "atlasSHA256": "1ddfcf157f9319755f96a78ce83129e6a4728f69cb188ac2a189f25d81450fce",
+      "hotspot": [
+        2,
+        2
+      ]
+    }
+  ]
+}
