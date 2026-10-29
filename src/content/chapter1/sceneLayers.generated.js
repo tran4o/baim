@@ -145,35 +145,41 @@ export const sceneLayerGeometry = {
     "sceneId": "scene.chapter1.apartment",
     "foregroundLayers": [
       {
+        "id": "layer.apartment.adult_wall_photo",
+        "asset": "adultWallPhoto",
+        "zIndex": 100,
+        "top": 0,
+        "left": 0,
+        "hiddenWhenFlag": "adultPhotoTaken"
+      },
+      {
+        "id": "layer.apartment.adult_wall_frame",
+        "asset": "adultWallFrameEmpty",
+        "zIndex": 100,
+        "top": 0,
+        "left": 0,
+        "visibleWhenFlag": "adultPhotoTaken"
+      },
+      {
         "id": "layer.apartment.table_foreground",
         "asset": "foregroundTable",
         "zIndex": -1,
-        "top": 389,
-        "left": 104
+        "top": 0,
+        "left": 0
       },
       {
-        "id": "layer.apartment.bills_on_table",
-        "asset": "billsOnTable",
-        "zIndex": -2,
-        "top": 390,
-        "left": 199,
-        "hiddenWhenState": "hasUnpaidBills"
+        "id": "layer.apartment.dining_ad",
+        "asset": "diningTableAD",
+        "zIndex": 31,
+        "top": 0,
+        "left": 0
       },
       {
-        "id": "layer.apartment.accordion_on_chair",
-        "asset": "accordionOnChair",
-        "zIndex": 0,
-        "top": 399,
-        "left": 1064,
-        "hiddenWhenItemOwned": "item.accordion"
-      },
-      {
-        "id": "layer.apartment.window_open",
-        "asset": "windowOpen",
-        "zIndex": 100,
-        "top": 51,
-        "left": 150,
-        "visibleWhenFlag": "apartmentWindowOpen"
+        "id": "layer.apartment.cupboard_ad",
+        "asset": "cupboardFrontAD",
+        "zIndex": 20,
+        "top": 0,
+        "left": 0
       }
     ]
   },

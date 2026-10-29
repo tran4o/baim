@@ -1,0 +1,71 @@
+{
+  "scope": "Historical inputs only; originals, SHA256 values and assertions preserved; no live production module changes",
+  "copied": [
+    {
+      "file": "test/fixtures/apartment-history-r38/accordion-r22-intake.json",
+      "sha256": "5b62badc7664cb899bb4b698465475c4c2db592b2d3171c2146231009fbe41aa",
+      "bytes": 2247
+    },
+    {
+      "file": "test/fixtures/apartment-history-r38/accordion-r23-intake.json",
+      "sha256": "a202db7b5f051f64ef8fbe98a74204c2615591dbf6895a8b4311e043c1629eea",
+      "bytes": 3908
+    },
+    {
+      "file": "test/fixtures/apartment-history-r38/medium-preserved.json",
+      "sha256": "d6b6520132e92bf4e66587ef24c0a7408e9382d96e1a2f67984f85274516747a",
+      "bytes": 2153
+    },
+    {
+      "file": "test/fixtures/apartment-history-r38/model-derivation.json",
+      "sha256": "82a99a363a8cbbe6a6632734d6624e498990cdde7d94a4e95e7b6419ece410ca",
+      "bytes": 1003
+    }
+  ],
+  "refusalBefore": {
+    "src/engine/Game.js": {
+      "fixture": "test/fixtures/refusal-approach-r19-deltas.json",
+      "sha256": "cdb914382d82df13c300559c23395d01c2d1b8581262ec57b71a7c6ddfd2b4a7",
+      "originalByteSHA256": "cdb914382d82df13c300559c23395d01c2d1b8581262ec57b71a7c6ddfd2b4a7"
+    },
+    "src/engine/ActionCursor.js": {
+      "fixture": "test/fixtures/refusal-approach-r19-deltas.json",
+      "sha256": "5facb7f3bf6f3ac33642b37694484b674d8a76c7ba39620f6620accb44b46817",
+      "originalByteSHA256": "5facb7f3bf6f3ac33642b37694484b674d8a76c7ba39620f6620accb44b46817"
+    }
+  },
+  "mediumAliases": {
+    "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\apartment-two-photo-20261024\\photo-puzzle-easy-r24\\medium-preserved\\src\\engine\\SlidingBlockPuzzle.js": {
+      "repoFile": "src/engine/SlidingBlockPuzzle.js",
+      "sha256": "6a838972948c4640382252dc75f37837284a9fd455a6f85268d37782c68c4178",
+      "bytes": 3220
+    },
+    "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\apartment-two-photo-20261024\\photo-puzzle-easy-r24\\medium-preserved\\assets\\chapter1\\puzzles\\photo-cupboard-c01.glb": {
+      "repoFile": "assets/chapter1/puzzles/photo-cupboard-c01.glb",
+      "sha256": "389aa046786846761821f3fd84b4564cdcfebbec84cf76184800e30612cd3940",
+      "bytes": 604160
+    },
+    "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\apartment-two-photo-20261024\\photo-puzzle-easy-r24\\medium-preserved\\assets_src\\chapter1\\puzzles\\photo-cupboard-c01.blend": {
+      "repoFile": "assets_src/chapter1/puzzles/photo-cupboard-c01.blend",
+      "sha256": "b63558bf477ea35ec1bf29d0e2736f04ea2bc81b576c56da43c1f810da8860c7",
+      "bytes": 133768
+    },
+    "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\apartment-two-photo-20261024\\photo-puzzle-easy-r24\\medium-preserved\\assets_src\\chapter1\\puzzles\\photo-cupboard-c01.png": {
+      "repoFile": "assets_src/chapter1/puzzles/photo-cupboard-c01.png",
+      "sha256": "2ebb8efb93449372bfba0552412b504fd23935e9bf428007769c41d6fb8fdc17",
+      "bytes": 925811
+    }
+  },
+  "r24FrozenModules": {
+    "src/engine/ids.js": {
+      "fixture": "test/fixtures/photo-puzzle-mouse-r25-deltas.json",
+      "record": "src/engine/ids.js",
+      "sha256": "0785aa29d3cb0e5ffc1f9126deff44c773e9a1ed09b53063fe3a02e9bdccd051"
+    },
+    "src/content/chapter1/photoQuest.js": {
+      "fixture": "test/fixtures/photo-puzzle-mouse-r25-deltas.json",
+      "record": "src/content/chapter1/photoQuest.js",
+      "sha256": "aa163d103ca8dacdde2d2f35dc6dce81b3e560dc4869721c5375a14d0b7e716b"
+    }
+  }
+}

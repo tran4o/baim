@@ -1,3 +1,4 @@
+import{stripKioskR07}from'./helpers/kiosk-r07-preservation.js';
 import test from 'node:test';
 import {restorePhotoQuestSnapshot} from './helpers/photo-quest-preservation.js';
 import {restoreActionCursorsSnapshot} from './helpers/action-cursors-preservation.js';
@@ -56,7 +57,7 @@ test('all remaining square ground is one connected component, with every scene r
 test('existing original counter occludes the rear gait and actor remains visible on the front pavement',()=>{
  const counter=square.foregroundLayers.find(l=>l.id==='layer.square.kiosk_counter');assert.equal(counter.zIndex,1);assert.equal(counter.asset,'kioskCounterC05');
  assert.ok(sceneZIndexForPoint(square,{x:1000,y:570})>counter.zIndex);assert.ok(sceneZIndexForPoint(square,{x:1090,y:630})<counter.zIndex);
- const oldLayers=JSON.parse(fixture.records['assets_src/chapter1/scenes/village_square/layers.json'].before),now=JSON.parse(readFileSync('assets_src/chapter1/scenes/village_square/layers.json'));
+ const oldLayers=JSON.parse(fixture.records['assets_src/chapter1/scenes/village_square/layers.json'].before),now=JSON.parse(stripKioskR07('assets_src/chapter1/scenes/village_square/layers.json',readFileSync('assets_src/chapter1/scenes/village_square/layers.json'),true));
  const restored=structuredClone(now);restored.layers.find(l=>l.id===counter.id).zIndex=30;assert.deepEqual(restored,oldLayers);
  assert.equal(sha(readFileSync('assets/chapter1/scenes/village_square/kiosk-counter-c05.png')),'98d13ad75e1693d61c4724ef3910702b338d039eb341633708cc5cdd22a0be84');
 });

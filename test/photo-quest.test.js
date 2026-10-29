@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { chapter1 } from '../src/content/chapter1/index.js';
 import { strings } from '../src/content/localization/index.js';
 import { photoQuestBg, photoQuestEn } from '../src/content/localization/chapter1PhotoQuest.js';
-import { photoReward, pepaMusicRule, pepaPosterRule, pepaDiplomaRule, diplomaTakeRule } from '../src/content/chapter1/photoQuest.js';
+import { adultPhotoReward, photoReward, pepaMusicRule, pepaPosterRule, pepaDiplomaRule, diplomaTakeRule } from '../src/content/chapter1/photoQuest.js';
 import { initialPuzzle, validPuzzle, movePuzzle, puzzleSolved, puzzleHint } from '../src/engine/SlidingBlockPuzzle.js';
 import { DEFAULT_SAVE } from '../src/engine/ids.js';
 import { SaveSystem } from '../src/engine/SaveSystem.js';
@@ -13,21 +13,25 @@ import { applyEffects, requirementsMet } from '../src/engine/EffectSystem.js';
 import { findTargetAt, isWalkable, findWalkPath } from '../src/engine/SceneGeometry.js';
 import { stripPhotoQuest, restorePhotoQuestSnapshot } from './helpers/photo-quest-preservation.js';
 import { assetManifest } from '../src/content/art/assetManifest.js';
+import { BEGINNER_PHOTO_PUZZLE as EASY_PHOTO_PUZZLE, initialPhotoPuzzle } from '../src/content/chapter1/photoPuzzleBeginner.js';
 function context(state=structuredClone(DEFAULT_SAVE)) {return {state,inventory:new InventorySystem({},state)};}
 function use(rule,ctx) { assert.ok(requirementsMet(rule.requirements,ctx));assert.equal(applyEffects(rule.effects,ctx),true); }
 function reload(state) {return new SaveSystem({getItem:()=>JSON.stringify(state)}).load();}
-test('beginner puzzle has an exact six-slide legal solution, blockers, bounds and saved progress',()=>{
+test('preserved medium puzzle has its exact six-slide solution and old completion is retained on easy migration',()=>{
   let state=initialPuzzle(); assert.ok(validPuzzle(state)); assert.equal(movePuzzle(state,'blue',0,1),null);
   assert.equal(movePuzzle(state,'yellow2',1,0),null); assert.equal(movePuzzle(state,'blue',1,1),null);
   let n=0; while(!puzzleSolved(state)&&n<10) {const h=puzzleHint(state);assert.ok(h);state=movePuzzle(state,h.id,h.dx,h.dy);n++;}
   assert.equal(n,6);assert.ok(puzzleSolved(state));assert.equal(puzzleHint(state),null);
   const save=structuredClone(DEFAULT_SAVE);save.photoPuzzle=state;
-  assert.deepEqual(reload(save).photoPuzzle,state);
-  save.photoPuzzle.positions.blue.x=99;assert.deepEqual(reload(save).photoPuzzle,initialPuzzle());
+  assert.deepEqual(reload(save).photoPuzzleMediumPreserved,state);
+  assert.ok(puzzleSolved(reload(save).photoPuzzle,EASY_PHOTO_PUZZLE));
+  save.photoPuzzle.positions.blue.x=99;assert.deepEqual(reload(save).photoPuzzle,initialPhotoPuzzle());
 });
 test('new quest preserves reusable photo, gates music and original diploma, and issues each reward once',()=>{
   const ctx=context();assert.equal(requirementsMet(pepaDiplomaRule.requirements,ctx),false);
   use(photoReward,ctx);assert.equal(requirementsMet(photoReward.requirements,ctx),false);
+  assert.equal(ctx.inventory.has('item.mitko_child_photo'),true);
+  use(adultPhotoReward,ctx);
   assert.equal(requirementsMet(pepaPosterRule.requirements,ctx),false);
   ctx.inventory.add('item.accordion');use(pepaMusicRule,ctx);
   assert.equal(requirementsMet(pepaMusicRule.requirements,ctx),false);
@@ -55,7 +59,8 @@ test('dropped photograph cannot be scanned remotely; old earned credentials are 
 });
 test('new authored objects survive generated geometry and diploma wins overlap only while present',()=>{
   const apartment=chapter1.scenes.find(s=>s.id==='scene.chapter1.apartment');
-  const cupboard=apartment.interactables.find(t=>t.id==='hotspot.apartment.photo_cupboard');assert.ok(cupboard);
+  assert.equal(apartment.interactables.some(t=>t.id==='hotspot.apartment.photo_cupboard'),false);
+  const cupboard=apartment.interactables.find(t=>t.objectCloseup);assert.ok(cupboard.objectCloseup.items.some(i=>i.target.puzzleId==='photo_cupboard'));
   assert.ok(isWalkable(apartment,cupboard.interactionApproach)); assert.ok(findWalkPath(apartment,apartment.playerStart,cupboard.interactionApproach).length);
   const tavern=chapter1.scenes.find(s=>s.id==='scene.chapter1.mehana');
   assert.equal(findTargetAt(tavern,{x:1000,y:490}).id,'hotspot.mehana.tony_diploma');

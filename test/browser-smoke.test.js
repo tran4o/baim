@@ -8,6 +8,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { chromium } from "playwright";
 import { observeImageRequests, waitForLoadedImage } from "./helpers/browser-image-readiness.js";
+import { mousePuzzleSlide } from './helpers/puzzle-mouse.js';
 
 const projectRoot = fileURLToPath(new URL("..", import.meta.url));
 
@@ -119,7 +120,8 @@ test("browser completes the required Chapter 1 path and restores the ending afte
       const { game } = window.__comradeCandidateTest;
       const find = (entries, id) => entries.find((entry) => entry.id === id);
 
-      game.takeTarget(find(game.currentScene.interactables, "hotspot.apartment.unpaid_bills"));
+      // Historical earned-credential journey starts with an explicit legacy saved item.
+      game.inventory.add('item.unpaid_bills');
       await game.changeScene("scene.chapter1.village_square");
       game.takeTarget(find(game.currentScene.interactables, "hotspot.square.empty_envelope"));
       game.useInventoryItemOnItem("item.unpaid_bills", "item.empty_envelope");
@@ -274,8 +276,9 @@ async function availablePort() {
 
 test("fresh photo and Tony diploma journeys reach narrow and convincing wins through real BG/EN clicks", { timeout: 600_000 }, async (t) => {
   if (!browserAvailable(t, chromium.executablePath())) return;
-  const port = await availablePort();
-  const server = spawn(process.execPath, ["tools/dev-server.mjs"], {
+  const normalReview=process.env.BAIM_NORMAL_REVIEW==='1';
+  const port = normalReview ? 5173 : await availablePort();
+  const server = normalReview ? {exitCode:0} : spawn(process.execPath, ["tools/dev-server.mjs"], {
     cwd: projectRoot, env: { ...process.env, PORT: String(port) }, stdio: "ignore"
   });
   let browser;
@@ -288,6 +291,7 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
       const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, serviceWorkers: "block",
         recordVideo: { dir: evidenceRoot, size: { width: 1280, height: 720 } } });
       const page = await context.newPage();
+      if(normalReview)await page.addInitScript(()=>Object.defineProperty(window,'__comradeCandidateTest',{get(){const fit=window.__comradeCandidateAnimationFit;return fit?{game:fit.game,ready:new Promise(resolve=>{if(fit.game.inputBound)return resolve();const timer=setInterval(()=>{if(fit.game.inputBound){clearInterval(timer);resolve();}},20);})}:undefined;}}));
       const imageNetwork = observeImageRequests(page);
       const videoPath = await page.video().path(), marks = [], startedAtMs = Date.now();
       const mark = async name => {
@@ -301,7 +305,8 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
         writeFileSync(join(evidenceRoot, `${language}-journey.json`), JSON.stringify({ language, videoPath, startedAtMs, marks, scope: 'Fresh actual UI path; state read for assertions/evidence only' }, null, 2));
         t.diagnostic(`${language}: ${name}`);
       };
-      await page.goto(`http://127.0.0.1:${port}/?play=1&testHarness=1`);
+      await page.goto(`http://127.0.0.1:${port}/${normalReview?'?play=1&animationFit=1&proof=1':'?play=1&testHarness=1'}`);
+      await page.waitForFunction(()=>window.__comradeCandidateTest?.game.inputBound);
       await page.evaluate(() => window.__comradeCandidateTest.ready);
       // Language is setup; all progression below uses normal mouse input.
       await page.evaluate(language => window.__comradeCandidateTest.game.setLanguage(language), language);
@@ -311,20 +316,24 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
       const clickTarget = id => clickSceneTarget(page, id);
       await clickTarget("hotspot.apartment.tv");
       await waitFor(() => window.__comradeCandidateTest.game.state.flags.chapter1OpeningHeard);
-      await verb("take");
-      await clickTarget("hotspot.apartment.unpaid_bills");
-      await waitFor(() => window.__comradeCandidateTest.game.inventory.has("item.unpaid_bills"));
-      await waitFor(() => !window.__comradeCandidateTest.game.player.actionSequence);
-      await verb('use');
-      await clickTarget('hotspot.apartment.photo_cupboard');
-      await page.locator('.photo-puzzle-view[data-model-state=ready]').waitFor();
-      for(const [piece,dir] of [['yellow1','up'],['yellow3','up'],['yellow4','up'],['red3','left'],['red4','right'],['blue','down']]) {
-        await page.locator(`[data-piece=${piece}]`).click();await page.locator(`[data-direction=${dir}]`).click();
-      }
+      // Owner removed the table papers; fresh journey starts with the adult wall photo.
+      await verb('take');await clickTarget('hotspot.apartment.adult_photo');
       await waitFor(()=>window.__comradeCandidateTest.game.inventory.has('item.mitko_photo'));
-      await mark('photograph-earned-by-puzzle');
-      await verb('take');
-      await clickTarget("hotspot.apartment.accordion");
+      await mark('adult-wall-photo-taken-for-poster');
+      await verb('use');
+      await clickTarget('hotspot.apartment.wardrobe');
+      await page.locator('.object-closeup-screen [data-item-id="hotspot.apartment.wardrobe_photo_puzzle"]:enabled').click();
+      await page.locator('.photo-puzzle-view[data-model-state=ready]').waitFor();
+      for(const [piece,dx,dy] of [['yellow3',0,-1],['red3',-1,0],['yellow4',0,-1],['red4',1,0],['blue',0,1]]) {
+        await mousePuzzleSlide(page,piece,dx,dy);
+      }
+      await waitFor(()=>window.__comradeCandidateTest.game.inventory.has('item.mitko_child_photo'));
+      await mark('childhood-BW-photo-earned-by-original-puzzle');
+      await page.locator('.object-closeup-screen [data-action=close]').click();
+      await verb('use');
+      await clickTarget("hotspot.apartment.wardrobe");
+      await page.locator('.object-closeup-screen [data-item-id="item.accordion"]').click();
+      await page.locator('.object-closeup-screen [data-action="close"]').click();
       await waitFor(() => window.__comradeCandidateTest.game.inventory.has("item.accordion"));
       await waitFor(() => !window.__comradeCandidateTest.game.player.actionSequence);
       await clickTarget("exit.apartment.to_square");
@@ -393,8 +402,7 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
       await go('exit.square.to_mehana','scene.chapter1.mehana');
       await talk('npc.tony_fridge');
       for(const key of ['dialogue.tony.choice.challenge','dialogue.tony.choice.accept','dialogue.tony.choice.prepare'])await choice(key);
-      await useItem('item.accordion');await clickTarget('npc.tony_fridge');
-      await waitFor(()=>window.__comradeCandidateTest.game.state.flags.tonyDistracted);
+      assert.equal(await page.evaluate(()=>Boolean(window.__comradeCandidateTest.game.state.flags.tonyDistracted)),false);
       await useItem('item.fountain_water_bottle');await clickTarget('hotspot.mehana.bai_mitko_rakia_glass');
       await waitFor(()=>window.__comradeCandidateTest.game.state.swappedOwnRakiaWithWater);
       await mark('toni-water-prepared-before-contest');

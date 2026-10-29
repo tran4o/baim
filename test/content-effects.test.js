@@ -77,16 +77,15 @@ test("unknown content effect types fail loudly", () => {
   );
 });
 
-test("Tony vote vertical slice is reachable from authored Chapter 1 data", () => {
-  const apartment = chapter1.scenes.find((scene) => scene.id === "scene.chapter1.apartment");
+test("Tony vote rules remain reachable with only the fountain water bottle", () => {
   const mehana = chapter1.scenes.find((scene) => scene.id === "scene.chapter1.mehana");
-  const accordion = apartment.interactables.find((target) => target.id === "hotspot.apartment.accordion");
+  const accordion = chapter1.items.find((item) => item.id === "item.accordion");
   const tony = mehana.npcs.find((target) => target.id === "npc.tony_fridge");
   const mitkoGlass = mehana.interactables.find(
     (target) => target.id === "hotspot.mehana.bai_mitko_rakia_glass"
   );
   const tonyDialogue = chapter1.dialogues.find((dialogue) => dialogue.id === "dialogue.tony_fridge");
-  const inventory = inventoryWith(accordion.takeItemId);
+  const inventory = inventoryWith();
   const state = {
     tonyVote: false,
     swappedOwnRakiaWithWater: false,
@@ -106,8 +105,8 @@ test("Tony vote vertical slice is reachable from authored Chapter 1 data", () =>
     tony.itemUseRules.filter((rule) => rule.itemId === "item.accordion"),
     context
   );
-  assert.ok(distraction);
-  applyEffects(distraction.effects, context);
+  assert.equal(distraction, null);
+  assert.equal(inventory.has(accordion.id), false);
   inventory.add("item.fountain_water_bottle");
   const swap = firstMatchingRule(
     mitkoGlass.itemUseRules.filter((rule) => rule.itemId === "item.fountain_water_bottle"),
@@ -173,11 +172,13 @@ test("fake diploma quest exposes its collection and assembly stages in order", (
   });
 
   assert.equal(objectiveFor({ hasUnpaidBills: false, hasEmptyEnvelope: false }).id,
+    'stage.photo.adult');
+  assert.equal(objectiveFor({ flags: { adultPhotoTaken: true } }, 'item.mitko_photo').id,
     'stage.photo.cupboard');
-  assert.equal(objectiveFor({ flags: { photoCupboardSolved: true } }, 'item.mitko_photo').id,
+  assert.equal(objectiveFor({ flags: { adultPhotoTaken: true, photoCupboardSolved: true } }, 'item.mitko_photo', 'item.mitko_child_photo').id,
     'stage.photo.music');
   assert.equal(objectiveFor(
-    { flags: { photoCupboardSolved: true, pepaMusicPlayed: true } }, 'item.mitko_photo'
+    { flags: { adultPhotoTaken: true, photoCupboardSolved: true, pepaMusicPlayed: true } }, 'item.mitko_photo', 'item.mitko_child_photo'
   ).id, 'stage.photo.tony');
 });
 
@@ -190,15 +191,12 @@ test("the village-square envelope is a one-time recoverable diploma component", 
   assert.deepEqual(envelope.requirements, { state: { hasEmptyEnvelope: false } });
 });
 
-test("apartment bills cannot respawn after diploma assembly consumes the inventory item", () => {
+test("removed apartment papers have no pickup while old inventory items stay supported", () => {
   const apartment = chapter1.scenes.find((scene) => scene.id === "scene.chapter1.apartment");
   const bills = apartment.interactables.find((target) => target.id === "hotspot.apartment.unpaid_bills");
 
-  assert.deepEqual(bills.requirements, { state: { hasUnpaidBills: false } });
-  assert.equal(requirementsMet(bills.requirements, {
-    state: { hasUnpaidBills: true, flags: {} },
-    inventory: inventoryWith()
-  }), false);
+  assert.equal(bills, undefined);
+  assert.ok(chapter1.items.some(item=>item.id==='item.unpaid_bills'));
 });
 
 test("the municipality clerk checks but does not register an unstamped diploma", () => {
@@ -292,7 +290,7 @@ test("Tony quest exposes one outstanding objective for each unresolved puzzle st
   });
 
   assert.equal(objectiveFor({}).id, "stage.tony.accept_challenge");
-  assert.equal(objectiveFor({ tonyChallengeStarted: true }).id, "stage.tony.distract");
+  assert.equal(objectiveFor({ tonyChallengeStarted: true }).id, "stage.tony.swap_water");
   assert.equal(objectiveFor({ tonyChallengeStarted: true, tonyDistracted: true }).id, "stage.tony.swap_water");
   assert.equal(objectiveFor(
     { tonyChallengeStarted: true, tonyDistracted: true },
@@ -336,7 +334,7 @@ test("refusing Tony safely defers the challenge, reveals Kiro's clue, and permit
   assert.equal(state.flags.tonyChallengeDeferred, false);
 });
 
-test("Tony catches one early water attempt but does not consume the water", () => {
+test("Tony water preparation needs no distraction, adds no suspicion and cannot consume twice", () => {
   const mehana = chapter1.scenes.find((scene) => scene.id === "scene.chapter1.mehana");
   const mitkoGlass = mehana.interactables.find(
     (target) => target.id === "hotspot.mehana.bai_mitko_rakia_glass"
@@ -352,17 +350,20 @@ test("Tony catches one early water attempt but does not consume the water", () =
   const waterRules = mitkoGlass.itemUseRules.filter((rule) => rule.itemId === "item.fountain_water_bottle");
 
   const caught = firstMatchingRule(waterRules, context);
-  assert.equal(caught.messageKey, "msg.water_swap_watched");
+  assert.equal(caught.messageKey, "msg.water_swap_ready");
   applyEffects(caught.effects, context);
-  assert.equal(state.flags.tonyCaughtWaterAttempt, true);
-  assert.equal(state.suspicion, 3);
-  assert.equal(inventory.has("item.fountain_water_bottle"), true);
+  assert.equal(state.flags.tonyCaughtWaterAttempt, undefined);
+  assert.equal(state.flags.tonyDistracted, undefined);
+  assert.equal(state.flags.pepaMusicPlayed, undefined);
+  assert.equal(state.swappedOwnRakiaWithWater, true);
+  assert.equal(state.suspicion, 0);
+  assert.equal(inventory.has("item.fountain_water_bottle"), false);
+  assert.equal(inventory.has("item.empty_rakia_bottle"), true);
 
   const repeated = firstMatchingRule(waterRules, context);
-  assert.equal(repeated.messageKey, "msg.water_swap_still_watched");
-  applyEffects(repeated.effects, context);
-  assert.equal(state.suspicion, 3);
-  assert.equal(inventory.has("item.fountain_water_bottle"), true);
+  assert.equal(repeated, null);
+  assert.equal(state.suspicion, 0);
+  assert.equal(inventory.has("item.fountain_water_bottle"), false);
 });
 
 test("Tony's challenge invitation disappears after acceptance or vote completion", () => {

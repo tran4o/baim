@@ -2,6 +2,7 @@ import { accordionCue } from "./audio.js";
 import { pepaMusicRule } from './photoQuest.js';
 export const items = [
   { id: 'item.mitko_photo', nameKey: 'photoquest.photo_name', descriptionKey: 'photoquest.photo_desc' },
+  { id: 'item.mitko_child_photo', nameKey: 'photoquest.child_name', descriptionKey: 'photoquest.child_desc' },
   { id: 'item.tony_diploma', nameKey: 'photoquest.diploma_name', descriptionKey: 'photoquest.diploma_desc' },
   { id: "item.empty_rakia_bottle", nameKey: "bottle.empty.name", descriptionKey: "bottle.empty.desc" },
   { id: "item.fountain_water_bottle", nameKey: "bottle.water.name", descriptionKey: "bottle.water.desc" },
@@ -56,6 +57,7 @@ export const items = [
   { id: "item.empty_envelope", nameKey: "item.empty_envelope.name", descriptionKey: "item.empty_envelope.desc" },
   { id: "item.fake_diploma", nameKey: "item.fake_diploma.name", descriptionKey: "item.fake_diploma.desc",
     iconRules: [{ requirements: { flags: ["mayorDiplomaStamped"] }, slot: "stampedIcon" },
+      { requirements: { flags: ['childhoodDiplomaEdition'] }, slot: 'childIcon' },
       { requirements: { flags: ['pepaDiplomaAltered'] }, slot: 'pepaIcon' }] },
   {
     id: "item.rakia",

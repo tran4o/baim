@@ -1,0 +1,5 @@
+import assert from'node:assert/strict';import{readFileSync}from'node:fs';import{createHash}from'node:crypto';
+const f=JSON.parse(readFileSync(new URL('../fixtures/wardrobe-grounded-r30-deltas.json',import.meta.url))),sha=x=>createHash('sha256').update(x).digest('hex');
+import{stripWardrobeSelectedR34,restoreWardrobeSelectedR34Snapshot}from'./wardrobe-selected-r34-preservation.js';
+export function stripWardrobeGroundedR30(path,source,strict=false){source=stripWardrobeSelectedR34(path,source);const r=f.records[path];if(!r)return source;const s=String(source).replaceAll('\r\n','\n').replace(/^\uFEFF/,'');if(sha(s)!==r.afterSHA256){if(strict)assert.equal(sha(s),r.beforeSHA256,'unbound grounded wardrobe '+path);return source;}assert.equal(sha(r.before),r.beforeSHA256);return r.before;}
+export function restoreWardrobeGroundedR30Snapshot(kind,value){value=restoreWardrobeSelectedR34Snapshot(kind,value);const r=f.snapshots[kind];if(!r||sha(JSON.stringify(value))!==r.afterSHA256)return value;assert.equal(sha(JSON.stringify(r.before)),r.beforeSHA256);return structuredClone(r.before);}

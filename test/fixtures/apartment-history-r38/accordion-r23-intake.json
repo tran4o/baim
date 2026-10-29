@@ -1,0 +1,70 @@
+{
+  "revision": "r23",
+  "date": "2026-10-28",
+  "scope": "Existing owner-authorized reversible contextual wardrobe/inspection preview; source appearance review still pending in workshop, no acceptance/publication inferred.",
+  "model": {
+    "file": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r03\\accordion-r03.glb",
+    "sha256": "23ed208aac4f89d0dbf845ce75a707ac01f9e7bcffcc52fe50a12fd42f60c1d9",
+    "bytes": 2804488,
+    "asset": "assets/chapter1/items/accordion-r03/accordion-r03.glb"
+  },
+  "native": {
+    "file": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r03\\accordion-r03.blend",
+    "sha256": "e674ff1aab9dc0b3506fcc6f85b1b574aafaafc4339e64c2e678e34315ce0b42",
+    "bytes": 1281550
+  },
+  "reports": [
+    {
+      "file": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r03\\README.md",
+      "sha256": "45ad9199f4e186a339c7b5649157b44d1401688ef71f71a7a9492ac7f7ed955d"
+    },
+    {
+      "file": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r03\\verification.json",
+      "sha256": "5ef1b6e39b3b441ad247e890e4f18aef5bd0758c20fbad65ea55f77fb258fd25"
+    },
+    {
+      "file": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r03\\runtime-check.json",
+      "sha256": "b1b84b038c302af774dcc637315bcf230aa2ae8a3f56cf4c574893d3554ab6b7"
+    },
+    {
+      "file": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r03\\housing-profile.json",
+      "sha256": "3b184cba10054db20580c74e35078a1b478b9f1b8887ce0f7146c41bdfc1bdb7"
+    },
+    {
+      "file": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r03\\model-report.json",
+      "sha256": "9adce61bdcf08d9776b8deaf6dfcc5bedf199f17f80742a90df8c39fee6d33a2"
+    },
+    {
+      "file": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r03\\provenance.json",
+      "sha256": "11f728ebee56a2244447b33a8cbfdfe35be542943e73da617f06c37a9a3cfa10"
+    }
+  ],
+  "selection": {
+    "date": "2026-10-27",
+    "owner_instruction": "The first option gave the actual looks a lot better. You can use that instead.",
+    "selected_reference": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r03\\selected-concept-A.png",
+    "sha256": "93f8654e572487a48d7f2484235a8ba7228fe37344c7d937aa59f597a1d835aa",
+    "geometry_feedback": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r03\\housing-form-feedback.png",
+    "feedback_sha256": "5c34f8b8eff6e5d1be3312ef1983407b4a3b824609aaeed431b9cd4b7feb2a82",
+    "selection": "Generated conceptA, replacing AVIF-basedR02. Raised curved housing correction is part of this revision, no additional design choice pending.",
+    "scope": "Local versioned3Dprop, editable native +runtimeGLB and review. Existing puzzle audit unaffected; stopped character route not resumed."
+  },
+  "housingProjectionBeyondKeyboardMetres": 0.07699999999999999,
+  "runtime": {
+    "meshes": 8,
+    "nodes": 9,
+    "triangles": 49452,
+    "embeddedImages": 5,
+    "front": "+Z",
+    "cameraDirection": [
+      0.18,
+      0.12,
+      1
+    ]
+  },
+  "previous": "R02/R01 preserved, superseded appearances; R03 replaces them for current contextual preview.",
+  "puzzleDisposition": "Existing low-cupboard3Dpuzzle stays in place; wardrobe photo box remains decorative.",
+  "sourceAppearanceAccepted": false,
+  "contextAccepted": false,
+  "publication": false
+}

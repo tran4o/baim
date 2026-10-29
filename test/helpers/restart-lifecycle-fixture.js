@@ -42,11 +42,11 @@ function use(g,id,item){const t=target(g,id);if(item) assert.notEqual(g.useInven
 async function papers(g,route='kiosk'){
   // Historical earned-credential fixture for restart/old-ending preservation.
   // New-game acquisition is independently exercised by photo-quest and native BG/EN tests.
-  assert.equal(g.takeTarget(target(g,'hotspot.apartment.accordion')),true);
-  // Exercise the actual animated pickup's contact-frame commit without rendering the animation.
-  const bills=target(g,'hotspot.apartment.unpaid_bills');
-  const action={verb:VERBS.TAKE,target:bills,sequence:bills.actions.take};
-  g.applyInteractionActionSequenceEffect(action);g.completeInteractionActionSequence(action);
+  // Actual current wardrobe pickup; removed chair/table targets are not new-game inputs.
+  assert.equal(g.openObjectCloseup(target(g,'hotspot.apartment.wardrobe')),true);
+  assert.equal(g.takeObjectCloseupItem('item.accordion'),true);g.closeObjectCloseup();
+  // Explicit legacy-save input for the historical recipe rejection below.
+  g.inventory.add('item.unpaid_bills');
   await leave(g,'exit.apartment.to_square');
   if(route==='combine'){
     g.takeTarget(target(g,'hotspot.square.empty_envelope'));

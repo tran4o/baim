@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
+import {stripApartmentTwoPhoto,restoreApartmentTwoPhotoSnapshot} from './apartment-two-photo-preservation.js';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 const fixture = JSON.parse(readFileSync(new URL('../fixtures/action-cursors-deltas.json', import.meta.url)));
 const sha = value => createHash('sha256').update(value).digest('hex');
 export function stripActionCursors(path, source, allowOtherHistory = false) {
+  source=stripApartmentTwoPhoto(path,source,true);
   const record = fixture.records[path];
   if (!record) return source;
   const originalSource = source;
@@ -15,6 +17,7 @@ export function stripActionCursors(path, source, allowOtherHistory = false) {
   return record.before;
 }
 export function restoreActionCursorsSnapshot(kind, value, allowOtherHistory = false) {
+  value=restoreApartmentTwoPhotoSnapshot(kind,value,true);
   const record = fixture.snapshots?.[kind];
   const hash = sha(JSON.stringify(value));
   if (!record || hash === record.beforeSHA256) return value;

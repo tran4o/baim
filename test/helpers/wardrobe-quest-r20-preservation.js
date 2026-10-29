@@ -1,0 +1,5 @@
+import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import {createHash} from 'node:crypto';
+import {stripWardrobeBindR21,restoreWardrobeBindR21Snapshot} from './wardrobe-bind-r21-preservation.js';
+const f=JSON.parse(readFileSync(new URL('../fixtures/wardrobe-quest-r20-deltas.json',import.meta.url))),sha=x=>createHash('sha256').update(x).digest('hex');
+export function stripWardrobeQuestR20(path,source,strict=false){source=stripWardrobeBindR21(path,source);const r=f.records[path];if(!r)return source;const s=String(source).replaceAll('\r\n','\n').replace(/^\uFEFF/,'');if(sha(s)!==r.afterSHA256){if(strict)assert.equal(sha(s),r.beforeSHA256,'unbound wardrobe r20 source '+path);return source;}assert.equal(sha(r.before),r.beforeSHA256);return r.before;}
+export function restoreWardrobeQuestR20Snapshot(kind,value){value=restoreWardrobeBindR21Snapshot(kind,value);const r=f.snapshots[kind];if(!r||sha(JSON.stringify(value))!==r.afterSHA256)return value;assert.equal(sha(JSON.stringify(r.before)),r.beforeSHA256);return structuredClone(r.before);}

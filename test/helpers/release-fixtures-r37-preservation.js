@@ -1,0 +1,3 @@
+import{stripApartmentHistoryR38}from'./apartment-history-r38-preservation.js';
+import assert from'node:assert/strict';import{readFileSync}from'node:fs';import{createHash}from'node:crypto';const f=JSON.parse(readFileSync(new URL('../fixtures/release-fixtures-r37-deltas.json',import.meta.url))),sha=s=>createHash('sha256').update(s).digest('hex');
+export function stripReleaseFixturesR37(path,source,strict=false){source=stripApartmentHistoryR38(path,source);const r=f.records[path];if(!r)return source;const s=String(source).replaceAll('\r\n','\n').replace(/^\uFEFF/,'');if(sha(s)===r.beforeSHA256)return s;if(sha(s)!==r.afterSHA256){if(strict)assert.equal(sha(s),r.beforeSHA256,'unbound R37 fixture');return source;}assert.equal(sha(r.before),r.beforeSHA256);return r.before;}

@@ -1,0 +1,5 @@
+import assert from 'node:assert/strict';import{readFileSync}from'node:fs';import{createHash}from'node:crypto';
+import{stripAccordionContextR22,restoreAccordionContextR22Snapshot}from'./accordion-context-r22-preservation.js';
+const f=JSON.parse(readFileSync(new URL('../fixtures/wardrobe-bind-r21-deltas.json',import.meta.url))),sha=x=>createHash('sha256').update(x).digest('hex');
+export function stripWardrobeBindR21(path,source,strict=false){source=stripAccordionContextR22(path,source);const r=f.records[path];if(!r)return source;const s=String(source).replaceAll('\r\n','\n').replace(/^\uFEFF/,'');if(sha(s)!==r.afterSHA256){if(strict)assert.equal(sha(s),r.beforeSHA256,'unbound wardrobe bind r21 '+path);return source;}assert.equal(sha(r.before),r.beforeSHA256);return r.before;}
+export function restoreWardrobeBindR21Snapshot(kind,value){value=restoreAccordionContextR22Snapshot(kind,value);const r=f.snapshots[kind];if(!r||sha(JSON.stringify(value))!==r.afterSHA256)return value;assert.equal(sha(JSON.stringify(r.before)),r.beforeSHA256);return structuredClone(r.before);}

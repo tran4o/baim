@@ -15,12 +15,21 @@ export const assetManifest = {
       box: "assets/chapter1/scenes/archive/box-v1.png"
     },
     "scene.chapter1.apartment": {
-      background: "assets/chapter1/scenes/apartment/background.png",
+      background: "assets/chapter1/scenes/apartment/window-interaction-r17/background.png",
+      windowNativeR17: "assets/chapter1/scenes/apartment/window-interaction-r17/window.webp",
+      windowCharacterR17: "assets/chapter1/scenes/apartment/window-interaction-r17/mitko.webp",
       droppedBelongingsPile: "assets/chapter1/items/dropped-belongings-pile-v1.png",
-      foregroundTable: "assets/chapter1/scenes/apartment/foreground-table.png",
+      foregroundTable: "assets/chapter1/scenes/apartment/ad-r08/foreground.png",
+      diningTableAD: "assets/chapter1/scenes/apartment/occlusion-r35/dining.png",
+      cupboardFrontAD: "assets/chapter1/scenes/apartment/occlusion-r18/cupboard-front.png",
+      wardrobeInteriorC04A: "assets/chapter1/scenes/apartment/wardrobe-r21/interior-c04-A.png",
+      adultWallPhoto: "assets/chapter1/items/adult-portrait-selected3-r36/wall-full.png",
+      adultWallFrameEmpty: "assets/chapter1/items/adult-portrait-selected3-r36/wall-empty.png",
       billsOnTable: "assets/chapter1/scenes/apartment/bills-on-table.png",
       accordionOnChair: "assets/chapter1/scenes/apartment/accordion-on-chair.png",
-      windowOpen: "assets/chapter1/scenes/apartment/window-open.png",
+      windowOpen: "assets/chapter1/scenes/apartment/ad-r08/window-open.png",
+      windowClosedAD: "assets/chapter1/scenes/apartment/ad-r08/window-closed.png",
+      windowSashAD: "assets/chapter1/scenes/apartment/ad-r08/window-sash.png",
       windowOpenBack: "assets/chapter1/scenes/apartment/window-open-0.png"
     },
     "scene.chapter1.village_square": {
@@ -30,7 +39,7 @@ export const assetManifest = {
       squareFlagWind: "assets/chapter1/scenes/village_square/flag-wind-c01.png",
       squarePepaIdle: "assets/chapter1/scenes/village_square/pepa-idle-hydra-c14-r03.png",
       squarePepaStill: "assets/chapter1/scenes/village_square/pepa-idle-hydra-c14-r03-static.png",
-      kioskCounterC05: "assets/chapter1/scenes/village_square/kiosk-counter-c05.png",
+      kioskCounterC05: "assets/chapter1/scenes/village_square/kiosk-foreground-r07.png",
       electionSign: "assets/chapter1/scenes/village_square/election-sign-v1.png",
       journalistStanding: "assets/chapter1/characters/journalist/standing-v2.png",
       background: "assets/chapter1/scenes/village_square/background-redesign-c05.png",
@@ -114,15 +123,17 @@ export const assetManifest = {
     "npc.bai_mitko": {
       type: "externalAnimation",
       ...externalAnimationV1.characterAssets,
+      external_apartment_window_r17: "assets/chapter1/scenes/apartment/window-interaction-r17/mitko.webp",
       ...mitkoTurnAssets,
       ...mitkoTurnPocketAssets,
       ...mitkoSizeMatchedAssets
     }
   },
   items: {
-    'item.mitko_photo': { icon: 'assets/chapter1/items/mitko-photo.png' },
+    'item.mitko_photo': { icon: 'assets/chapter1/items/adult-portrait-selected3-r36/print.png', model: 'assets/chapter1/items/adult-portrait-selected3-r36/portrait-only.glb', inspection: 'prop', cameraDirection: [0,0,1] },
+    'item.mitko_child_photo': { icon: 'assets/chapter1/scenes/apartment/ad-r08/child-photo.png' },
     'item.tony_diploma': { icon: 'assets/chapter1/items/tony-diploma.png', model: 'assets/chapter1/items/tony-diploma-inspection.glb', inspection: 'document' },
-    "item.fake_diploma": { icon: "assets/chapter1/items/fake-diploma-v1.png", pepaIcon: 'assets/chapter1/items/pepa-mitko-diploma.png', stampedIcon: "assets/chapter1/items/stamped-diploma-v1.png" },
+    "item.fake_diploma": { icon: "assets/chapter1/items/fake-diploma-v1.png", pepaIcon: 'assets/chapter1/items/pepa-mitko-diploma.png', childIcon: 'assets/chapter1/scenes/apartment/ad-r08/child-diploma.png', stampedIcon: "assets/chapter1/items/stamped-diploma-v1.png" },
     "item.campaign_pamphlets": { icon: "assets/chapter1/items/campaign-pamphlets-v1.png" },
     "item.suspicious_receipt": { icon: "assets/chapter1/items/suspicious-receipt-v1.png" },
     "item.rakia": { icon: "assets/chapter1/items/rakia-v1.png" },
@@ -136,7 +147,9 @@ export const assetManifest = {
       icon: "assets/chapter1/scenes/municipality/municipality-seal-v1.png"
     },
     "item.accordion": {
-      icon: "assets/chapter1/items/accordion.png"
+      icon: "assets/chapter1/items/accordion.png",
+      model: "assets/chapter1/items/accordion-r08/accordion-r08.glb",
+      inspection: 'prop', cameraDirection: [0.18, 0.12, 1], reviewStatus: 'source-accepted-context-review'
     },
     "item.unpaid_bills": {
       icon: "assets/chapter1/items/unpaid_bills.png"

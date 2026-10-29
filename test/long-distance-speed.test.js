@@ -59,7 +59,7 @@ test('no-op/invalid command preserves the active route calibration and original 
  assert.equal(m.walkTo({...p.position},null,null,options),false);
  assert.deepEqual({ratio:p.walkJourneyRatio,elapsed:p.walkTravelElapsed,boost:p.walkJourneyElapsed,target:p.target},state);
 });
-for(const [id,a,b]of [['apartment',{x:1000,y:565},{x:415,y:510}],['village_square',{x:1050,y:620},{x:380,y:620}],['mehana',{x:140,y:580},{x:690,y:580}]])for(const reverse of [false,true]){
+for(const [id,a,b]of [['apartment',{x:1000,y:515},{x:270,y:490}],['village_square',{x:1050,y:620},{x:380,y:620}],['mehana',{x:140,y:580},{x:690,y:580}]])for(const reverse of [false,true]){
  test(`${id} reverse=${reverse}: reachable route/perspective estimate and exact brisk arrival`,()=>{
   const scene=scenes.find(s=>s.id.endsWith('.'+id)),start=reverse?b:a,end=reverse?a:b;
   assert.ok(isWalkable(scene,start));assert.ok(isWalkable(scene,end));const path=findWalkPath(scene,start,end);assert.ok(path.length);

@@ -123,6 +123,7 @@ test("journalist art visibility follows her local NPC; registration translations
 test("visible doors explain campaign and evidence gates instead of allowing premature entry", () => {
   const ctx = context();
   const game = Object.assign(Object.create(Game.prototype), ctx, {
+    player: {position:{x:1000,y:565},animation:'idle'},
     t: key => key,
     setStatusMessage(message) { this.message = message; },
     changeScene(id) { this.destination = id; }

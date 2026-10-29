@@ -408,7 +408,7 @@ export const apartmentObjectGeometry = {
   "id": "objectGeometry.chapter1.apartment.v1",
   "sceneId": "scene.chapter1.apartment",
   "sourceBackground": {
-    "path": "assets/chapter1/scenes/apartment/background.png",
+    "path": "assets/chapter1/scenes/apartment/ad-r08/background.png",
     "width": 1672,
     "height": 941
   },
@@ -417,24 +417,45 @@ export const apartmentObjectGeometry = {
     "height": 720
   },
   "objects": {
+    "hotspot.apartment.adult_photo": {
+      "id": "hotspot.apartment.adult_photo",
+      "polygon": [
+        {
+          "x": 435,
+          "y": 108
+        },
+        {
+          "x": 540,
+          "y": 108
+        },
+        {
+          "x": 540,
+          "y": 228
+        },
+        {
+          "x": 435,
+          "y": 228
+        }
+      ]
+    },
     "hotspot.apartment.photo_cupboard": {
       "id": "hotspot.apartment.photo_cupboard",
       "polygon": [
         {
-          "x": 825,
-          "y": 130
+          "x": 1060,
+          "y": 375
         },
         {
-          "x": 990,
-          "y": 130
+          "x": 1280,
+          "y": 375
         },
         {
-          "x": 990,
-          "y": 485
+          "x": 1280,
+          "y": 610
         },
         {
-          "x": 825,
-          "y": 485
+          "x": 1060,
+          "y": 610
         }
       ]
     },
@@ -442,28 +463,20 @@ export const apartmentObjectGeometry = {
       "id": "exit.apartment.to_square",
       "polygon": [
         {
-          "x": 1031,
-          "y": 107
+          "x": 995,
+          "y": 75
         },
         {
-          "x": 1117,
-          "y": 79
+          "x": 1095,
+          "y": 75
         },
         {
-          "x": 1127,
-          "y": 418
+          "x": 1095,
+          "y": 465
         },
         {
-          "x": 1098,
-          "y": 544
-        },
-        {
-          "x": 1069,
-          "y": 559
-        },
-        {
-          "x": 1031,
-          "y": 526
+          "x": 995,
+          "y": 465
         }
       ]
     },
@@ -471,40 +484,20 @@ export const apartmentObjectGeometry = {
       "id": "hotspot.apartment.accordion",
       "polygon": [
         {
-          "x": 1128,
-          "y": 412
+          "x": 560,
+          "y": 480
         },
         {
-          "x": 1153,
-          "y": 415
+          "x": 625,
+          "y": 480
         },
         {
-          "x": 1172,
-          "y": 424
+          "x": 625,
+          "y": 580
         },
         {
-          "x": 1200,
-          "y": 434
-        },
-        {
-          "x": 1229,
-          "y": 455
-        },
-        {
-          "x": 1236,
-          "y": 469
-        },
-        {
-          "x": 1193,
-          "y": 593
-        },
-        {
-          "x": 1169,
-          "y": 595
-        },
-        {
-          "x": 1095,
-          "y": 552
+          "x": 560,
+          "y": 580
         }
       ]
     },
@@ -512,36 +505,20 @@ export const apartmentObjectGeometry = {
       "id": "hotspot.apartment.unpaid_bills",
       "polygon": [
         {
-          "x": 244,
-          "y": 397
+          "x": 500,
+          "y": 390
         },
         {
-          "x": 289,
-          "y": 389
+          "x": 565,
+          "y": 390
         },
         {
-          "x": 382,
-          "y": 440
+          "x": 565,
+          "y": 425
         },
         {
-          "x": 306,
-          "y": 451
-        },
-        {
-          "x": 294,
-          "y": 433
-        },
-        {
-          "x": 253,
-          "y": 441
-        },
-        {
-          "x": 204,
-          "y": 427
-        },
-        {
-          "x": 253,
-          "y": 415
+          "x": 500,
+          "y": 425
         }
       ]
     },
@@ -549,20 +526,20 @@ export const apartmentObjectGeometry = {
       "id": "hotspot.apartment.mirror",
       "polygon": [
         {
-          "x": 672,
-          "y": 148
+          "x": 580,
+          "y": 110
         },
         {
-          "x": 766,
-          "y": 163
+          "x": 690,
+          "y": 110
         },
         {
-          "x": 733,
-          "y": 329
+          "x": 690,
+          "y": 265
         },
         {
-          "x": 632,
-          "y": 302
+          "x": 580,
+          "y": 265
         }
       ]
     },
@@ -571,19 +548,19 @@ export const apartmentObjectGeometry = {
       "polygon": [
         {
           "x": 0,
-          "y": 302
+          "y": 245
         },
         {
-          "x": 122,
-          "y": 301
+          "x": 130,
+          "y": 245
         },
         {
-          "x": 122,
-          "y": 394
+          "x": 130,
+          "y": 365
         },
         {
-          "x": 1,
-          "y": 420
+          "x": 0,
+          "y": 365
         }
       ]
     },
@@ -591,20 +568,20 @@ export const apartmentObjectGeometry = {
       "id": "hotspot.apartment.wardrobe",
       "polygon": [
         {
-          "x": 797,
-          "y": 119
+          "x": 765,
+          "y": 75
         },
         {
-          "x": 1005,
-          "y": 115
+          "x": 975,
+          "y": 75
         },
         {
-          "x": 1014,
-          "y": 499
+          "x": 975,
+          "y": 440
         },
         {
-          "x": 799,
-          "y": 497
+          "x": 765,
+          "y": 440
         }
       ]
     },
@@ -612,49 +589,20 @@ export const apartmentObjectGeometry = {
       "id": "hotspot.apartment.table",
       "polygon": [
         {
-          "x": 169,
-          "y": 437
+          "x": 180,
+          "y": 360
         },
         {
-          "x": 282,
-          "y": 395
+          "x": 630,
+          "y": 360
         },
         {
-          "x": 441,
-          "y": 417
-        },
-        {
-          "x": 448,
-          "y": 443
-        },
-        {
-          "x": 361,
-          "y": 498
+          "x": 630,
+          "y": 560
         },
         {
           "x": 180,
-          "y": 479
-        }
-      ]
-    },
-    "hotspot.apartment.campaign_poster": {
-      "id": "hotspot.apartment.campaign_poster",
-      "polygon": [
-        {
-          "x": 500,
-          "y": 132
-        },
-        {
-          "x": 614,
-          "y": 126
-        },
-        {
-          "x": 616,
-          "y": 303
-        },
-        {
-          "x": 498,
-          "y": 310
+          "y": 560
         }
       ]
     },
@@ -662,36 +610,20 @@ export const apartmentObjectGeometry = {
       "id": "hotspot.apartment.rakia_bottle",
       "polygon": [
         {
-          "x": 87,
-          "y": 517
+          "x": 20,
+          "y": 500
         },
         {
-          "x": 117,
-          "y": 517
+          "x": 135,
+          "y": 500
         },
         {
-          "x": 117,
-          "y": 562
+          "x": 135,
+          "y": 660
         },
         {
-          "x": 129,
-          "y": 582
-        },
-        {
-          "x": 134,
-          "y": 675
-        },
-        {
-          "x": 79,
-          "y": 673
-        },
-        {
-          "x": 79,
-          "y": 577
-        },
-        {
-          "x": 90,
-          "y": 561
+          "x": 20,
+          "y": 660
         }
       ]
     },
@@ -699,32 +631,20 @@ export const apartmentObjectGeometry = {
       "id": "hotspot.apartment.bed",
       "polygon": [
         {
-          "x": 1060,
-          "y": 535
+          "x": 365,
+          "y": 305
         },
         {
-          "x": 1117,
-          "y": 536
+          "x": 775,
+          "y": 305
         },
         {
-          "x": 1194,
-          "y": 609
+          "x": 775,
+          "y": 430
         },
         {
-          "x": 1235,
-          "y": 609
-        },
-        {
-          "x": 1266,
-          "y": 572
-        },
-        {
-          "x": 1279,
-          "y": 705
-        },
-        {
-          "x": 1065,
-          "y": 690
+          "x": 365,
+          "y": 430
         }
       ]
     },
@@ -732,43 +652,43 @@ export const apartmentObjectGeometry = {
       "id": "window",
       "polygon": [
         {
-          "x": 384,
-          "y": 323
+          "x": 90,
+          "y": 80
         },
         {
-          "x": 167,
-          "y": 349
+          "x": 350,
+          "y": 80
         },
         {
-          "x": 148,
-          "y": 75
+          "x": 350,
+          "y": 335
         },
         {
-          "x": 375,
-          "y": 94
+          "x": 90,
+          "y": 335
         }
       ]
     },
     "window.open": {
       "id": "window.open",
       "polygon": [
-        {
-          "x": 340,
-          "y": 50
-        },
-        {
-          "x": 465,
-          "y": 78
-        },
-        {
-          "x": 465,
-          "y": 390
-        },
-        {
-          "x": 340,
-          "y": 350
-        }
-      ]
+  {
+    "x": 300,
+    "y": 80
+  },
+  {
+    "x": 390,
+    "y": 80
+  },
+  {
+    "x": 390,
+    "y": 315
+  },
+  {
+    "x": 300,
+    "y": 315
+  }
+]
     }
   }
 };

@@ -1,8 +1,8 @@
 // Foot positions belong to painted floor, independently of tall door hit areas.
 // Arrival points use the same threshold on the other side of each doorway.
 const doors = {
-  'exit.apartment.to_square': [{ x: 1010, y: 570 }, 'east', { x: 460, y: 445 }],
-  'exit.square.to_apartment': [{ x: 460, y: 445 }, 'north', { x: 1010, y: 570 }],
+  'exit.apartment.to_square': [{ x: 990, y: 510 }, 'east', { x: 460, y: 445 }],
+  'exit.square.to_apartment': [{ x: 460, y: 445 }, 'north', { x: 990, y: 510 }],
   'exit.square.to_mehana': [{ x: 147.5, y: 562.5 }, 'west', { x: 150, y: 585 }],
   'exit.mehana.to_square': [{ x: 150, y: 585 }, 'west', { x: 147.5, y: 562.5 }],
   'exit.square.to_municipality': [{ x: 897.5, y: 482.5 }, 'north', { x: 135, y: 550 }],

@@ -1,0 +1,35 @@
+{
+  "candidate": "photo-puzzle-easy-five-c01",
+  "source": {
+    "file": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\baim-apartment-two-photo\\assets\\chapter1\\puzzles\\photo-cupboard-c01.glb",
+    "sha256": "389aa046786846761821f3fd84b4564cdcfebbec84cf76184800e30612cd3940",
+    "bytes": 604160
+  },
+  "output": {
+    "asset": "assets/chapter1/puzzles/photo-cupboard-easy-five-c01.glb",
+    "sha256": "e03bd204b48a249cd591166af43f9b5c984464e1d1e257dc33d096e412101cb8",
+    "bytes": 597436
+  },
+  "activePieceIds": [
+    "blue",
+    "red3",
+    "red4",
+    "yellow2",
+    "yellow5"
+  ],
+  "removedPieceIds": [
+    "red1",
+    "red2",
+    "yellow1",
+    "yellow3",
+    "yellow4"
+  ],
+  "sourceNodes": 76,
+  "derivedNodes": 41,
+  "sourceMeshes": 66,
+  "derivedMeshes": 36,
+  "binTailByteExact": true,
+  "retainedRootTransformsExact": true,
+  "definitionGrid": "Same4×5/0.04mcell dimensions; easy start applied by view from named definition before first render.",
+  "mediumSourceUnchanged": true
+}
