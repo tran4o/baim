@@ -1,0 +1,37 @@
+{
+  "candidate": "photo-puzzle-medium-c01",
+  "status": "Preserved for possible later owner-directed use; not inserted elsewhere.",
+  "difficulty": "Owner identifies original as medium; no six-slide-equals-easy claim.",
+  "files": [
+    {
+      "path": "src/engine/SlidingBlockPuzzle.js",
+      "preservedFile": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\apartment-two-photo-20261024\\photo-puzzle-easy-r24\\medium-preserved\\src\\engine\\SlidingBlockPuzzle.js",
+      "sha256": "6a838972948c4640382252dc75f37837284a9fd455a6f85268d37782c68c4178",
+      "bytes": 3220
+    },
+    {
+      "path": "src/engine/SlidingPuzzleView.js",
+      "preservedFile": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\apartment-two-photo-20261024\\photo-puzzle-easy-r24\\medium-preserved\\src\\engine\\SlidingPuzzleView.js",
+      "sha256": "e2fd09c85fe0b2d5f9aa5734a66c3007e841c4f1cf2b77361039fcdf1ebcd1df",
+      "bytes": 7017
+    },
+    {
+      "path": "assets/chapter1/puzzles/photo-cupboard-c01.glb",
+      "preservedFile": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\apartment-two-photo-20261024\\photo-puzzle-easy-r24\\medium-preserved\\assets\\chapter1\\puzzles\\photo-cupboard-c01.glb",
+      "sha256": "389aa046786846761821f3fd84b4564cdcfebbec84cf76184800e30612cd3940",
+      "bytes": 604160
+    },
+    {
+      "path": "assets_src/chapter1/puzzles/photo-cupboard-c01.blend",
+      "preservedFile": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\apartment-two-photo-20261024\\photo-puzzle-easy-r24\\medium-preserved\\assets_src\\chapter1\\puzzles\\photo-cupboard-c01.blend",
+      "sha256": "b63558bf477ea35ec1bf29d0e2736f04ea2bc81b576c56da43c1f810da8860c7",
+      "bytes": 133768
+    },
+    {
+      "path": "assets_src/chapter1/puzzles/photo-cupboard-c01.png",
+      "preservedFile": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\apartment-two-photo-20261024\\photo-puzzle-easy-r24\\medium-preserved\\assets_src\\chapter1\\puzzles\\photo-cupboard-c01.png",
+      "sha256": "2ebb8efb93449372bfba0552412b504fd23935e9bf428007769c41d6fb8fdc17",
+      "bytes": 925811
+    }
+  ]
+}

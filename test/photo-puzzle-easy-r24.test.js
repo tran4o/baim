@@ -1,3 +1,4 @@
+import{historicalMetadata,canonicalMediumOriginal}from'./helpers/apartment-history-inputs.js';
 import test from'node:test';import assert from'node:assert/strict';import{readFileSync}from'node:fs';import{createHash}from'node:crypto';
 import{PHOTO_PUZZLE,initialPuzzle,movePuzzle,puzzleSolved,puzzleHint,validPuzzle}from'../src/engine/SlidingBlockPuzzle.js';
 import{EASY_PHOTO_PUZZLE,EASY_PHOTO_PUZZLE_ID,MEDIUM_PHOTO_PUZZLE,FIRST_PHOTO_PUZZLE_VIEW,initialPhotoPuzzle,validPhotoPuzzle,normalizeFirstPhotoPuzzleSave}from'../src/content/chapter1/photoPuzzleEasy.js';
@@ -26,7 +27,7 @@ test('invalid current puzzle resets to easy while preserving prior medium archiv
 });
 test('derived GLB has exactly the five active scene roots and original medium/native remain exact',()=>{
  const bytes=readFileSync(FIRST_PHOTO_PUZZLE_VIEW.modelUrl),g=JSON.parse(bytes.subarray(20,20+bytes.readUInt32LE(12)).toString().trim());assert.deepEqual(g.nodes.filter(n=>n.extras?.pieceId).map(n=>n.extras.pieceId).sort(),[...ids].sort());assert.equal(g.asset.extras.variantId,EASY_PHOTO_PUZZLE_ID);
- const preserved=JSON.parse(readFileSync('../extraFixes/apartment-two-photo-20261024/photo-puzzle-easy-r24/medium-preserved.json'));for(const f of preserved.files){if(f.path==='src/engine/SlidingPuzzleView.js')continue;assert.equal(sha(readFileSync(f.path)),f.sha256,'unchanged medium source/model '+f.path);assert.equal(sha(readFileSync(f.preservedFile)),f.sha256);}
- const derivation=JSON.parse(readFileSync('../extraFixes/apartment-two-photo-20261024/photo-puzzle-easy-r24/model-derivation.json'));assert.equal(derivation.binTailByteExact,true);assert.equal(derivation.retainedRootTransformsExact,true);
+ const preserved=historicalMetadata('medium-preserved.json');for(const f of preserved.files){if(f.path==='src/engine/SlidingPuzzleView.js')continue;assert.equal(sha(readFileSync(f.path)),f.sha256,'unchanged medium source/model '+f.path);assert.equal(sha(readFileSync(canonicalMediumOriginal(f))),f.sha256);}
+ const derivation=historicalMetadata('model-derivation.json');assert.equal(derivation.binTailByteExact,true);assert.equal(derivation.retainedRootTransformsExact,true);
 });
 test('easy incremental inverse restores exact pre-easy sources and rejects tampering',()=>{const f=JSON.parse(readFileSync('test/fixtures/photo-puzzle-easy-r24-deltas.json'));for(const[p,r]of Object.entries(f.records)){const s=readFileSync(p,'utf8');assert.equal(stripPhotoPuzzleEasyR24(p,s,true),r.before);assert.throws(()=>stripPhotoPuzzleEasyR24(p,s+'\n// unknown',true));}});

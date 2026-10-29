@@ -1,0 +1,49 @@
+{
+  "revision": "r22",
+  "scope": "Owner-authorized contextual wardrobe/inspection preparation; appearance review pending, no publication.",
+  "communicationAuthorization": "Workshop relay of owner “Yes, send the handoff.”",
+  "model": {
+    "source": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r02\\accordion-r02.glb",
+    "asset": "assets/chapter1/items/accordion-r02/accordion-r02.glb",
+    "sha256": "9f97ae25ac5172a47cb33819d3a4faab9a8eed8966017a9fbf3d8a6aadb31e43",
+    "bytes": 3423284
+  },
+  "native": {
+    "file": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r02\\accordion-r02.blend",
+    "sha256": "09c619bc5b9bb36f38c9b1c4116c43c20697ccabe68cb28e993f77a4b7eb36c7",
+    "bytes": 965667
+  },
+  "reports": [
+    {
+      "file": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r02\\model-report.json",
+      "sha256": "a395aae7bb46728d00b8067ad733875d4c49fd462bda4dad213d8bcf8df3ce74"
+    },
+    {
+      "file": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r02\\runtime-check.json",
+      "sha256": "64d0ec66647fcead25195566d06c9ce6337b8b632c6443e38153fa06a9adb616"
+    },
+    {
+      "file": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r02\\runtime-provenance.json",
+      "sha256": "da6b8d07681ddc61b313bbeb9d69822c1929e31d73206789a47e312eb36bfd7a"
+    },
+    {
+      "file": "C:\\Users\\SveBiS\\Desktop\\myStuff\\2026_GitPro\\extraFixes\\blender-workshop\\wardrobe-props-20261027\\accordion-r02\\owner-selection.json",
+      "sha256": "4a1f6f5196e0aed1df3476f68102427234b94714939de5f124452f63c1341a23"
+    }
+  ],
+  "runtime": {
+    "meshes": 8,
+    "nodes": 9,
+    "triangles": 59112,
+    "embeddedImages": 5,
+    "front": "+Z",
+    "cameraDirection": [
+      0.18,
+      0.12,
+      1
+    ]
+  },
+  "puzzleDisposition": "Existing low-cupboard3Dpuzzle stays in place. No wardrobe-right puzzle or photo-box reward added.",
+  "appearanceAccepted": false,
+  "publication": false
+}

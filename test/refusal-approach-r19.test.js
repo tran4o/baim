@@ -1,3 +1,4 @@
+import{historicalRefusalBefore}from'./helpers/apartment-history-inputs.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -72,7 +73,7 @@ test('solved cupboard legacy recovery is valid and dispatches its original earne
 });
 test('incremental inverse restores exact r18 and rejects unknown changes',()=>{
  for(const f of ['src/engine/Game.js','src/engine/ActionCursor.js']){
-  const source=readFileSync(f,'utf8'),before=readFileSync('../extraFixes/apartment-two-photo-20261024/refusal-approach-r19/source-before/'+f,'utf8').replaceAll('\r\n','\n');
+  const source=readFileSync(f,'utf8'),before=historicalRefusalBefore(f);
   assert.equal(stripRefusalApproachR19(f,source,true),before);assert.throws(()=>stripRefusalApproachR19(f,source+'\n// unknown',true));
  }
 });
