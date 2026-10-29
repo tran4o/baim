@@ -30,15 +30,14 @@ function use(rule, ctx) {
   applyEffects(rule.effects, ctx);
 }
 
-test("TV and poster share a one-time opening and persistent recap without changing inventory or meters", () => {
+test("AD television retains a one-time opening and persistent recap without changing inventory or meters", () => {
   const ctx = context();
   const beforeInventory = [...ctx.state.inventory];
   const tv = target("hotspot.apartment.tv");
-  const poster = target("hotspot.apartment.campaign_poster");
   const opening = firstMatchingRule(tv.lookRules, ctx);
   assert.equal(opening.messageKey, "campaign.opening");
   use(opening, ctx);
-  assert.equal(firstMatchingRule(poster.lookRules, ctx).messageKey, "campaign.opening_recap");
+  assert.equal(firstMatchingRule(tv.lookRules, ctx).messageKey, "campaign.opening_recap");
   assert.deepEqual(ctx.state.inventory, beforeInventory);
   assert.equal(ctx.state.suspicion, 0);
   let saved;
@@ -58,7 +57,7 @@ test("photo and music issue a poster once, preserve the photo, and posting survi
   assert.equal(ctx.state.completedQuests.includes("quest.chapter1.fake_diploma"), false);
   assert.equal(ctx.state.suspicion, 0);
   assert.equal(requirementsMet(pepaPosterRule.requirements, ctx), false);
-  assert.equal(requirementsMet(target("hotspot.apartment.unpaid_bills").requirements, ctx), false);
+  assert.equal(target("hotspot.apartment.unpaid_bills"), undefined, 'removed table papers expose no pickup');
   assert.equal(requirementsMet(kioskPamphletRule.requirements, ctx), false);
 
   // Dropping papers must not allow a second issuance or posting without possession.
@@ -99,7 +98,8 @@ test("kiosk dialogue and direct item handover share transaction requirements", (
   const choice = campaignDialogues[0].nodes.start.choices.find(entry => entry.effect === pepaDiplomaRule);
   assert.ok(choice);
   assert.equal(requirementsMet(choice.requirements, context()), false);
-  assert.equal(requirementsMet(choice.requirements, context({ inventory: ['item.mitko_photo','item.tony_diploma'], flags: { pepaMusicPlayed: true } })), true);
+  assert.equal(requirementsMet(choice.requirements, context({ inventory: ['item.mitko_photo','item.tony_diploma'], flags: { pepaMusicPlayed: true } })), false);
+  assert.equal(requirementsMet(choice.requirements, context({ inventory: ['item.mitko_child_photo','item.tony_diploma'], flags: { pepaMusicPlayed: true } })), true);
 });
 
 test("main quest guides opening, papers and posting, including legacy and dropped-paper states", () => {

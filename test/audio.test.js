@@ -4,6 +4,7 @@ import { AudioSystem } from "../src/engine/AudioSystem.js";
 import { SaveSystem } from "../src/engine/SaveSystem.js";
 import { accordionCue } from "../src/content/chapter1/audio.js";
 import { chapter1 } from "../src/content/chapter1/index.js";
+import {game as lifecycleGame} from './helpers/restart-lifecycle-fixture.js';
 import { archiveOpenRule } from "../src/content/chapter1/archive.js";
 
 test("volume migrates old saves, persists zero, and clamps invalid levels", () => {
@@ -33,11 +34,14 @@ test("volume changes live gain and stays silent while muted", () => {
   assert.equal(gain, 0);
 });
 
-test("all accordion performance routes play the phrase, but using the strap does not", () => {
+test("all accordion performance routes play the phrase, but using the strap does not", async () => {
   const item = chapter1.items.find(item => item.id === "item.accordion");
   for (const rule of [...item.selfUseRules, ...item.targetUseRules]) assert.equal(rule.soundCue, accordionCue);
   const tony = chapter1.scenes.find(scene => scene.id === "scene.chapter1.mehana").npcs.find(npc => npc.id === "npc.tony_fridge");
-  assert.equal(tony.itemUseRules.find(rule => rule.itemId === "item.accordion").soundCue, accordionCue);
+  const g=lifecycleGame();await g.changeScene('scene.chapter1.mehana');g.inventory.add('item.accordion');
+  const played=[];g.audio.play=cue=>played.push(cue);
+  assert.equal(g.useInventoryItemOnTarget('item.accordion',tony),true);
+  assert.deepEqual(played,[accordionCue],'real Tony dispatch uses current generic accordion performance');
   assert.equal(archiveOpenRule.soundCue, undefined);
   assert.ok(Math.max(...accordionCue.notes.map(note => note.at + note.duration)) < 2.5);
 });

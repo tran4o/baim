@@ -1,4 +1,5 @@
 import { firstMatchingRule, requirementsMet } from './EffectSystem.js';
+import { childPhotoRecovery } from '../content/chapter1/photoQuest.js';
 
 export const CURSOR_ART = Object.freeze({
   look: { id: 'LOOK-A', hotspot: [2, 2] },
@@ -9,7 +10,7 @@ export const CURSOR_ART = Object.freeze({
 export const NEUTRAL_CURSOR_ART = Object.freeze({ id: 'N-C', hotspot: [4, 3] });
 
 export function cursorInteractionBlocked(game) {
-  return Boolean(game.editMode || game.devHome || game.simpleAnimTest || game.puzzleOpen || game.inspectedItemId
+  return Boolean(game.editMode || game.devHome || game.simpleAnimTest || game.objectCloseup || game.puzzleOpen || game.inspectedItemId
     || game.sceneAction?.active || game.menuOpen || game.paused || game.dialogue?.current
     || game.sceneTransitionPending || game.player?.actionSequence || game.player?.animation === 'action');
 }
@@ -42,15 +43,18 @@ export function cursorTargetSupportsAction(game, target, verb = game.selectedVer
     const rule = firstMatchingRule(target.talkRules, context);
     return rule ? accepts(rule) : Boolean(target.talkKey || target.dialogueId);
   }
+  // Game routes both verbs to the same puzzle/recovery handler.
+  if ((verb === 'use' || verb === 'take') && target.puzzleId === 'photo_cupboard') {
+    return !game.state.flags?.photoCupboardSolved || requirementsMet(childPhotoRecovery.requirements, context);
+  }
   if (verb === 'take' && target.takeItemId) {
     const rule = firstMatchingRule(target.takeRules, context);
     return rule ? accepts(rule) : true;
   }
   if (verb === 'use') {
-    if (target.puzzleId === 'photo_cupboard') return !game.state.flags?.photoCupboardSolved;
     if (target.endingTrigger) return !game.state.chapter1Completed
       && requirementsMet(target.endingTrigger.requirements, context);
-    return Boolean(target.useDialogueId) || accepts(firstMatchingRule(target.useRules, context));
+    return Boolean(target.objectCloseup || target.useDialogueId) || accepts(firstMatchingRule(target.useRules, context));
   }
   return false;
 }
@@ -114,14 +118,17 @@ export class ActionCursor {
     }
     const point = game.renderer.screenToWorld(pointer.x, pointer.y);
     const target = !cursorInteractionBlocked(game) && underPointer === this.canvas ? game.sceneTargetAt(point) : null;
-    const verb = target && target.kind !== 'exit' ? game.selectedVerb : 'neutral';
+    const closeupButton=game.objectCloseup&&!game.puzzleOpen ? underPointer.closest?.('.object-closeup-item[data-closeup-action]') : null;
+    const closeupVerb=closeupButton?.dataset.closeupAction;
+    const verb = closeupButton&&['take','use'].includes(closeupVerb) ? closeupVerb : target && target.kind !== 'exit' ? game.selectedVerb : 'neutral';
     const art = verb === 'neutral' ? NEUTRAL_CURSOR_ART : CURSOR_ART[verb], image = this.images[verb];
     if (!art || !image?.complete || !image.naturalWidth) {
       this.overlay.style.display = 'none';
       return;
     }
-    const active = verb !== 'neutral' && cursorTargetSupportsAction(game, target);
-    const key = `${verb}:${target?.id || 'ground'}:${active}:${game.inventoryUseItemId || ''}`;
+    const active = closeupButton ? !closeupButton.disabled : verb !== 'neutral' && cursorTargetSupportsAction(game, target);
+    const targetId=closeupButton?.dataset.itemId || target?.id || '';
+    const key = `${verb}:${targetId || 'ground'}:${active}:${game.inventoryUseItemId || ''}`;
     if (key !== this.key) { this.key = key; this.startedAt = now; }
     const frame = cursorFrameAt(active, now - this.startedAt);
     this.ctx.clearRect(0, 0, 64, 64);
@@ -132,7 +139,7 @@ export class ActionCursor {
     this.overlay.dataset.verb = verb;
     this.overlay.dataset.active = String(active);
     this.overlay.dataset.frame = String(frame);
-    this.overlay.dataset.target = target?.id || '';
+    this.overlay.dataset.target = targetId;
     this.canvas.style.cursor = 'none';
   }
 }

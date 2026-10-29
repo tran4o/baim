@@ -1,3 +1,4 @@
+import { apartmentWindowActions, apartmentWindowPresentation } from "./apartmentWindow.generated.js";
 import { accordionCue, footstepSurfaces } from "./audio.js";
 import { electionObjectGeometry } from "./sceneObjectGeometry.generated.js";
 import { electionScene } from "./election.js";
@@ -11,9 +12,10 @@ import { sceneLayerGeometry } from "./sceneLayers.generated.js";
 import { openingLookRules, kioskPaperRule, campaignPostedRule, campaignPosterRules } from "./campaign.js";
 import { mayorOfficeScene } from "./mayorOffice.js";
 import { mayorOfficeObjectGeometry } from "./sceneObjectGeometry.generated.js";
-import { pepaItemRules, diplomaTakeRule } from './photoQuest.js';
+import { adultPhotoReward, pepaItemRules, diplomaTakeRule } from './photoQuest.js';
 import { stageToniTable } from './toniTable.js';
 import { wireEntrances } from './entrances.js';
+import { wardrobeCloseup } from './wardrobe.js';
 
 const rawScenes = [
   archiveScene,
@@ -22,16 +24,18 @@ const rawScenes = [
     id: "scene.chapter1.apartment",
     titleKey: "scene.chapter1.apartment.title",
     palette: { sky: "#4d6f86", wall: "#735f49", floor: "#2f2a23" },
+    characterPlacement: {"characterId":"npc.bai_mitko","sourceWidth":399,"sourceHeight":599,"w":318,"h":478,"westX":-180.7220636737793,"eastX":-137.2779363262207,"y":-402.939745646501},
+    interactionPresentation: apartmentWindowPresentation,
     movementSpeed: 70,
-    playerStart: { x: 1000, y: 565 },
+    playerStart: { x: 980, y: 515 },
     walkPolygons: apartmentWalkGeometry.walkPolygons,
     walkMask: apartmentWalkGeometry.walkMask,
-    perspectiveScale: { horizonY: 430, bottomY: 600, far: 0.76, near: 1.12 },
+    perspectiveScale: { horizonY: 300, bottomY: 700, far: 0.76, near: 1.12 },
     anchors: {
       door: { x: 1115, y: 500 },
       mirror: { x: 690, y: 420 },
       table: { x: 415, y: 510 },
-      baiMitkoSpawn: { x: 1000, y: 565 }
+      baiMitkoSpawn: { x: 980, y: 515 }
     },
     foregroundLayers: sceneLayerGeometry["scene.chapter1.apartment"]?.foregroundLayers || [],
     exits: [
@@ -45,13 +49,13 @@ const rawScenes = [
       }
     ],
     interactables: [
-      {
-        id: 'hotspot.apartment.photo_cupboard', kind: 'hotspot',
-        nameKey: 'photoquest.cupboard', lookKey: 'photoquest.cupboard_look',
-        rect: { x: 825, y: 130, w: 165, h: 355 },
-        interactionApproach: { x: 930, y: 550 }, interactionApproachExact: true,
-        puzzleId: 'photo_cupboard'
-      },
+      { id: 'hotspot.apartment.adult_photo', kind: 'hotspot',
+        nameKey: 'photoquest.photo_name', lookKey: 'photoquest.photo_desc',
+        rect: {x:435,y:108,w:105,h:120}, takeItemId:'item.mitko_photo',
+        requirements: adultPhotoReward.requirements,
+        takeEffects: [{type:'setFlag',key:'adultPhotoTaken'}],
+        interactionApproach:{x:600,y:490}, interactionApproachExact:true,
+        takeMessageKey:'photoquest.adult_found' },
       {
         id: "window",
         kind: "hotspot",
@@ -59,17 +63,7 @@ const rawScenes = [
         rect: { x: 145, y: 75, w: 240, h: 280 },
         requirements: { notFlags: ["apartmentWindowOpen"] },
         lookKey: "look.apartment.window.closed",
-        actions: {
-          use: {
-            approachCell: { x: 16, y: 23 },
-            requireExactApproach: true,
-            facing: "west",
-            animation: "opensWindow",
-            holdFinalFrame: false,
-            effectsOnComplete: [{ type: "setFlag", key: "apartmentWindowOpen", value: true }],
-            messageKey: "msg.apartment.window_opened"
-          }
-        }
+        actions: { use: apartmentWindowActions.open }
       },
       {
         id: "window.open",
@@ -78,21 +72,11 @@ const rawScenes = [
         rect: { x: 340, y: 50, w: 125, h: 340 },
         requirements: { flags: ["apartmentWindowOpen"] },
         lookKey: "look.apartment.window.open",
-        actions: {
-          use: {
-            approachCell: { x: 24, y: 25 },
-            requireExactApproach: true,
-            facing: "west",
-            animation: "opensWindow",
-            reverseAnimation: true,
-            holdFinalFrame: false,
-            effectsOnComplete: [{ type: "setFlag", key: "apartmentWindowOpen", value: false }],
-            messageKey: "msg.apartment.window_closed"
-          }
-        }
+        actions: { use: apartmentWindowActions.close }
       },
       {
         id: "hotspot.apartment.accordion",
+        enabled: false, // Owner leaves this separate object unplaced until later.
         kind: "hotspot",
         nameKey: "item.accordion.name",
         rect: { x: 1120, y: 375, w: 150, h: 190 },
@@ -100,7 +84,8 @@ const rawScenes = [
         takeItemId: "item.accordion",
         hiddenWhenItemOwned: "item.accordion",
         restoreOnDrop: true,
-        flagOnTake: "hasAccordion"
+        flagOnTake: "hasAccordion",
+        interactionApproach:{x:650,y:570},interactionApproachExact:true
       },
       {
         id: "hotspot.apartment.rakia_bottle",
@@ -142,7 +127,9 @@ const rawScenes = [
       },
       {
         id: "hotspot.apartment.unpaid_bills",
+        enabled: false, // Owner removed the optional papers from the table.
         kind: "hotspot",
+        hitPriority:10,
         nameKey: "item.unpaid_bills.name",
         rect: { x: 265, y: 375, w: 245, h: 95 },
         lookKey: "item.unpaid_bills.desc",
@@ -152,7 +139,7 @@ const rawScenes = [
         flagOnTake: "hasUnpaidBills",
         actions: {
           take: {
-            approach: { x: 390, y: 570 },
+            approach: { x: 650, y: 510 },
             requireExactApproach: true,
             facing: "west",
             animation: "take",
@@ -173,6 +160,8 @@ const rawScenes = [
         kind: "hotspot",
         nameKey: "hotspot.tv.name",
         rect: { x: 0, y: 285, w: 125, h: 160 },
+        television: { flag: 'apartmentTvOn', screen: { x: 53, y: 268, w: 45, h: 59 } },
+        interactionApproach: { x: 262.5, y: 507.5 }, interactionApproachExact: true,
         lookKey: "look.apartment.tv",
         lookRules: openingLookRules,
         useRules: openingLookRules
@@ -182,7 +171,9 @@ const rawScenes = [
         kind: "hotspot",
         nameKey: "hotspot.wardrobe.name",
         rect: { x: 805, y: 105, w: 240, h: 410 },
-        lookKey: "look.apartment.wardrobe"
+        lookKey: "look.apartment.wardrobe",
+        objectCloseup: wardrobeCloseup,
+        interactionApproach: { x: 1000, y: 515 }, interactionApproachExact: true
       },
       {
         id: "hotspot.apartment.table",
@@ -191,14 +182,8 @@ const rawScenes = [
         rect: { x: 225, y: 385, w: 280, h: 175 },
         lookKey: "look.apartment.table"
       },
-      {
-        id: "hotspot.apartment.campaign_poster",
-        kind: "hotspot",
-        nameKey: "hotspot.campaign_poster.name",
-        rect: { x: 500, y: 160, w: 150, h: 155 },
-        lookKey: "look.apartment.poster",
-        lookRules: openingLookRules
-      }
+      { id:'hotspot.apartment.patriot_photos',kind:'hotspot',nameKey:'hotspot.apartment.wardrobe.name',
+        rect:{x:1060,y:280,w:220,h:90},lookKey:'look.apartment.wardrobe' }
     ],
     npcs: []
   },
@@ -240,7 +225,7 @@ const rawScenes = [
         nameKey: "exit.to_apartment",
         rect: { x: 10, y: 485, w: 190, h: 100 },
         targetSceneId: "scene.chapter1.apartment",
-        targetPosition: { x: 1000, y: 565 }
+        targetPosition: { x: 980, y: 515 }
       },
       {
         id: "exit.square.to_mehana",
@@ -459,7 +444,7 @@ const rawScenes = [
             itemId: "item.fountain_water_bottle",
             requirements: {
               items: ["item.fountain_water_bottle"],
-              flags: ["tonyChallengeStarted", "tonyDistracted"],
+              flags: ["tonyChallengeStarted"],
               state: { swappedOwnRakiaWithWater: false, tonyVote: false }
             },
             effects: [
@@ -467,33 +452,6 @@ const rawScenes = [
               { type: "setState", key: "swappedOwnRakiaWithWater", value: true }
             ],
             messageKey: "msg.water_swap_ready"
-          },
-          {
-            itemId: "item.fountain_water_bottle",
-            requirements: {
-              items: ["item.fountain_water_bottle"],
-              flags: ["tonyChallengeStarted"],
-              notFlags: ["tonyDistracted", "tonyCaughtWaterAttempt"],
-              state: { swappedOwnRakiaWithWater: false, tonyVote: false }
-            },
-            effects: [
-              { type: "setFlag", key: "tonyCaughtWaterAttempt" },
-              { type: "adjustState", key: "suspicion", amount: 3 }
-            ],
-            messageKey: "msg.water_swap_watched",
-            reject: true
-          },
-          {
-            itemId: "item.fountain_water_bottle",
-            requirements: {
-              items: ["item.fountain_water_bottle"],
-              flags: ["tonyChallengeStarted", "tonyCaughtWaterAttempt"],
-              notFlags: ["tonyDistracted"],
-              state: { swappedOwnRakiaWithWater: false, tonyVote: false }
-            },
-            effects: [],
-            messageKey: "msg.water_swap_still_watched",
-            reject: true
           }
         ]
       },
@@ -628,16 +586,6 @@ const rawScenes = [
               reject: true
             })
           ),
-          {
-            itemId: "item.accordion",
-            requirements: {
-              flags: ["tonyChallengeStarted"],
-              notFlags: ["tonyDistracted"],
-              state: { tonyVote: false }
-            },
-            effects: [{ type: "setFlag", key: "tonyDistracted" }],
-            soundCue: accordionCue, messageKey: "msg.accordion_tony"
-          },
           {
             itemId: "item.glass_of_water",
             requirements: {

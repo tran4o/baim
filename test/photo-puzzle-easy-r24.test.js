@@ -1,0 +1,32 @@
+import test from'node:test';import assert from'node:assert/strict';import{readFileSync}from'node:fs';import{createHash}from'node:crypto';
+import{PHOTO_PUZZLE,initialPuzzle,movePuzzle,puzzleSolved,puzzleHint,validPuzzle}from'../src/engine/SlidingBlockPuzzle.js';
+import{EASY_PHOTO_PUZZLE,EASY_PHOTO_PUZZLE_ID,MEDIUM_PHOTO_PUZZLE,FIRST_PHOTO_PUZZLE_VIEW,initialPhotoPuzzle,validPhotoPuzzle,normalizeFirstPhotoPuzzleSave}from'../src/content/chapter1/photoPuzzleEasy.js';
+import{R24_DEFAULT_SAVE as DEFAULT_SAVE,R24_SaveSystem as SaveSystem}from'./helpers/photo-puzzle-r24-history.js';import{stripPhotoPuzzleEasyR24}from'./helpers/photo-puzzle-easy-r24-preservation.js';
+const ids=['blue','red3','red4','yellow2','yellow5'],reload=s=>new SaveSystem({getItem:()=>JSON.stringify(s)}).load(),sha=b=>createHash('sha256').update(b).digest('hex');
+test('named five-block easy board is the first-photo default with an exact three-slide hint route',()=>{
+ assert.equal(DEFAULT_SAVE.photoPuzzle.definitionId,EASY_PHOTO_PUZZLE_ID);assert.deepEqual(EASY_PHOTO_PUZZLE.pieces.map(p=>p.id),ids);assert.equal(EASY_PHOTO_PUZZLE.pieces.length,5);assert.equal(MEDIUM_PHOTO_PUZZLE,PHOTO_PUZZLE);assert.equal(PHOTO_PUZZLE.pieces.length,10);
+ let state=initialPhotoPuzzle(),route=[];while(!puzzleSolved(state,EASY_PHOTO_PUZZLE)&&route.length<5){const hint=puzzleHint(state,EASY_PHOTO_PUZZLE);assert.ok(hint);route.push([hint.id,hint.dx,hint.dy]);state=movePuzzle(state,hint.id,hint.dx,hint.dy,EASY_PHOTO_PUZZLE);}assert.deepEqual(route,[['red3',-1,0],['red4',1,0],['blue',0,1]]);assert.ok(puzzleSolved(state,EASY_PHOTO_PUZZLE));assert.equal(state.moves,3);assert.equal(state.definitionId,EASY_PHOTO_PUZZLE_ID);
+});
+test('no zero/one/two-slide solution exists; removed pieces cannot act as invisible blockers',()=>{
+ let layer=[initialPhotoPuzzle()];for(let depth=0;depth<=2;depth++){assert.ok(layer.every(s=>!puzzleSolved(s,EASY_PHOTO_PUZZLE)));if(depth<2)layer=layer.flatMap(s=>EASY_PHOTO_PUZZLE.pieces.flatMap(p=>[[0,-1],[-1,0],[1,0],[0,1]].map(([dx,dy])=>movePuzzle(s,p.id,dx,dy,EASY_PHOTO_PUZZLE)).filter(Boolean)));}
+ const s=initialPhotoPuzzle();assert.equal(movePuzzle(s,'blue',0,1,EASY_PHOTO_PUZZLE),null);assert.equal(movePuzzle(s,'red1',-1,0,EASY_PHOTO_PUZZLE),null);assert.equal(movePuzzle(s,'red3',0,1,EASY_PHOTO_PUZZLE),null);assert.ok(movePuzzle(s,'red3',-1,0,EASY_PHOTO_PUZZLE));assert.ok(movePuzzle(s,'red4',1,0,EASY_PHOTO_PUZZLE));
+});
+test('default save/reload preserves easy progress and rejects extra or stale definition keys',()=>{
+ const s=structuredClone(DEFAULT_SAVE);s.photoPuzzle=movePuzzle(s.photoPuzzle,'red3',-1,0,EASY_PHOTO_PUZZLE);assert.deepEqual(reload(s).photoPuzzle,s.photoPuzzle);assert.ok(validPhotoPuzzle(s.photoPuzzle));
+ const extra={...initialPuzzle(),definitionId:EASY_PHOTO_PUZZLE_ID};assert.equal(validPuzzle(extra,EASY_PHOTO_PUZZLE),true,'generic geometry alone is insufficient for schema binding');assert.equal(validPhotoPuzzle(extra),false);const old=structuredClone(DEFAULT_SAVE);old.photoPuzzle=extra;const r=reload(old);assert.deepEqual(r.photoPuzzle,initialPhotoPuzzle());assert.deepEqual(r.photoPuzzleMediumPreserved,extra);
+});
+test('old unfinished ten-piece progress is archived byte-for-JSON exactly and easy starts truly sparse',()=>{
+ const old=structuredClone(DEFAULT_SAVE);old.photoPuzzle=movePuzzle(initialPuzzle(),'yellow1',0,-1);old.flags.keepExistingFlag=true;old.influence=29;const before=JSON.stringify(old.photoPuzzle),r=reload(old);assert.equal(JSON.stringify(r.photoPuzzleMediumPreserved),before);assert.deepEqual(r.photoPuzzle,initialPhotoPuzzle());assert.equal(Object.keys(r.photoPuzzle.positions).length,5);assert.equal(r.flags.keepExistingFlag,true);assert.equal(r.influence,29);assert.deepEqual(reload(r),r);
+});
+test('old solved/rewarded progress is not reopened or awarded/reset by migration',()=>{
+ let medium=initialPuzzle();while(!puzzleSolved(medium)){const h=puzzleHint(medium);medium=movePuzzle(medium,h.id,h.dx,h.dy);}const old=structuredClone(DEFAULT_SAVE);old.photoPuzzle=medium;old.flags={photoCupboardSolved:true,childPhotoRecovered:true,adultPhotoTaken:true,campaignPosted:true};old.inventory=['item.mitko_child_photo','item.mitko_photo'];old.chapter1Completed=true;const r=reload(old);assert.deepEqual(r.photoPuzzleMediumPreserved,medium);assert.ok(puzzleSolved(r.photoPuzzle,EASY_PHOTO_PUZZLE));assert.equal(r.photoPuzzle.moves,medium.moves);assert.equal(r.flags.photoCupboardSolved,true);assert.equal(r.flags.childPhotoRecovered,true);assert.equal(r.flags.campaignPosted,true);assert.equal(r.chapter1Completed,true);assert.deepEqual(r.inventory,old.inventory);assert.deepEqual(reload(r),r);
+});
+test('invalid current puzzle resets to easy while preserving prior medium archive and earned flags',()=>{
+ const s=structuredClone(DEFAULT_SAVE);s.photoPuzzle.positions.blue.x=99;s.photoPuzzleMediumPreserved=initialPuzzle();s.flags.photoCupboardSolved=true;normalizeFirstPhotoPuzzleSave(s);assert.deepEqual(s.photoPuzzle,initialPhotoPuzzle());assert.deepEqual(s.photoPuzzleMediumPreserved,initialPuzzle());assert.equal(s.flags.photoCupboardSolved,true);
+});
+test('derived GLB has exactly the five active scene roots and original medium/native remain exact',()=>{
+ const bytes=readFileSync(FIRST_PHOTO_PUZZLE_VIEW.modelUrl),g=JSON.parse(bytes.subarray(20,20+bytes.readUInt32LE(12)).toString().trim());assert.deepEqual(g.nodes.filter(n=>n.extras?.pieceId).map(n=>n.extras.pieceId).sort(),[...ids].sort());assert.equal(g.asset.extras.variantId,EASY_PHOTO_PUZZLE_ID);
+ const preserved=JSON.parse(readFileSync('../extraFixes/apartment-two-photo-20261024/photo-puzzle-easy-r24/medium-preserved.json'));for(const f of preserved.files){if(f.path==='src/engine/SlidingPuzzleView.js')continue;assert.equal(sha(readFileSync(f.path)),f.sha256,'unchanged medium source/model '+f.path);assert.equal(sha(readFileSync(f.preservedFile)),f.sha256);}
+ const derivation=JSON.parse(readFileSync('../extraFixes/apartment-two-photo-20261024/photo-puzzle-easy-r24/model-derivation.json'));assert.equal(derivation.binTailByteExact,true);assert.equal(derivation.retainedRootTransformsExact,true);
+});
+test('easy incremental inverse restores exact pre-easy sources and rejects tampering',()=>{const f=JSON.parse(readFileSync('test/fixtures/photo-puzzle-easy-r24-deltas.json'));for(const[p,r]of Object.entries(f.records)){const s=readFileSync(p,'utf8');assert.equal(stripPhotoPuzzleEasyR24(p,s,true),r.before);assert.throws(()=>stripPhotoPuzzleEasyR24(p,s+'\n// unknown',true));}});

@@ -1,3 +1,4 @@
+import { interactionLayerPresentation, scenePosePlacement } from "./InteractionPresentation.js";
 import { requirementsMet } from "./EffectSystem.js";
 import { clamp } from "./geometry.js";
 import { characterHeight } from "./CharacterRenderMath.js";
@@ -7,8 +8,20 @@ import { intoxicationSway } from "./IntoxicationSystem.js";
 import { sceneZDepthT } from "./DepthMath.js";
 import { drawSceneEffect } from "./SceneEffects.js";
 import {findSceneSpeaker} from './SceneGeometry.js';
+import { drawTelevisionScreen } from './TelevisionScreen.js';
 
 const PLAYER_SHADOW_FULL_SIZE_Y_OFFSET = -4;
+
+// Fixed, source-measured clip registration is scene-local. It must never fit
+// individual frames: raising an arm must not shrink the character's body.
+export function sceneRegisteredFrame(frame, definition, sceneId) {
+  const rules = definition?.render?.sceneRegistrations?.[sceneId];
+  const rule = rules?.find(r => r.slot === frame?.slot || (r.prefix && frame?.slot?.startsWith(r.prefix)));
+  return rule ? { ...frame, registration: { visualHeight: rule.visualHeight, baselineY: rule.baselineY },
+    scale: rule.scale ?? frame.scale,
+    ...(Number.isFinite(rule.offsetY) ? { offsetY: rule.offsetY } : {}),
+    ...(rule.anchor ? { anchor: rule.anchor } : {}) } : frame;
+}
 
 export function stopRenderOffsetX(frame, frameIndex, mirrored = false) {
   const startOffset = Number(frame?.stopRenderOffsetXStart);
@@ -60,6 +73,15 @@ export function animationRenderOffset(frame, frameIndex, mirrored = false) {
 export function animationRenderMirrored(frame, mirrored = false) {
   if (typeof frame?.flipX === "boolean") return frame.flipX;
   return Boolean(mirrored);
+}
+
+// Source-space visibility masks follow the existing hand; they do not move,
+// scale, redraw or retime any animation frame or affect the actor's body.
+export function actionHandOcclusionPolygon(sequence, frame, frameIndex) {
+  const config = sequence?.handOcclusion;
+  if (!config || frame?.slot !== config.frameSlot) return null;
+  const polygon = config.sourcePolygons?.[frameIndex];
+  return polygon?.length >= 3 ? polygon : null;
 }
 
 export function sceneLayerAnimationFrame(animation, timeMs = 0) {
@@ -271,6 +293,8 @@ export class Renderer {
     if (this.ambientSceneId !== scene.id) { this.ambientSceneId = scene.id; this.ambientClocks = new Map(); }
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     const hasRealBackground = this.drawBackground(scene);
+    const television=scene.interactables?.find(target=>target.television)?.television;
+    if(television){const key='television:'+television.flag;if(this.game.state.flags[television.flag]){const clock=ambientLayerClock(this.ambientClocks.get(key),this.game.lastTime||0,Boolean(this.game.paused||this.game.menuOpen||this.game.objectCloseup||this.game.puzzleOpen),true);this.ambientClocks.set(key,clock);drawTelevisionScreen(ctx,television.screen,clock.elapsed,k=>this.game.t(k));}else this.ambientClocks.delete(key);}
     const actors = scene.playerMode !== "closeup" && (!this.game.editMode || this.game.sceneEditor?.shouldRenderPlayer())
       ? [this.game.player]
       : [];
@@ -533,7 +557,9 @@ export class Renderer {
   }
 
   drawSceneZLayers(scene, actors) {
+    const presentation = interactionLayerPresentation(scene, this.game.player, this.game.state?.flags);
     const entries = [
+      ...(presentation ? [{ kind: "interactionLayer", presentation, zIndex: presentation.behindActor ? 1000 : sceneZIndexForPoint(scene, this.game.player.position) - 0.01 }] : []),
       ...actors.map((actor) => ({ kind: "actor", actor, zIndex: sceneZIndexForPoint(scene, actor.position) })),
       ...scene.interactables
         .filter((target) => target.droppedItemsPileAsset)
@@ -559,7 +585,11 @@ export class Renderer {
       return bz - az;
     });
     for (const entry of entries) {
-      if (entry.kind === "actor") this.drawPlayer(entry.actor);
+      if (entry.kind === "interactionLayer") {
+        const p = entry.presentation, image = this.game.assets.getSceneImage(scene.id, p.asset);
+        if (this.game.assets.isLoaded(image)) this.ctx.drawImage(image, p.sx, p.sy, p.width, p.height, p.left, p.top, p.width, p.height);
+      }
+      else if (entry.kind === "actor") this.drawPlayer(entry.actor);
       else if (entry.kind === "hover") this.drawHoveredTarget(entry.target);
       else if (entry.kind === "droppedItemsPile") this.drawDroppedItemsPile(scene, entry.target);
       else if (entry.kind === "debugTarget") this.drawDebugTarget(entry.target);
@@ -1203,6 +1233,7 @@ export class Renderer {
       }
     }
     const sprite = spriteInfo.image;
+    spriteInfo = { ...spriteInfo, frame: sceneRegisteredFrame(spriteInfo.frame, definition, this.game.currentScene.id) };
     const walkBob = p.animation === "walk" ? Math.sin(p.animationTime * 16) * 5 : 0;
     if (!this.game.assets.isLoaded(sprite)) return;
     const height = characterHeight(definition, this.game.currentScene, p.position);
@@ -1228,8 +1259,9 @@ export class Renderer {
     const visualHeight = currentVisualBounds?.h || (preserveFrameLayout ? sourceHeight : boundsForSize?.h || sourceHeight);
     const animationScale = animationRenderScale(spriteInfo.frame);
     const scale = (height / visualHeight) * animationScale;
-    const width = sourceWidth * scale;
-    const drawHeight = sourceHeight * scale;
+    const placement = spriteInfo.frame?.fixedPlacement || scenePosePlacement(this.game.currentScene, p, spriteInfo.frame, animationRenderMirrored(spriteInfo.frame, spriteInfo.mirrored));
+    const width = placement?.w || sourceWidth * scale;
+    const drawHeight = placement?.h || sourceHeight * scale;
     const anchor = spriteInfo.frame?.anchor || definition.render.anchor;
     const useRealWalk = p.animation === "walk" && spriteInfo.frame;
     const verticalOffset = useRealWalk ? 0 : walkBob;
@@ -1238,7 +1270,7 @@ export class Renderer {
     const renderOffsetX = stopRenderOffsetX(spriteInfo.frame, frameIndex, mirrored) + renderOffset.x;
     const renderOffsetY = stopRenderOffsetY(spriteInfo.frame, frameIndex) + renderOffset.y;
     const sway = intoxicationSway(this.game.state?.rakiaGlasses, p.animationTime);
-    const drawX = p.position.x + renderOffsetX + sway.x - width * anchor.x;
+    const drawX = placement ? p.position.x + placement.x : p.position.x + renderOffsetX + sway.x - width * anchor.x;
     let baselineOffset = preserveFrameLayout && spriteInfo.frame
       ? stableBounds?.baselineY || spriteInfo.frame.baselineY || sourceHeight
       : spriteInfo.frame?.baselineY && boundsForSize ? spriteInfo.frame.baselineY - boundsForSize.y : sourceHeight * anchor.y;
@@ -1250,7 +1282,7 @@ export class Renderer {
         baselineOffset += (groundedBaseline - baselineOffset) * progress;
       }
     }
-    const drawY = p.position.y + renderOffsetY + sway.y - baselineOffset * scale + verticalOffset;
+    const drawY = placement ? p.position.y + placement.y : p.position.y + renderOffsetY + sway.y - baselineOffset * scale + verticalOffset;
     ctx.save();
     ctx.fillStyle = "rgba(0, 0, 0, 0.26)";
     ctx.beginPath();
@@ -1273,6 +1305,23 @@ export class Renderer {
         ? { x: 0, y: 0, w: spriteInfo.frame.frameWidth, h: spriteInfo.frame.frameHeight }
         : this.frameContentBounds(spriteInfo.frame, frameIndex);
       this.drawFrameImage(sprite, frameIndex, spriteInfo.frame, bounds, drawX, drawY, width, drawHeight, mirrored);
+      const handOcclusion = p.actionSequence?.sequence?.handOcclusion;
+      const handPolygon = actionHandOcclusionPolygon(p.actionSequence?.sequence, spriteInfo.frame, frameIndex);
+      if (handPolygon) {
+        const occluder = this.game.assets.getSceneImage(this.game.currentScene.id, handOcclusion.asset);
+        if (this.game.assets.isLoaded(occluder)) {
+          ctx.save();
+          ctx.beginPath();
+          handPolygon.forEach(([x, y], index) => {
+            const px = drawX + (mirrored ? sourceWidth - x : x) * width / sourceWidth;
+            const py = drawY + y * drawHeight / sourceHeight;
+            if (index) ctx.lineTo(px, py); else ctx.moveTo(px, py);
+          });
+          ctx.closePath(); ctx.clip();
+          ctx.drawImage(occluder, 0, 0);
+          ctx.restore();
+        }
+      }
     } else if (mirrored) {
       ctx.save();
       ctx.translate(drawX + width, 0);

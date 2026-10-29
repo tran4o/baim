@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, lstatSync, readFileSync, realpathSync, mkdirSync, readdirSync } from 'node:fs';
 import { resolve, join, relative, isAbsolute, parse } from 'node:path';
 
-export const PC_PRIMARY = 'C:/Users/SveBiS/Desktop/myStuff/2026_GitPro/baim-local-active';
+export const PC_PRIMARY = 'C:/Users/SveBiS/Desktop/myStuff/2026_GitPro/baim/.workspace/preview/baim-local-active';
 export const VPS_ROOT = '/home/ZeShad/baim';
 
 // Inspect every existing component, including junctions, before trusting realpath.

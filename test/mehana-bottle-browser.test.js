@@ -40,8 +40,7 @@ test('Mehana bottle chain through actual BG/EN gameplay, inspection, save/load a
    const shot=async(name,durationMs=1500)=>{phase=name;await advance(0);const path=`${root}/${language}-${String(frames.length).padStart(3,'0')}-${name}.png`;await page.screenshot({path});frames.push({path,durationMs,name});};
    const snapshot=()=>page.evaluate(()=>{const g=window.__comradeCandidateTest.game;return structuredClone(g.state);});
    const reload=async()=>{phase='reload-start';const before=await snapshot();await page.locator('img').evaluateAll(images=>Promise.all(images.filter(i=>i.src).map(i=>i.decode())));await page.waitForLoadState('networkidle');phase='reload-navigation';await page.reload();phase='reload-ready';await page.evaluate(()=>window.__comradeCandidateTest.ready);await advance(0);const after=await snapshot();assert.deepEqual(after.inventory,before.inventory);for(const k of ['tonyVote','babaStoyankaVote','swappedOwnRakiaWithWater','influence','suspicion'])assert.equal(after[k],before[k]);};
-   await verb('take');await click('hotspot.apartment.accordion');await settled();
-   assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.accordion')),true);
+   assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.accordion')),false,'bottle journey needs no accordion');
    await exit('exit.apartment.to_square','scene.chapter1.village_square');
    await exit('exit.square.to_mehana','scene.chapter1.mehana');
    assert.equal(await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;return g.targetAvailable(g.currentScene.interactables.find(t=>t.id==='hotspot.mehana.oil'));}),false);
@@ -67,11 +66,10 @@ test('Mehana bottle chain through actual BG/EN gameplay, inspection, save/load a
    await canvas.evaluate(c=>c.dispatchEvent(new Event('webglcontextlost',{cancelable:true})));await page.locator('.item-model-viewer[data-model-state=fallback] img').waitFor();await page.waitForFunction(()=>document.querySelector('.item-model-viewer img')?.naturalWidth>0);await shot('water-fallback');await page.locator('.received-item-screen > button:last-child').click();
    await talk('npc.baba_stoyanka');await choice('fountain.baba.choice.report');await shot('baba-support');
    await exit('exit.square.to_mehana','scene.chapter1.mehana');await talk('npc.tony_fridge');await choice('dialogue.tony.choice.challenge');await choice('dialogue.tony.choice.accept');await choice('dialogue.tony.choice.prepare');
-   await use('item.fountain_water_bottle','hotspot.mehana.bai_mitko_rakia_glass');assert.equal((await snapshot()).swappedOwnRakiaWithWater,false);const suspicion=(await snapshot()).suspicion;await shot('watched-refusal');
-   await use('item.fountain_water_bottle','hotspot.mehana.bai_mitko_rakia_glass');assert.equal((await snapshot()).suspicion,suspicion);
-   await talk('npc.mehana_waiter');await choice('dialogue.waiter.choice.water');await settled();await use('item.accordion','npc.tony_fridge');assert.equal((await snapshot()).flags.tonyDistracted,true);
+   const suspicion=(await snapshot()).suspicion;
+   await talk('npc.mehana_waiter');await choice('dialogue.waiter.choice.water');await settled();assert.equal(Boolean((await snapshot()).flags.tonyDistracted),false);
    await use('item.glass_of_water','hotspot.mehana.bai_mitko_rakia_glass');assert.equal((await snapshot()).swappedOwnRakiaWithWater,false);assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.glass_of_water')),true);await shot('glass-shortcut-refused');
-   await use('item.fountain_water_bottle','hotspot.mehana.bai_mitko_rakia_glass');assert.equal((await snapshot()).swappedOwnRakiaWithWater,true);assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.empty_rakia_bottle')),true);await shot('contest-prepared');await reload();
+   await use('item.fountain_water_bottle','hotspot.mehana.bai_mitko_rakia_glass');assert.equal((await snapshot()).swappedOwnRakiaWithWater,true);assert.equal((await snapshot()).suspicion,suspicion);assert.equal(Boolean((await snapshot()).flags.pepaMusicPlayed),false);assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.empty_rakia_bottle')),true);await shot('contest-prepared');await reload();
    await talk('npc.tony_fridge');await choice('dialogue.tony.choice.finish_challenge');
    assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.dialogue.current),null,'blackout closes the contest dialogue');
    await wait(()=>{const g=window.__comradeCandidateTest.game;return g.state.flags.tonyPassedOut&&!g.sceneAction.active;},'contest blackout completes');

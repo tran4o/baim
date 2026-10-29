@@ -1,7 +1,9 @@
+import { mountInspectionControls, INSPECTION_PROFILE } from './InspectionControls.js';
 // The scene remains 2D. Load the 3D dependencies only for an inspected item.
 export function mountItemModelViewer(host, { modelUrl, fallbackUrl, text, liquidColor = '#b77c00', inspection = 'bottle' }) {
   const documentView = inspection === 'document';
   host.dataset.inspectionProfile = documentView ? 'document' : 'bottle';
+  host.dataset.controlsProfile = INSPECTION_PROFILE.id;
   let disposed = false, cleanup = () => {}, resetView = () => {};
   const status = document.createElement('span');
   status.className = 'item-model-status'; status.textContent = text.loading;
@@ -89,44 +91,14 @@ export function mountItemModelViewer(host, { modelUrl, fallbackUrl, text, liquid
       if (!width || !height || disposed) return;
       paintBackdrop(); camera.aspect = width / height; fitDocument(); camera.updateProjectionMatrix(); renderer.setSize(width,height,false); render(); };
     const observer = new ResizeObserver(resize); observer.observe(host);
-    // Small front-facing inspection tilt. Repeated drags cannot accumulate past the limits.
-    const limit = Math.PI / 12;
-    let pointer = null, origin = null, pitch = 0, yaw = 0;
-    const down = event => {
-      if (event.button !== 0 || pointer !== null) return;
-      pointer = event.pointerId;
-      origin = { x:event.clientX, y:event.clientY, pitch, yaw };
-      canvas.setPointerCapture(pointer); canvas.focus(); event.preventDefault();
-    };
-    const move = event => {
-      if (event.pointerId !== pointer) return;
-      const radius = Math.max(1, Math.min(canvas.clientWidth, canvas.clientHeight) / 2);
-      yaw = T.MathUtils.clamp(origin.yaw + (event.clientX-origin.x)/radius*limit, -limit, limit);
-      pitch = T.MathUtils.clamp(origin.pitch + (event.clientY-origin.y)/radius*limit, -limit, limit);
-      pivot.rotation.set(pitch,yaw,0,'YXZ');
-      host.dataset.pitch = pitch.toFixed(6); host.dataset.yaw = yaw.toFixed(6); render();
-    };
-    const up = event => {
-      if (event.pointerId !== pointer) return;
-      const id=pointer; pointer=null; origin=null;
-      if (canvas.hasPointerCapture(id)) canvas.releasePointerCapture(id);
-    };
-    canvas.addEventListener('pointerdown',down); canvas.addEventListener('pointermove',move);
-    canvas.addEventListener('pointerup',up); canvas.addEventListener('pointercancel',up); canvas.addEventListener('lostpointercapture',up);
-    const wheel = event => {
-      event.preventDefault(); event.stopPropagation();
-      const pixels = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? canvas.clientHeight : 1);
-      const next = T.MathUtils.clamp(camera.zoom * Math.exp(-T.MathUtils.clamp(pixels,-200,200)*.0015),1,1.5);
-      if (next === camera.zoom) return;
-      camera.zoom = next; camera.updateProjectionMatrix(); render();
-    };
-    canvas.addEventListener('wheel',wheel,{passive:false});
+    const controls = mountInspectionControls(canvas, ({pitch,yaw,zoom}) => {
+      pivot.rotation.set(pitch,yaw,0,'YXZ'); camera.zoom=zoom; camera.updateProjectionMatrix();
+      host.dataset.pitch=pitch.toFixed(6); host.dataset.yaw=yaw.toFixed(6); render();
+    });
     const lost = event => { event.preventDefault(); fallback(); };
     canvas.addEventListener('webglcontextlost',lost);
     cleanup = () => { observer.disconnect();
-      canvas.removeEventListener('pointerdown',down);canvas.removeEventListener('pointermove',move);
-      canvas.removeEventListener('pointerup',up);canvas.removeEventListener('pointercancel',up);canvas.removeEventListener('lostpointercapture',up);
-      canvas.removeEventListener('wheel',wheel);
+      controls.dispose();
       canvas.removeEventListener('webglcontextlost',lost); releaseModel(model); model = null;
       backdropTexture.dispose(); envTarget.dispose(); renderer.dispose(); renderer.forceContextLoss(); };
     resize();

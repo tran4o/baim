@@ -1,6 +1,10 @@
+import { interactionSideFacing, canFaceStoppedInteraction, hasVerticalRest } from "./InteractionFacing.js";
 import { createReviewSaveSystem } from "./ReviewState.js";
 import { AudioSystem } from "./AudioSystem.js";
-import { ActionCursor } from './ActionCursor.js';
+import { ActionCursor, cursorTargetSupportsAction } from './ActionCursor.js';
+import { planRefusalApproach, refusalTargetPoint } from './RefusalApproach.js';
+import { createObjectCloseup } from './ObjectCloseupView.js';
+import { mountObjectProp } from './ObjectPropView.js';
 import { DialogueSystem } from "./DialogueSystem.js";
 import { applyEffects, firstMatchingRule, requirementsMet } from "./EffectSystem.js";
 import { resolveEnding } from "./EndingSystem.js";
@@ -13,8 +17,8 @@ import { Renderer } from "./Renderer.js";
 import { SceneIdleVariations, sceneIdleVariationsBlocked } from "./SceneIdleVariations.js";
 import { mountItemModelViewer } from "./ItemModelViewer.js";
 import { createSlidingPuzzle } from './SlidingPuzzleView.js';
-import { photoReward } from '../content/chapter1/photoQuest.js';
-import { initialPuzzle } from './SlidingBlockPuzzle.js';
+import { photoReward, childPhotoRecovery } from '../content/chapter1/photoQuest.js';
+import { FIRST_PHOTO_PUZZLE_VIEW, normalizeFirstPhotoPuzzleSave } from '../content/chapter1/photoPuzzleBeginner.js';
 import { SceneActionSequence } from "./SceneActionSequence.js";
 import { kiroOilSequence } from "../content/art/kiroOilHandover.generated.js";
 import { fountainRepairSequence } from "../content/chapter1/fountain.js";
@@ -118,6 +122,8 @@ export class Game {
       shortWalk: false,
       pendingInteraction: null,
       pendingFacingPoint: null,
+      interactionFacingPoint: null,
+      interactionFacingTargetId: null,
       interactionDebug: null,
       speed: this.sceneMovementSpeed(this.currentScene),
       animation: "idle",
@@ -226,12 +232,12 @@ export class Game {
     const dt = Math.min(0.05, (time - this.lastTime) / 1000 || 0);
     this.lastTime = time;
     this.updateTimedIntoxication();
-    if (this.puzzleOpen || this.paused || this.menuOpen || this.dialogue.current || this.devHome || this.editMode || this.state.chapter1Completed) this.audio.resetFootsteps();
+    if (this.objectCloseup || this.puzzleOpen || this.paused || this.menuOpen || this.dialogue.current || this.devHome || this.editMode || this.state.chapter1Completed) this.audio.resetFootsteps();
     if (this.simpleAnimTest) {
       this.updateSimpleAnim(dt);
     } else if (this.animLab) {
       this.player.animationTime += dt;
-    } else if (!this.puzzleOpen && !this.paused && !this.menuOpen && !this.dialogue.current && !this.sceneAction?.active) {
+    } else if (!this.objectCloseup && !this.puzzleOpen && !this.paused && !this.menuOpen && !this.dialogue.current && !this.sceneAction?.active) {
       this.player.animator.beginTick();
       const finishingStopFrame = this.finishingStopFrame();
       const feetBefore = { ...this.player.position };
@@ -247,6 +253,7 @@ export class Game {
       if (finishingStopFrame && this.player.animation === "idle") this.setIdleHoldFrame(finishingStopFrame.frame, finishingStopFrame.frameIndex);
       this.resolvePendingFacingPoint();
       this.resolvePendingInteraction();
+      this.resolveStoppedInteractionFacing();
       this.updateIdleVariants(dt);
       this.player.animationTime += dt;
       this.player.animator.fpsOverride = this.currentAnimationFps();
@@ -356,7 +363,7 @@ export class Game {
       this.releaseDialogueChoicePointerLock(event.pointerId);
     });
     window.addEventListener("keydown", (event) => {
-      if (this.puzzleOpen) return; // The modal owns Escape, arrows and focus trapping.
+      if (this.objectCloseup || this.puzzleOpen) return; // The modal owns Escape, arrows and focus trapping.
       if (this.inspectedItemId) {
         if (event.key === "Escape") { event.preventDefault(); this.closeItemInspection(); }
         if (event.key === "Tab") {
@@ -1046,6 +1053,10 @@ export class Game {
 
   startSpeechAnimationForMessage(message, options = {}) {
     if (!this.usesExternalCharacterAnimation() || !message || this.player.target || this.player.animation === "walk" || this.player.animation === "action") return;
+    if (this.player.position && !this.player.actionSequence && !this.sceneAction?.active) {
+      this.player.interactionFacingPoint ||= { ...this.player.position };
+      this.resolveStoppedInteractionFacing?.();
+    }
     const frame = options.reject ? this.randomRejectAnimation() : this.talkAnimationForMessage(message);
     if (!frame) return;
     this.assets?.preloadCharacterSlot?.(this.player.id, frame.slot);
@@ -1111,8 +1122,9 @@ export class Game {
     if (!actionName) return null;
     const facing = eastWestFallbackFacing(sequence.facing || this.player.facing) || "east";
     const byFacing = externalAnimationV1.actionAnimations?.[facing] || externalAnimationV1.actionAnimations?.east || {};
-    const frame = this.randomAnimationFrame(byFacing[actionName] || []);
-    return frame && sequence?.reverseAnimation ? { ...frame, reverseFrames: true } : frame;
+    const frame = sequence.animationFrame || this.randomAnimationFrame(byFacing[actionName] || []);
+    const renderFrame = frame && typeof sequence?.flipX === 'boolean' ? { ...frame, flipX: sequence.flipX } : frame;
+    return renderFrame && sequence?.reverseAnimation ? { ...renderFrame, reverseFrames: true } : renderFrame;
   }
 
   actionSequenceApproachPoint(sequence) {
@@ -1172,6 +1184,8 @@ export class Game {
     ) {
       this.applyInteractionActionSequenceEffect(this.player.actionSequence);
     }
+    const completeAfterMs = this.player.actionAnimation?.completeAfterMs;
+    if (completeAfterMs && this.player.animator.elapsed * 1000 < completeAfterMs) return;
     if (!this.player.animator?.isFinished()) return;
     this.completeInteractionActionSequence();
   }
@@ -1195,6 +1209,7 @@ export class Game {
       this.setIdleHoldFrame(frame, Math.max(0, (frame.frameCount || 1) - 1));
     }
     this.player.animation = "idle";
+    this.resolveStoppedInteractionFacing();
     if (actionSequence.effectSucceeded === false) return false;
     const effects = [...(actionSequence.sequence?.effectsOnComplete || [])];
     const flagOnComplete = actionSequence.sequence?.flagOnComplete;
@@ -1229,6 +1244,7 @@ export class Game {
   }
 
   handleWorldClick(point) {
+    if (this.objectCloseup) return;
     if (this.sceneAction?.active || this.sceneTransitionPending || this.player?.actionSequence || this.player?.animation === "action") return;
     if (this.selectedInventoryItemId && !this.inventoryUseItemId) {
       this.selectedInventoryItemId = null;
@@ -1250,6 +1266,7 @@ export class Game {
     if (destination && this.walkToPoint(destination, point)) {
       this.player.pendingInteraction = null;
       this.player.pendingFacingPoint = null;
+      this.player.interactionFacingPoint = null; this.player.interactionFacingTargetId = null;
       this.player.interactionDebug = {
         kind: "move",
         click: { ...point },
@@ -1260,7 +1277,7 @@ export class Game {
   }
 
   updateHoveredTarget(point) {
-    const blocked = this.puzzleOpen || this.inspectedItemId || this.sceneAction?.active || this.menuOpen || this.paused || this.dialogue.current
+    const blocked = this.objectCloseup || this.puzzleOpen || this.inspectedItemId || this.sceneAction?.active || this.menuOpen || this.paused || this.dialogue.current
       || this.sceneTransitionPending || this.player?.actionSequence || this.player?.animation === "action";
     const previousTargetId = this.hoveredTarget?.id || null;
     this.hoveredTarget = !blocked && point
@@ -1292,17 +1309,99 @@ export class Game {
   }
 
   handleTarget(target, clickPoint = null) {
-    if (this.puzzleOpen || this.inspectedItemId || this.sceneAction?.active) return;
+    if (this.objectCloseup || this.puzzleOpen || this.inspectedItemId || this.sceneAction?.active) return;
+    if (target.kind !== "exit") this.rememberInteractionTarget(target, clickPoint);
+    else { this.player.interactionFacingPoint = null; this.player.interactionFacingTargetId = null; }
     if (this.selectedVerb === VERBS.LOOK && !this.inventoryUseItemId && target.kind !== 'exit') {
       this.player.pendingInteraction = null;
-      this.player.pendingFacingPoint = null;
+      this.player.pendingFacingPoint = { ...this.player.interactionFacingPoint };
       if (this.player.target || this.player.animation === 'walk') requestWalkStop(this.player);
-      this.facePoint(this.targetReachPoint(target, clickPoint));
+      this.faceInteractionPoint(this.targetReachPoint(target, clickPoint));
       this.lookTarget(target);
+      return;
+    }
+    if (target.kind !== 'exit' && !cursorTargetSupportsAction(this, target)) {
+      if (this.player.actionSequence || this.player.animation === 'action') return;
+      this.approachUnavailableAction(target, clickPoint);
       return;
     }
     if (this.shouldApproachTargetBeforeAction(target, clickPoint)) return;
     this.performTargetAction(target);
+  }
+
+  approachUnavailableAction(target, clickPoint) {
+    const point = refusalTargetPoint(target, clickPoint);
+    const existing = this.player.pendingInteraction;
+    // An identical click must not restart the walk/stop cycle or compound its gap.
+    if (existing?.refusalOnly && existing.target.id === target.id
+      && existing.verb === this.selectedVerb && existing.inventoryUseItemId === this.inventoryUseItemId) return;
+    const definition = this.characterDefinitions?.['npc.bai_mitko'] || characterDefinitions['npc.bai_mitko'];
+    const height = characterHeight(definition, this.currentScene, this.player.position);
+    let anchor = target.interactionApproach;
+    const characterTarget = this.interactionCharacterTarget(target);
+    if (!anchor && characterTarget) {
+      const body = this.characterApproachBounds(characterTarget);
+      const scene = { ...this.currentScene, npcs: this.currentScene.npcs.filter(n => this.targetAvailable(n))
+        .map(n => ({ ...n, interactionBody: this.characterApproachBounds(n) })) };
+      anchor = planCharacterApproach(scene, { ...characterTarget, interactionBody: body }, this.player.position, height)?.point;
+    }
+    if (!anchor) {
+      for (const verb of [this.selectedVerb, VERBS.USE, VERBS.TALK, VERBS.TAKE]) {
+        anchor = this.actionSequenceApproachPoint(this.actionSequenceForTarget(target, verb));
+        if (anchor) break;
+      }
+    }
+    anchor ||= point && this.reachableTargetApproachPoint(this.targetFeetApproachPoint(point));
+    const interacting = Boolean(this.speechBubble || this.npcSpeechBubble || this.dialogue?.current);
+    const plan = interacting || this.currentScene.playerMode === 'closeup' || this.currentScene.playerMode === 'seated'
+      ? { point: { ...this.player.position }, path: [], reason: 'already-interacting' }
+      : planRefusalApproach(this.currentScene, this.player.position, anchor, point, height);
+    const pending = { target, verb: this.selectedVerb, inventoryUseItemId: this.inventoryUseItemId,
+      hand: point, approach: plan.point, refusalOnly: true };
+    this.player.interactionDebug = { kind: 'refusal-approach', targetId: target.id, ...plan };
+    this.player.pendingInteraction = pending;
+    this.player.pendingFacingPoint = point;
+    if (plan.path.length && this.walkToPoint(plan.point, point, { path: plan.path })) {
+      this.clearStatusMessage();
+      return;
+    }
+    if (this.player.target || this.player.animation === 'walk') requestWalkStop(this.player);
+    else this.resolvePendingInteraction();
+  }
+
+  refuseTargetAction(target) {
+    // Re-query current state. Preserve authored rejection effects (e.g. learning
+    // that the fountain is jammed), but never execute a newly successful action.
+    const nowAvailable = cursorTargetSupportsAction(this, target);
+    const context = this.effectContext(), itemId = this.inventoryUseItemId;
+    let rule;
+    if (itemId) {
+      const explicit = firstMatchingRule((target.itemUseRules || []).filter(r => r.itemId === itemId), context);
+      const fallback = firstMatchingRule((this.content.items[itemId]?.targetUseRules || [])
+        .filter(r => this.itemTargetRuleMatches(r, target)), context);
+      rule = explicit || fallback;
+      this.clearInventoryInteraction();
+    } else {
+      const configured = target.actions?.[this.selectedVerb];
+      rule = Array.isArray(configured) ? firstMatchingRule(configured, context) : configured;
+      if (!rule || !requirementsMet(rule.requirements, context)) {
+        rule = firstMatchingRule(target[`${this.selectedVerb}Rules`], context);
+      }
+    }
+    this.player.interactionDebug = { ...this.player.interactionDebug, availabilityAtDispatch: nowAvailable };
+    if (!nowAvailable && rule?.reject && this.targetAvailable(target)
+      && (!itemId || this.inventory.has(itemId)) && requirementsMet(rule.requirements, context)) {
+      return this.applyContentEffect(rule, { speakerTarget: target.kind === 'npc' ? target : null });
+    }
+    const key = rule?.reject && rule.messageKey ? rule.messageKey
+      : itemId ? (target.kind === 'npc' ? target.itemRejectKey || 'msg.inventory.npc_reject_generic' : 'msg.inventory.cannot_use_with')
+      : target.puzzleId === 'photo_cupboard' && this.selectedVerb !== VERBS.TALK ? 'photoquest.cupboard_empty'
+      : this.selectedVerb === VERBS.TALK ? 'msg.need_talk'
+      : this.selectedVerb === VERBS.TAKE && target.takeItemId && this.inventory.has(target.takeItemId) ? 'msg.already_taken' : 'msg.no_use';
+    const message = this.t(key, { item: this.t(this.content?.items?.[itemId]?.nameKey || itemId || ''),
+      target: this.t(target.nameKey || target.lookKey || target.id) });
+    if (itemId && target.kind === 'npc') this.setNpcSpeechMessage(target, message);
+    else this.setStatusMessage(message, { reject: true });
   }
 
   shouldApproachTargetBeforeAction(target, clickPoint = null) {
@@ -1320,7 +1419,7 @@ export class Game {
       const approach = this.reachableTargetApproachPoint(rawApproach);
       const reachPoint = actionSequence.facingPoint || clickPoint || this.targetReachPoint(target, clickPoint) || rawApproach;
       if (actionSequence.facing) this.player.facing = actionSequence.facing;
-      else this.facePoint(reachPoint);
+      else this.faceInteractionPoint(reachPoint);
       this.player.interactionDebug = {
         kind: "target",
         targetId: target.id,
@@ -1356,7 +1455,7 @@ export class Game {
       const rawApproach = target.interactionApproach;
       const approach = this.reachableTargetApproachPoint(rawApproach);
       const reachPoint = target.interactionFacingPoint || clickPoint || this.targetReachPoint(target, clickPoint) || rawApproach;
-      this.facePoint(reachPoint);
+      this.faceInteractionPoint(reachPoint);
       this.player.interactionDebug = {
         kind: "target",
         targetId: target.id,
@@ -1383,7 +1482,7 @@ export class Game {
     }
     const reachPoint = this.targetReachPoint(target, clickPoint);
     if (!reachPoint) return false;
-    this.facePoint(reachPoint);
+    this.faceInteractionPoint(reachPoint);
     const feetGoal = this.targetFeetApproachPoint(reachPoint);
     const approach = this.reachableTargetApproachPoint(feetGoal)
       || this.reachableTargetApproachPoint(reachPoint);
@@ -1424,7 +1523,8 @@ export class Game {
     const point = this.player.pendingFacingPoint;
     if (!point || this.player.target || this.player.animation === "walk") return;
     this.player.pendingFacingPoint = null;
-    this.facePoint(point);
+    if (this.player.pendingInteraction?.entryFacing) this.facePoint(point);
+    else this.faceInteractionPoint(point);
   }
 
   approachExit(target) {
@@ -1454,11 +1554,13 @@ export class Game {
     if (pending.target.kind === 'exit' && distance(this.player.position, pending.approach) > EXACT_ACTION_APPROACH_EPSILON) return;
     if (pending.entryFacing) this.player.facing = pending.entryFacing;
     if (pending.sideFacing) this.faceInteractionSide(pending.sideFacing);
-    else if (pending.hand) this.facePoint(pending.hand);
+    else if (pending.hand) this.faceInteractionPoint(pending.hand);
     const previousVerb = this.selectedVerb;
     this.selectedVerb = pending.verb;
     if (pending.inventoryUseItemId) this.inventoryUseItemId = pending.inventoryUseItemId;
-    this.performTargetAction(pending.target, pending.actionSequence);
+    if (pending.refusalOnly || (pending.target.kind !== 'exit' && pending.verb !== VERBS.LOOK
+      && !cursorTargetSupportsAction(this, pending.target))) this.refuseTargetAction(pending.target);
+    else this.performTargetAction(pending.target, pending.actionSequence);
     this.selectedVerb = previousVerb;
   }
 
@@ -1503,9 +1605,37 @@ export class Game {
     return true;
   }
 
+  rememberInteractionTarget(target, clickPoint = null) {
+    const point = this.targetReachPoint(target, clickPoint) || this.targetCenter(target);
+    if (!point) return;
+    this.player.interactionFacingTargetId = target.id;
+    this.faceInteractionPoint(point);
+  }
+
+  faceInteractionPoint(point) {
+    if (!point) return;
+    this.player.interactionFacingPoint = { ...point };
+    if (canFaceStoppedInteraction(this.player, this.sceneAction?.active || this.sceneTransitionPending)) {
+      this.faceInteractionSide(interactionSideFacing(this.player, point));
+    }
+  }
+
+  resolveStoppedInteractionFacing() {
+    if (!this.player?.interactionFacingPoint && this.player?.position && !this.player.target
+      && !["walk", "action"].includes(this.player.animation) && !this.player.actionSequence
+      && !this.player.actionAnimation && !this.player.arrivalTurn && !this.sceneAction?.active
+      && !this.sceneTransitionPending && hasVerticalRest(this.player)) {
+      this.player.interactionFacingPoint = { ...this.player.position };
+    }
+    if (!canFaceStoppedInteraction(this.player, this.sceneAction?.active || this.sceneTransitionPending)) return;
+    const facing = interactionSideFacing(this.player, this.player.interactionFacingPoint);
+    if (this.player.facing !== facing || hasVerticalRest(this.player) || this.player.arrivalTurn) this.faceInteractionSide(facing);
+  }
+
   faceInteractionSide(facing) {
     this.player.arrivalTurn = null;
     this.player.facing = facing;
+    if (facing === "east" || facing === "west") this.player.lastHorizontalFacing = facing;
     this.player.idleHoldFrame = null;
     this.player.idleVariant = null;
     this.player.idleVariantQueue = [];
@@ -1583,7 +1713,7 @@ export class Game {
   }
 
   walkToPoint(point, facingPoint = point, options = {}) {
-    if (this.puzzleOpen || this.inspectedItemId || this.sceneAction?.active) return;
+    if (this.objectCloseup || this.puzzleOpen || this.inspectedItemId || this.sceneAction?.active) return;
     if (!isWalkable(this.currentScene, point)) return false;
     const path = options.path || findWalkPath(this.currentScene, this.player.position, point);
     if (!path.length) return false;
@@ -1591,6 +1721,7 @@ export class Game {
     const routeDistance = walkPathDistance(this.player.position, route);
     if (!walkCommandHasDistance(routeDistance)) return false;
     const shortWalk = routeDistance > 0 && routeDistance <= SHORT_WALK_PATH_DISTANCE;
+    if (!this.player.pendingInteraction) { this.player.interactionFacingPoint = null; this.player.interactionFacingTargetId = null; }
     this.hideSpeechBubble(true);
     this.npcSpeechBubble = null;
     this.player.actionSequence = null;
@@ -1603,13 +1734,17 @@ export class Game {
   }
 
   performTargetAction(target, forcedActionSequence = null) {
-    if (this.puzzleOpen || this.inspectedItemId || this.sceneAction?.active) return;
+    if (this.objectCloseup || this.puzzleOpen || this.inspectedItemId || this.sceneAction?.active) return;
+    if (this.player?.position && target.kind !== "exit" && this.player.interactionFacingTargetId !== target.id) this.rememberInteractionTarget?.(target);
+    this.resolveStoppedInteractionFacing?.();
     if (this.inventoryUseItemId) {
       this.useInventoryItemOnTarget(this.inventoryUseItemId, target);
       return;
     }
     if (target.kind === "exit") {
       if (!requirementsMet(target.accessRequirements, this.effectContext())) {
+        this.rememberInteractionTarget(target);
+        this.resolveStoppedInteractionFacing();
         this.setStatusMessage(this.t(target.blockedMessageKey), { reject: true });
         return;
       }
@@ -1687,12 +1822,25 @@ export class Game {
   }
 
   useTarget(target) {
+    if (target.objectCloseup) return this.openObjectCloseup(target);
+    if (target.television) {
+      if(!this.currentScene.interactables.includes(target)||this.puzzleOpen||this.objectCloseup||this.menuOpen||this.paused||this.sceneAction?.active)return false;
+      const flag=target.television.flag;this.state.flags[flag]=!this.state.flags[flag];
+      this.setStatusMessage(this.t(this.state.flags[flag]?'tv.on':'tv.off'));this.save();return true;
+    }
     if (target.puzzleId === 'photo_cupboard') {
-      if (this.state.flags.photoCupboardSolved) return this.setStatusMessage(this.t('photoquest.cupboard_empty'));
+      const active = this.objectCloseup;
+      if (!active || active.sceneId !== this.currentScene.id || this.puzzleOpen
+        || !active.definition.items.some(item => item.target === target)) return false;
+      if (this.state.flags.photoCupboardSolved) {
+        active.rewardStatusKey = null;
+        if (requirementsMet(childPhotoRecovery.requirements, this.effectContext())) return this.applyContentEffect(childPhotoRecovery);
+        return this.setStatusMessage(this.t('photoquest.cupboard_empty'));
+      }
       this.puzzleOpen = true; this.puzzleSceneId = this.currentScene.id;
-      this.puzzleReturnFocus = document.activeElement;
+      this.puzzleReturnFocus = globalThis.document?.activeElement;
       this.player.pendingInteraction = null;
-      this.state.photoPuzzle ||= initialPuzzle(); this.renderUi(); return;
+      normalizeFirstPhotoPuzzleSave(this.state); this.save(); this.renderUi(); return;
     }
     if (target.endingTrigger) return this.requestEnding(target.endingTrigger);
     if (target.useDialogueId) {
@@ -1705,6 +1853,37 @@ export class Game {
     const rule = firstMatchingRule(target.useRules, this.effectContext());
     if (rule) return this.applyContentEffect(rule);
     this.setStatusMessage(this.t("msg.no_use"), { reject: true });
+  }
+
+  openObjectCloseup(target) {
+    if (!target.objectCloseup || !this.targetAvailable(target) || this.sceneAction?.active) return false;
+    this.objectCloseup = { definition: target.objectCloseup, targetId: target.id,
+      sceneId: this.currentScene.id, returnFocus: globalThis.document?.activeElement };
+    this.player.pendingInteraction = null; this.player.pendingFacingPoint = null;
+    this.hideSpeechBubble(true); this.npcSpeechBubble = null;
+    this.clearInventoryInteraction(); this.renderUi(); return true;
+  }
+
+  objectCloseupItemAvailable(target) {
+    if (target.puzzleId) return this.targetAvailable(target);
+    return this.targetAvailable(target) && !this.inventory.has(target.takeItemId)
+      && !(this.state.droppedItems || []).some(r => r.itemId === target.takeItemId);
+  }
+
+  takeObjectCloseupItem(itemId) {
+    const active = this.objectCloseup;
+    if (!active || active.sceneId !== this.currentScene.id || this.puzzleOpen) return false;
+    const item = active.definition.items.find(item => (item.target.takeItemId || item.target.id) === itemId);
+    if (!item || !this.objectCloseupItemAvailable(item.target)) return false;
+    if (item.target.puzzleId) return this.useTarget(item.target);
+    const taken = this.takeTarget(item.target);
+    this.renderUi(); return taken;
+  }
+
+  closeObjectCloseup() {
+    const focus = this.objectCloseup?.returnFocus;
+    this.objectCloseup = null; this.objectCloseupView?.dispose(); this.objectCloseupView = null;
+    this.renderUi(); focus?.focus?.();
   }
 
   beginInventoryItemUse(itemId) {
@@ -1943,11 +2122,17 @@ export class Game {
       for (const key of ['loading','unavailable','controls']) text[key] = this.t('photoquest.diploma_' + key);
     }
     text.name = this.t(item.nameKey);
-    this.receivedItemViewer = mountItemModelViewer(viewer, { modelUrl: asset.model, fallbackUrl: asset.icon, text, liquidColor: asset.liquidColor, inspection: asset.inspection });
+    let propControls = null;
+    if (asset.inspection === 'prop') {
+      for (const key of ['loading','unavailable','controls']) text[key] = this.t('wardrobe.prop_' + key);
+      this.receivedItemViewer = mountObjectProp(viewer, { modelUrl: asset.model, text, interactive: true, cameraDirection: asset.cameraDirection });
+      propControls = document.createElement('p'); propControls.textContent = text.controls;
+    } else this.receivedItemViewer = mountItemModelViewer(viewer, { modelUrl: asset.model, fallbackUrl: asset.icon, text, liquidColor: asset.liquidColor, inspection: asset.inspection });
     const description = document.createElement('p'); description.textContent = this.t(item.descriptionKey);
     panel.append(title, viewer, description, button(this.t('ui.received_oil.close'), () => {
       this.closeItemInspection();
     }));
+    if (propControls) panel.insertBefore(propControls, panel.lastElementChild);
     return panel;
   }
 
@@ -2006,6 +2191,7 @@ export class Game {
   }
 
   async changeScene(sceneId, position) {
+    this.objectCloseup = null; this.objectCloseupView?.dispose(); this.objectCloseupView = null;
     this.puzzleOpen = false; this.puzzleView?.dispose(); this.puzzleView = null;
     if (!this.content.scenes[sceneId]) {
       this.message = this.t("msg.scene_not_ready");
@@ -2037,6 +2223,7 @@ export class Game {
       this.player.shortWalk = false;
       this.player.pendingInteraction = null;
       this.player.pendingFacingPoint = null;
+      this.player.interactionFacingPoint = null; this.player.interactionFacingTargetId = null;
       this.player.interactionDebug = null;
       this.hoveredTarget = null;
       this.player.actionSequence = null;
@@ -2085,6 +2272,7 @@ export class Game {
   }
 
   reset() {
+    this.objectCloseup = null; this.objectCloseupView?.dispose(); this.objectCloseupView = null;
     this.puzzleOpen = false; this.puzzleView?.dispose(); this.puzzleView = null;
     // Invalidate old continuations before replacing state or clearing storage.
     this.sceneLoadToken = null;
@@ -2111,6 +2299,7 @@ export class Game {
     this.player.shortWalk = false;
     this.player.pendingInteraction = null;
     this.player.pendingFacingPoint = null;
+    this.player.interactionFacingPoint = null; this.player.interactionFacingTargetId = null;
     this.player.interactionDebug = null;
     this.player.actionSequence = null;
     this.player.actionAnimation = null;
@@ -2163,6 +2352,7 @@ export class Game {
   }
 
   renderUi() {
+    this.objectCloseupView?.dispose(); this.objectCloseupView = null;
     this.puzzleView?.dispose(); this.puzzleView = null;
     this.receivedItemViewer?.dispose(); this.receivedItemViewer = null;
     if (this.simpleAnimTest) {
@@ -2202,16 +2392,44 @@ export class Game {
       this.uiRoot.appendChild(this.createDroppedItemsPanel());
     }
     this.uiRoot.appendChild(this.createTopBar());
+    if (this.objectCloseup && !this.puzzleOpen && !this.menuOpen && !this.paused) {
+      const definition = this.objectCloseup.definition;
+      this.objectCloseupView = createObjectCloseup({ definition, text: key => this.t(key),
+        statusKey: this.objectCloseup.rewardStatusKey || (definition.solvedFlag && this.state.flags[definition.solvedFlag] ? definition.solvedStatusKey : null),
+        scrollTop: this.objectCloseup.scrollTop || 0, onScroll: top => { if (this.objectCloseup) this.objectCloseup.scrollTop = top; },
+        backgroundSrc: definition.backgroundAsset ? this.assets.getSceneImage(this.currentScene.id, definition.backgroundAsset)?.src : null,
+        items: definition.items.filter(item => this.objectCloseupItemAvailable(item.target)).map(item => ({
+          id: item.target.takeItemId || item.target.id, nameKey: item.target.nameKey, rect: item.rect,
+          actionKey: item.target.puzzleId ? 'verb.use' : 'verb.take',
+          imageSrc: this.assets.getItemImage(item.target.takeItemId)?.src,
+          modelUrl: item.modelUrl || (item.modelAsset ? this.assets.manifest.items[item.target.takeItemId]?.[item.modelAsset] : null),
+          cameraDirection: item.cameraDirection, fitBounds: item.fitBounds, verticalAlign: item.verticalAlign, shelfPose: item.shelfPose
+        })),
+        onTake: itemId => this.takeObjectCloseupItem(itemId), onClose: () => this.closeObjectCloseup()
+      });
+      this.uiRoot.appendChild(this.objectCloseupView.element);
+    }
     if (this.sceneAction?.state?.phase === 'received') this.uiRoot.appendChild(this.createReceivedItem());
     if (this.inspectedItemId && !this.menuOpen && !this.paused) this.uiRoot.appendChild(this.createItemInspection());
     if (this.puzzleOpen && !this.menuOpen && !this.paused) {
-      const close = () => { this.puzzleOpen = false; this.renderUi(); this.puzzleReturnFocus?.focus?.(); };
-      this.puzzleView = createSlidingPuzzle({ state: this.state.photoPuzzle,
+      if(this.objectCloseup?.definition.presentation==='room'){
+        const backdrop=element('div','object-closeup-puzzle-backdrop');backdrop.style.cssText='position:absolute;inset:0;z-index:40;overflow:hidden;background:#201912;pointer-events:none;';
+        const image=this.assets.getSceneImage(this.currentScene.id,this.objectCloseup.definition.backgroundAsset);
+        if(image?.src){const art=document.createElement('img');art.src=image.src;art.alt='';art.style.cssText=`position:absolute;left:0;top:${-(this.objectCloseup.scrollTop||0)}px;width:100%;height:auto;`;backdrop.append(art);}this.uiRoot.append(backdrop);
+      }
+      const close = () => {
+        this.puzzleOpen = false; this.renderUi();
+        if (this.objectCloseup) queueMicrotask(() => this.uiRoot.querySelector('.object-closeup-viewport')?.focus({ preventScroll: true }));
+        else this.puzzleReturnFocus?.focus?.();
+      };
+      this.puzzleView = createSlidingPuzzle({ ...FIRST_PHOTO_PUZZLE_VIEW, state: this.state.photoPuzzle,
         text: key => this.t(`photoquest.puzzle.${key}`),
         onChange: state => { this.state.photoPuzzle = state; this.save(); },
         onClose: close,
         onSolved: () => {
-          if (!this.puzzleOpen || this.currentScene.id !== this.puzzleSceneId || this.state.flags.photoCupboardSolved) return;
+          if (!this.objectCloseup || !this.puzzleOpen || this.currentScene.id !== this.puzzleSceneId
+            || this.objectCloseup.sceneId !== this.currentScene.id || this.state.flags.photoCupboardSolved) return;
+          this.objectCloseup.rewardStatusKey = 'photoquest.photo_found';
           this.puzzleOpen = false; this.applyContentEffect(photoReward);
         }
       });

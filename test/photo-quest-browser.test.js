@@ -4,6 +4,7 @@ import { spawn } from 'node:child_process';
 import { createServer } from 'node:net';
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
+import { mousePuzzleSlide } from './helpers/puzzle-mouse.js';
 
 test('3D cupboard puzzle, persisted progress and Pepa transactions work in BG/EN without duplicate rewards', {timeout:180000}, async()=>{
   const probe=createServer(); await new Promise(r=>probe.listen(0,'127.0.0.1',r)); const port=probe.address().port; await new Promise(r=>probe.close(r));
@@ -17,22 +18,26 @@ test('3D cupboard puzzle, persisted progress and Pepa transactions work in BG/EN
       const context=await browser.newContext({viewport:{width:1280,height:720},serviceWorkers:'block'}),page=await context.newPage(),errors=[];
       page.on('pageerror',e=>errors.push(String(e)));
       await page.goto(`http://127.0.0.1:${port}/?play=1&testHarness=1`);await page.evaluate(()=>window.__comradeCandidateTest.ready);
-      await page.evaluate(lang=>{const g=window.__comradeCandidateTest.game;g.setLanguage(lang);g.useTarget(g.currentScene.interactables.find(t=>t.puzzleId));},lang);
+      await page.evaluate(lang=>{const g=window.__comradeCandidateTest.game;g.setLanguage(lang);g.useTarget(g.currentScene.interactables.find(t=>t.objectCloseup));},lang);
+      await page.locator('.object-closeup-screen [data-item-id="hotspot.apartment.wardrobe_photo_puzzle"]:enabled').click();
       await page.locator('.photo-puzzle-view[data-model-state=ready]').waitFor();
       assert.ok(Number(await page.locator('.photo-puzzle-view').getAttribute('data-triangles'))>100);
       await page.screenshot({path:`${evidence}/puzzle-${lang}.png`});
       // Actual user controls, not injected solve state.
-      await page.locator('[data-piece=yellow1]').click();await page.locator('[data-direction=up]').click();
+      await mousePuzzleSlide(page,'yellow3',0,-1);
       await page.keyboard.press('Escape');assert.equal(await page.locator('.photo-puzzle-screen').count(),0);
       await page.reload();await page.evaluate(()=>window.__comradeCandidateTest.ready);
       assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.state.photoPuzzle.moves),1);
-      await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;g.useTarget(g.currentScene.interactables.find(t=>t.puzzleId));});
+      await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;g.useTarget(g.currentScene.interactables.find(t=>t.objectCloseup));});
+      await page.locator('.object-closeup-screen [data-item-id="hotspot.apartment.wardrobe_photo_puzzle"]:enabled').click();
       await page.locator('.photo-puzzle-view[data-model-state=ready]').waitFor();
-      for(const [piece,dir] of [['yellow3','up'],['yellow4','up'],['red3','left'],['red4','right'],['blue','down']]) {
-        await page.locator(`[data-piece=${piece}]`).click();await page.locator(`[data-direction=${dir}]`).click();
+      for(const [piece,dx,dy] of [['red3',-1,0],['yellow4',0,-1],['red4',1,0],['blue',0,1]]) {
+        await mousePuzzleSlide(page,piece,dx,dy);
       }
       assert.equal(await page.locator('.photo-puzzle-screen').count(),0);
-      assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.state.inventory.filter(i=>i==='item.mitko_photo').length),1);
+      assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.state.inventory.filter(i=>i==='item.mitko_child_photo').length),1);
+      await page.locator('.object-closeup-screen [data-action=close]').click();
+      await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;g.takeTarget(g.currentScene.interactables.find(t=>t.id==='hotspot.apartment.adult_photo'));});
       await page.evaluate(async()=>{
         const g=window.__comradeCandidateTest.game;g.inventory.add('item.accordion');await g.changeScene('scene.chapter1.village_square');
         const kiosk=g.currentScene.interactables.find(t=>t.id==='hotspot.square.kiosk');

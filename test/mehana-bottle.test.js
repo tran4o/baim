@@ -25,8 +25,8 @@ test('complete bottle chain survives every save; repeat fills/swaps cannot dupli
  apply(fountain(oil,c),c);c=reload(c);assert.deepEqual(c.state.inventory,[empty]);
  assert.equal(c.state.flags.fountainRepaired,true); // Repair now completes directly on the statue.
  apply(firstMatchingRule(fountainUseRules,c),c);c=reload(c);apply(fountain(empty,c),c);c=reload(c);assert.deepEqual(c.state.inventory,[water]);assert.equal(fountain(empty,c),null);
- c.state.flags.tonyChallengeStarted=true;apply(swap(water,c),c);assert.equal(c.state.suspicion,3);apply(swap(water,c),c);assert.equal(c.state.suspicion,3);assert.equal(c.inventory.has(water),true);
- c.state.flags.tonyDistracted=true;apply(swap(water,c),c);c=reload(c);assert.deepEqual(c.state.inventory,[empty]);assert.equal(c.state.swappedOwnRakiaWithWater,true);assert.equal(swap(water,c),null);
+ c.state.flags.tonyChallengeStarted=true;const suspicion=c.state.suspicion;assert.equal(c.inventory.has('item.accordion'),false);apply(swap(water,c),c);assert.equal(c.state.suspicion,suspicion);assert.equal(c.state.flags.tonyDistracted,undefined);assert.equal(c.state.flags.pepaMusicPlayed,undefined);
+ c=reload(c);assert.deepEqual(c.state.inventory,[empty]);assert.equal(c.state.swappedOwnRakiaWithWater,true);assert.equal(swap(water,c),null);
  apply(finish.effect,c);apply(babaSupportRule,c);const rewards=[c.state.influence,c.state.suspicion,c.state.publicMood];c=reload(c);
  assert.equal(requirementsMet(finish.requirements,c),false);assert.equal(requirementsMet(babaSupportRule.requirements,c),false);
  for(let i=0;i<4;i++){apply(fountain(empty,c),c);assert.equal(swap(water,c),null);c=reload(c);assert.equal(bottleCount(c),1);}

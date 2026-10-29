@@ -204,7 +204,7 @@
       "id": "layer.square.kiosk_counter",
       "enabled": true,
       "asset": "kioskCounterC05",
-      "output": "assets/chapter1/scenes/village_square/kiosk-counter-c05.png",
+      "output": "assets/chapter1/scenes/village_square/kiosk-foreground-r07.png",
       "left": 0,
       "top": 0,
       "zIndex": 1

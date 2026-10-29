@@ -51,19 +51,10 @@ export const quests = [
         requirements: { notFlags: ["tonyChallengeStarted"] }
       },
       {
-        id: "stage.tony.distract",
-        titleKey: "quest.chapter1.tony_vote.stage.distract",
-        requirements: {
-          flags: ["tonyChallengeStarted"],
-          notFlags: ["tonyDistracted"],
-          state: { swappedOwnRakiaWithWater: false }
-        }
-      },
-      {
         id: "stage.tony.swap_water",
         titleKey: "quest.chapter1.tony_vote.stage.swap_water",
         requirements: {
-          flags: ["tonyChallengeStarted", "tonyDistracted"],
+          flags: ["tonyChallengeStarted"],
           state: { swappedOwnRakiaWithWater: false }
         }
       },

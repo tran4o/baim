@@ -14,7 +14,7 @@ export class SaveSystem {
     if (!raw) return structuredClone(DEFAULT_SAVE);
     try {
       const parsed = JSON.parse(raw);
-      return migrateSave({ ...structuredClone(DEFAULT_SAVE), ...parsed }, parsed.photoQuestVersion !== 2);
+      return migrateSave({ ...structuredClone(DEFAULT_SAVE), ...parsed }, Number(parsed.photoQuestVersion) || 0);
     } catch {
       return structuredClone(DEFAULT_SAVE);
     }
@@ -31,7 +31,7 @@ export class SaveSystem {
   }
 }
 
-function migrateSave(save, legacy = false) {
+function migrateSave(save, previousPhotoVersion = 0) {
   const normalized = {
     ...save,
     audioVolume: Number.isFinite(Number(save.audioVolume)) ? Math.max(0, Math.min(1, Number(save.audioVolume))) : 0.6,
@@ -43,7 +43,7 @@ function migrateSave(save, legacy = false) {
     expiredQuests: Array.isArray(save.expiredQuests) ? save.expiredQuests : []
   };
   normalizeBottleSave(normalized);
-  normalizePhotoQuestSave(normalized, legacy);
+  normalizePhotoQuestSave(normalized, previousPhotoVersion);
   // Preserve earned registration in old saves, including saves from before the
   // registration flags existed. Never reopen a resolved chapter.
   if (!normalized.chapter1Completed) {

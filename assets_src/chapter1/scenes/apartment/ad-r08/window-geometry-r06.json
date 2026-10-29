@@ -1,0 +1,28 @@
+{
+  "coordinateSpace": "1280x720 world pixels",
+  "hingeSide": "right",
+  "hinge": [[315,109],[315,285]],
+  "closedQuad": [[224,89],[315,109],[315,285],[224,301]],
+  "openQuad": [[260,76],[315,109],[315,285],[260,322]],
+  "handle": {
+    "edge": "free-left-stile",
+    "heightFraction": 0.5,
+    "closedBase": [230,195],
+    "closedTip": [250,195],
+    "openBase": [266,199],
+    "openTip": [283,199],
+    "openVisible": false
+  },
+  "actor": {
+    "near": 409,
+    "far": 209,
+    "openApproach": {"x":290,"y":480},
+    "closeApproach": {"x":321,"y":480},
+    "facing": "west",
+    "fixedWindowRegistration": {"visualHeight":390,"baselineY":578,"scale":1,"offsetY":0},
+    "gripProbes": {"openingFrame4":[111,207],"closingSourceFrame9":[82,207]},
+    "groundAndMotion": "One apartment-wide perspective calibration; original frames, range, timing, fixed registration and horizontal source offsets retained"
+  },
+  "depth": {"backgroundPatchZ":100,"isolatedOpenSashZ":90,"glassAlpha":26,"opaqueFrameAlpha":255,"closingHandOnlyForeground":true},
+  "scope": "Bounded window components only. Source window texture is mapped to one geometry; no opaque exterior/room pixels in the foreground glass. Binary open/closed states retain original game action timing."
+}

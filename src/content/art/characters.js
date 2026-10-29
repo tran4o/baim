@@ -11,8 +11,14 @@ export const characterDefinitions = {
       defaultFacing: "south",
       canonicalVisualHeight: 640,
       verticalDirectionBias: 1.6,
+      sceneRegistrations: {
+        "scene.chapter1.apartment": [
+          { slot: "external_opens_window", visualHeight: 390, baselineY: 578, scale: 1, offsetY: 0 },
+          { prefix: "external_talk_", visualHeight: 430, baselineY: 510, scale: 1 }
+        ]
+      },
       sceneHeights: {
-        "scene.chapter1.apartment": { near: 335, far: 270 },
+        "scene.chapter1.apartment": { near: 409, far: 209 },
         "scene.chapter1.village_square": { near: 300, far: 109 },
         "scene.chapter1.mehana": { near: 344.4, far: 278 },
         "scene.chapter1.municipality": { near: 386, far: 225.75 }

@@ -13,7 +13,7 @@ test('new cursor/entrance inverse restores the exact canonical predecessor and r
   for(const [path,record] of Object.entries(fixture.records)) {
     const source=readFileSync(new URL('../'+path,import.meta.url),'utf8');
     assert.equal(sha(stripActionCursors(path,source)),record.beforeSHA256);
-    assert.throws(()=>stripActionCursors(path,source+'\n'),/exact action cursor inverse/);
+    assert.throws(()=>stripActionCursors(path,source+'\n// deliberately unbound cursor fixture'),/exact action cursor inverse/);
   }
   assert.equal(sha(JSON.stringify(restoreActionCursorsSnapshot('scenes',scenes))),fixture.snapshots.scenes.beforeSHA256);
   const changed=structuredClone(scenes);changed[0].titleKey='unbound';

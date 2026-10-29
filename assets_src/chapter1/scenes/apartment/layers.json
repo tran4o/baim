@@ -1,49 +1,108 @@
 {
   "sceneId": "scene.chapter1.apartment",
-  "sourceBackground": "assets/chapter1/scenes/apartment/background.png",
+  "sourceBackground": "assets/chapter1/scenes/apartment/ad-r08/background.png",
   "zScale": {
     "frontmost": 0,
     "horizon": 100
   },
   "layers": [
     {
+        "id": "layer.apartment.adult_wall_photo",
+        "enabled": true,
+        "asset": "adultWallPhoto",
+        "output": "assets/chapter1/items/adult-portrait-selected3-r36/wall-full.png",
+        "left": 0,
+        "top": 0,
+        "zIndex": 100,
+        "hiddenWhenFlag": "adultPhotoTaken"
+      },
+      {
+        "id": "layer.apartment.adult_wall_frame",
+        "enabled": true,
+        "asset": "adultWallFrameEmpty",
+        "output": "assets/chapter1/items/adult-portrait-selected3-r36/wall-empty.png",
+        "left": 0,
+        "top": 0,
+        "zIndex": 100,
+        "visibleWhenFlag": "adultPhotoTaken"
+      },
+    {
       "id": "layer.apartment.table_foreground",
       "enabled": true,
       "asset": "foregroundTable",
-      "source": "assets/chapter1/scenes/apartment/background.png",
-      "output": "assets/chapter1/scenes/apartment/foreground-table.png",
-      "zIndex": -1,
-      "top": 389,
-      "left": 104
+      "output": "assets/chapter1/scenes/apartment/ad-r08/foreground.png",
+      "left": 0,
+      "top": 0,
+      "zIndex": -1
+    },
+    {
+      "id": "layer.apartment.dining_ad",
+      "enabled": true,
+      "asset": "diningTableAD",
+      "output": "assets/chapter1/scenes/apartment/occlusion-r35/dining.png",
+      "left": 0,
+      "top": 0,
+      "zIndex": 31
+    },
+    {
+      "id": "layer.apartment.cupboard_ad",
+      "enabled": true,
+      "asset": "cupboardFrontAD",
+      "output": "assets/chapter1/scenes/apartment/occlusion-r18/cupboard-front.png",
+      "left": 0,
+      "top": 0,
+      "zIndex": 20
     },
     {
       "id": "layer.apartment.bills_on_table",
-      "enabled": true,
+      "enabled": false,
       "asset": "billsOnTable",
       "output": "assets/chapter1/scenes/apartment/bills-on-table.png",
-      "zIndex": -2,
+      "left": 500,
       "top": 390,
-      "left": 199,
+      "width": 65,
+      "zIndex": 30,
       "hiddenWhenState": "hasUnpaidBills"
     },
     {
       "id": "layer.apartment.accordion_on_chair",
-      "enabled": true,
+      "enabled": false,
       "asset": "accordionOnChair",
       "output": "assets/chapter1/scenes/apartment/accordion-on-chair.png",
-      "zIndex": 0,
-      "top": 399,
-      "left": 1064,
+      "left": 560,
+      "top": 480,
+      "width": 65,
+      "zIndex": 30,
       "hiddenWhenItemOwned": "item.accordion"
     },
     {
       "id": "layer.apartment.window_open",
-      "enabled": true,
+      "enabled": false,
       "asset": "windowOpen",
-      "output": "assets/chapter1/scenes/apartment/window-open.png",
+      "output": "assets/chapter1/scenes/apartment/ad-r08/window-open.png",
+      "left": 0,
+      "top": 0,
       "zIndex": 100,
-      "top": 51,
-      "left": 150,
+      "visibleWhenFlag": "apartmentWindowOpen"
+    },
+    {
+      "id": "layer.apartment.window_closed",
+      "enabled": false,
+      "asset": "windowClosedAD",
+      "output": "assets/chapter1/scenes/apartment/ad-r08/window-closed.png",
+      "left": 0,
+      "top": 0,
+      "zIndex": 100,
+      "hiddenWhenFlag": "apartmentWindowOpen"
+    },
+    {
+      "id": "layer.apartment.window_sash",
+      "enabled": false,
+      "asset": "windowSashAD",
+      "output": "assets/chapter1/scenes/apartment/ad-r08/window-sash.png",
+      "left": 0,
+      "top": 0,
+      "zIndex": 90,
       "visibleWhenFlag": "apartmentWindowOpen"
     }
   ]

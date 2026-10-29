@@ -14,10 +14,16 @@ import { Game, SHORT_WALK_PATH_DISTANCE } from "../src/engine/Game.js";
 import { Renderer, animationRenderFrameIndex, animationRenderMirrored, animationRenderOffset, animationRenderScale, externalFrameVisualBounds, sceneLayerAnimationFrame, sceneLayerAnimationSourceRect, sceneZIndexForPoint, stableExternalVisualBounds, stopRenderOffsetX, stopRenderOffsetY, targetZIndex } from "../src/engine/Renderer.js";
 import { applyTimedSobering, intoxicationBandKey, intoxicationColor, intoxicationMovementMultiplier, RAKIA_SOBER_INTERVAL_MS } from "../src/engine/IntoxicationSystem.js";
 import { strings } from "../src/content/localization/index.js";
-import { chapter1 } from "../src/content/chapter1/index.js";
-import { assetManifest } from "../src/content/art/assetManifest.js";
+import { chapter1 as currentChapter1 } from "../src/content/chapter1/index.js";
+import { assetManifest as currentAssetManifest } from "../src/content/art/assetManifest.js";
+import {restoreApartmentTwoPhotoSnapshot} from './helpers/apartment-two-photo-preservation.js';
+// Keep these generic engine/old-room fixtures exact; the new AD geometry,
+// paths, assets and two-photo behavior are exercised in apartment-two-photo tests.
+const chapter1={...currentChapter1,scenes:restoreApartmentTwoPhotoSnapshot('scenes',currentChapter1.scenes)};
+const assetManifest=restoreApartmentTwoPhotoSnapshot('manifest',currentAssetManifest);
 import { CHARACTER_CUTOUT_MARGIN_RATIO, CHARACTER_SOURCE_SCALE } from "../src/content/art/characterAssetConfig.js";
-import { characterDefinitions } from "../src/content/art/characters.js";
+import { characterDefinitions as currentCharacterDefinitions } from "../src/content/art/characters.js";
+const characterDefinitions=restoreApartmentTwoPhotoSnapshot('characters',currentCharacterDefinitions);
 import { externalAnimationV1 } from "../src/content/art/externalAnimationRuntime.generated.js";
 import { distance } from "../src/engine/geometry.js";
 import { AssetLoader, imageAssetPaths } from "../src/engine/AssetLoader.js";
@@ -2419,7 +2425,7 @@ test("clicking current idle position does not start walk or stop animation", () 
   assert.equal(player.stopAnimationStarted, false);
 });
 
-test("far target click walks to direct mask approach before running take action", () => {
+test("normal action planner walks to direct mask approach before running take action", () => {
   const scene = chapter1.scenes.find((candidate) => candidate.id === "scene.chapter1.apartment");
   const target = scene.interactables.find((candidate) => candidate.id === "hotspot.apartment.mirror");
   const game = Object.create(Game.prototype);
@@ -2442,7 +2448,8 @@ test("far target click walks to direct mask approach before running take action"
   };
   game.t = (key) => key;
 
-  game.handleTarget(target, { x: 900, y: 250 });
+  // Preserve the full normal approach; unavailable-action dispatch has its own r19 tests.
+  game.shouldApproachTargetBeforeAction(target, { x: 900, y: 250 });
 
   assert.ok(game.player.pendingInteraction);
   assert.equal(game.player.facing, "east");
@@ -2460,7 +2467,7 @@ test("far target click walks to direct mask approach before running take action"
   assert.equal(game.message, "");
 });
 
-test("table click approaches the table instead of stopping near current feet", () => {
+test("normal table action planner approaches the table instead of stopping near current feet", () => {
   const scene = chapter1.scenes.find((candidate) => candidate.id === "scene.chapter1.apartment");
   const target = scene.interactables.find((candidate) => candidate.id === "hotspot.apartment.table");
   const game = Object.create(Game.prototype);
@@ -2483,7 +2490,8 @@ test("table click approaches the table instead of stopping near current feet", (
   };
   game.t = (key) => key;
 
-  game.handleTarget(target, { x: 315, y: 490 });
+  // This exercises the unchanged normal planner, before r19 refusal-route shortening.
+  game.shouldApproachTargetBeforeAction(target, { x: 315, y: 490 });
 
   assert.equal(game.player.facing, "west");
   assert.deepEqual(game.player.interactionDebug.hand, { x: 315, y: 490 });
