@@ -72,7 +72,7 @@ function applyEffectBatch(effects, context) {
     } else if (effect.type === "addItem") {
       context.inventory?.add(effect.itemId);
     } else if (effect.type === "replaceItem") {
-      if (!context.inventory?.replace(effect.itemId, effect.withItemId)) return false;
+      if (!context.inventory?.replace(effect.itemId, effect.withItemId, { preserveSlot: effect.preserveSlot === true })) return false;
     } else if (effect.type === "removeItem") {
       context.inventory?.remove(effect.itemId);
     } else if (effect.type === "startQuest") {

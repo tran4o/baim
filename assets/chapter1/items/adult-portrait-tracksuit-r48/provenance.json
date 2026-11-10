@@ -1,0 +1,33 @@
+{
+  "version": "R48",
+  "sourceSHA256": "6b1e9bb5321bbab61a2b39fcd916795acee4193f66c919fb554b71731b1f11f4",
+  "portraitModelSHA256": "552ea7d1232df632e6d6db3e8b7d0f274e230ca95e2256af0387e47fd6dba59e",
+  "workshopManifest": "extraFixes/blender-workshop/adult-wall-portrait-clothes-r48-20261108/deliverable-manifest.json",
+  "workshopManifestSHA256": "96aede6c2aec8e4d436f0517c78214725263be81b06b8a5542aa47fa6a2839fe",
+  "nativeRenderSHA256": "87cd5db2e4909137fce6a9e4995d277732158f1da21bfec7b186f0674c580ef4",
+  "nativeRenderPixels": [
+    1600,
+    1900
+  ],
+  "nativeCrop": {
+    "left": 136,
+    "top": 152,
+    "width": 1328,
+    "height": 1596
+  },
+  "runtimeSize": [
+    101,
+    121
+  ],
+  "worldPosition": [
+    437,
+    108
+  ],
+  "sameCameraCropAsR36": "Exact2x native crop of former800x950 render; same101x121 world footprint",
+  "wallFullSHA256": "266cd813e35b2a73cfb81ec50a9999c8ee00b292c7add3ffb34b3fde233a01cd",
+  "originalFrameAndBackingReused": true,
+  "geometryUVTransformsUnchanged": true,
+  "assembledModel": "Retained at workshop; not copied into runtime because only the detachable print is inspected",
+  "frameOnlyModel": "Reuse existing R36 b496abd23634e0162cfaa9f13dab412e78b545ca80f19b2c3d39d42148e42511",
+  "noActorOrAnimationChanges": true
+}

@@ -23,7 +23,7 @@ export const assetManifest = {
       diningTableAD: "assets/chapter1/scenes/apartment/occlusion-r35/dining.png",
       cupboardFrontAD: "assets/chapter1/scenes/apartment/occlusion-r18/cupboard-front.png",
       wardrobeInteriorC04A: "assets/chapter1/scenes/apartment/wardrobe-r21/interior-c04-A.png",
-      adultWallPhoto: "assets/chapter1/items/adult-portrait-selected3-r36/wall-full.png",
+      adultWallPhoto: "assets/chapter1/items/adult-portrait-tracksuit-r48/wall-full.png",
       adultWallFrameEmpty: "assets/chapter1/items/adult-portrait-selected3-r36/wall-empty.png",
       billsOnTable: "assets/chapter1/scenes/apartment/bills-on-table.png",
       accordionOnChair: "assets/chapter1/scenes/apartment/accordion-on-chair.png",
@@ -34,6 +34,8 @@ export const assetManifest = {
     },
     "scene.chapter1.village_square": {
       campaignPoster: "assets/chapter1/scenes/village_square/campaign-poster-c05.png",
+      mitkoPosterR45: "assets/chapter1/scenes/village_square/poster-p3-r51/posted.png",
+      incumbentPosterR40: "assets/chapter1/scenes/village_square/poster-r40/incumbent.png",
       fountainForeground: "assets/chapter1/scenes/village_square/fountain-stone-foreground-affinity-r01.png",
       fountainShallowWater: "assets/chapter1/scenes/village_square/fountain-shallow-water-c05.png",
       squareFlagWind: "assets/chapter1/scenes/village_square/flag-wind-c01.png",
@@ -55,6 +57,7 @@ export const assetManifest = {
     },
     "scene.chapter1.mehana": {
       tonyDiploma: 'assets/chapter1/items/tony-diploma-table.png',
+      tonyDiplomaFlatR39: 'assets/chapter1/scenes/mehana/toni-contest/diploma-flat-r39.png',
       tonySleepingIdle: 'assets/chapter1/characters/tony_fridge/sleep-reclined-c01.webp',
       tonyRakiaHalf: 'assets/chapter1/scenes/mehana/toni-contest/rakia-half.png',
       tonyRakiaEmptySide: 'assets/chapter1/scenes/mehana/toni-contest/rakia-empty-side.png',
@@ -130,11 +133,11 @@ export const assetManifest = {
     }
   },
   items: {
-    'item.mitko_photo': { icon: 'assets/chapter1/items/adult-portrait-selected3-r36/print.png', model: 'assets/chapter1/items/adult-portrait-selected3-r36/portrait-only.glb', inspection: 'prop', cameraDirection: [0,0,1] },
+    'item.mitko_photo': { icon: 'assets/chapter1/items/adult-portrait-tracksuit-r48/print.png', model: 'assets/chapter1/items/adult-portrait-tracksuit-r48/portrait-only.glb', inspection: 'prop', cameraDirection: [0,0,1] },
     'item.mitko_child_photo': { icon: 'assets/chapter1/scenes/apartment/ad-r08/child-photo.png' },
     'item.tony_diploma': { icon: 'assets/chapter1/items/tony-diploma.png', model: 'assets/chapter1/items/tony-diploma-inspection.glb', inspection: 'document' },
     "item.fake_diploma": { icon: "assets/chapter1/items/fake-diploma-v1.png", pepaIcon: 'assets/chapter1/items/pepa-mitko-diploma.png', childIcon: 'assets/chapter1/scenes/apartment/ad-r08/child-diploma.png', stampedIcon: "assets/chapter1/items/stamped-diploma-v1.png" },
-    "item.campaign_pamphlets": { icon: "assets/chapter1/items/campaign-pamphlets-v1.png" },
+    "item.campaign_pamphlets": { icon: 'assets/chapter1/items/campaign-poster-p3-r51/front.png', model: 'assets/chapter1/items/campaign-poster-p3-r51/poster.glb', inspection: 'prop', cameraDirection: [0,0,1], inspectionFitScale: 1.5 },
     "item.suspicious_receipt": { icon: "assets/chapter1/items/suspicious-receipt-v1.png" },
     "item.rakia": { icon: "assets/chapter1/items/rakia-v1.png" },
     "item.shopska_salad": { icon: "assets/chapter1/items/shopska-salad-v1.png" },

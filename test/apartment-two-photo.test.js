@@ -111,14 +111,14 @@ test('partial v2 medium puzzle is archived exactly while earned diploma/poster/r
  assert.equal(r.flags.campaignPosted,true);assert.equal(r.flags.candidateRegistrationStamped,true);assert.equal(r.chapter1Completed,completed);
  }
 });
-test('only explicit Toni acceptance starts challenge; water works without accordion or music',()=>{
+test('Toni accepts either dialogue or direct water use without accordion or music',()=>{
  const d=chapter1.dialogues.find(d=>d.id==='dialogue.tony_fridge');
  const accept=d.nodes.challenge.choices.find(c=>c.next==='challenge_accepted');const c=ctx();use(accept.effect,c);assert.equal(c.state.flags.tonyChallengeStarted,true);
  const tavern=chapter1.scenes.find(s=>s.id==='scene.chapter1.mehana');const t=tavern.npcs.find(n=>n.id==='npc.tony_fridge');
  assert.equal(t.itemUseRules.some(r=>r.itemId==='item.accordion'),false);
- const glass=tavern.interactables.find(t=>t.id==='hotspot.mehana.bai_mitko_rakia_glass');
+ const glass=t;
  const water=glass.itemUseRules.find(r=>r.itemId==='item.fountain_water_bottle');
- const fresh=ctx();fresh.inventory.add('item.fountain_water_bottle');assert.equal(requirementsMet(water.requirements,fresh),false);
+ const fresh=ctx();fresh.inventory.add('item.fountain_water_bottle');assert.equal(requirementsMet(water.requirements,fresh),true);use(water,fresh);assert.equal(fresh.state.flags.tonyChallengeStarted,true);
  c.inventory.add('item.fountain_water_bottle');assert.ok(requirementsMet(water.requirements,c));
  use(water,c);assert.equal(c.state.swappedOwnRakiaWithWater,true);assert.equal(c.state.flags.tonyDistracted,undefined);assert.equal(c.state.flags.pepaMusicPlayed,undefined);
 });

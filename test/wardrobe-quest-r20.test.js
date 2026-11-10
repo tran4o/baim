@@ -28,7 +28,7 @@ test('stale cross-scene pickup and world commands behind modal have no effect',(
  const g=fixture();g.openObjectCloseup(wardrobe);g.currentScene={id:'another'};assert.equal(g.takeObjectCloseupItem('item.accordion'),false);g.sceneTargetAt=()=>{throw Error('world hit test must not run behind modal');};g.handleWorldClick({x:500,y:500});assert.equal(g.inventory.has('item.accordion'),false);
 });
 test('Toni water route works without music/accordion, preserves bottle replacement and ignores old distraction flags',()=>{
- const tavern=chapter1.scenes.find(s=>s.id==='scene.chapter1.mehana'),glass=tavern.interactables.find(t=>t.id==='hotspot.mehana.bai_mitko_rakia_glass');
+ const tavern=chapter1.scenes.find(s=>s.id==='scene.chapter1.mehana'),glass=tavern.npcs.find(t=>t.id==='npc.tony_fridge');
  for(const flags of [{},{tonyDistracted:true},{tonyCaughtWaterAttempt:true}]){const g=fixture();g.state.flags={...flags,tonyChallengeStarted:true};g.inventory.add('item.fountain_water_bottle');const rule=firstMatchingRule(glass.itemUseRules.filter(r=>r.itemId==='item.fountain_water_bottle'),g.effectContext());assert.ok(rule&&!rule.reject);assert.ok(applyEffects(rule.effects,g.effectContext()));assert.ok(g.inventory.has('item.empty_rakia_bottle'));assert.equal(g.inventory.has('item.fountain_water_bottle'),false);assert.equal(g.state.swappedOwnRakiaWithWater,true);assert.equal(g.state.flags.pepaMusicPlayed,undefined);assert.equal(g.inventory.has('item.accordion'),false);}
 });
 test('Pepa refuses either product before music, then still requires correct photos and original diploma',()=>{
