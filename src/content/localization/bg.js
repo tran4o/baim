@@ -1,3 +1,5 @@
+import { posterContestR40Bg } from './chapter1PosterContestR40.js';
+import { posterContestR39Bg } from './chapter1PosterContestR39.js';
 import { electionBg } from "./chapter1Election.js";
 import { archiveBg } from "./chapter1Archive.js";
 import { registrationBg } from "./chapter1Registration.js";
@@ -448,4 +450,6 @@ export const bg = {
   "ending.chapter1.narrow_win.body": "Бай Митко печели с един глас и половин невалидна бюлетина, която комисията обсъжда до вечерта. Старият кмет напуска, за да обжалва посоката на вятъра. Селото приема резултата, защото механата вече е отворила.",
   "ending.chapter1.loss.title": "Достойна загуба, отчетена като опит",
   "ending.chapter1.loss.body": "Бай Митко губи, но събира достатъчно гласове, за да бъде вписан като местно явление. Комисията му връчва копие от протокола без последната страница. Кампанията приключва; неплатените сметки продължават своя независим мандат."
+  ,...posterContestR39Bg
+  ,...posterContestR40Bg
 };

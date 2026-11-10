@@ -66,6 +66,7 @@ test("Tony reward and Kiro fallback never duplicate carried, dropped or delivere
   const win = dialogue("tony_fridge").nodes.start.choices.find(c => c.next === "contest_result");
   const fallback = dialogue("mehana_waiter").nodes.start.choices.find(c => c.textKey === "registration.kiro_receipt");
   const ctx = context({ swappedOwnRakiaWithWater: true });
+  ctx.state.flags.tonyChallengeStarted = true; // R39: preparation follows an agreed challenge.
   assert.equal(requirementsMet(fallback.requirements, ctx), false);
   apply(win.effect, ctx);
   assert.ok(ctx.inventory.has("item.suspicious_receipt"));
@@ -81,7 +82,7 @@ test("Tony reward and Kiro fallback never duplicate carried, dropped or delivere
   ctx.state.flags.campaignPosted = true;
   apply(receiptHandover, ctx);
   assert.equal(requirementsMet(fallback.requirements, ctx), false);
-  const kiroFirst = context({ flags: { journalistEvidenceRequested: true }, swappedOwnRakiaWithWater: true });
+  const kiroFirst = context({ flags: { journalistEvidenceRequested: true, tonyChallengeStarted: true }, swappedOwnRakiaWithWater: true });
   apply(fallback.effect, kiroFirst);
   apply(win.effect, kiroFirst);
   assert.equal(kiroFirst.state.inventory.filter(id => id === "item.suspicious_receipt").length, 1);

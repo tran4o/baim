@@ -1,6 +1,6 @@
 import { mountInspectionControls, INSPECTION_PROFILE } from './InspectionControls.js';
 // Static shelf props and optional inspection share the same GLB, with no sprite replacement.
-export function mountObjectProp(host, { modelUrl, text = {}, interactive = false, cameraDirection = [0.18, 0.12, 1], fitBounds = false, verticalAlign = 'center', shelfPose = null, onReady = () => {}, onError = () => {} }) {
+export function mountObjectProp(host, { modelUrl, text = {}, interactive = false, cameraDirection = [0.18, 0.12, 1], inspectionFitScale = 1, fitBounds = false, verticalAlign = 'center', shelfPose = null, onReady = () => {}, onError = () => {} }) {
   let disposed = false, release = () => {};
   const status = document.createElement('span');status.className='object-prop-status';status.setAttribute('role','status');status.textContent=text.loading || '';host.append(status);host.dataset.modelState='loading';
   (async()=>{
@@ -16,7 +16,7 @@ export function mountObjectProp(host, { modelUrl, text = {}, interactive = false
     const draw=()=>{
       if(disposed||!size)return;
       const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;
-      const radius=size.length()/2,halfFov=Math.min(T.MathUtils.degToRad(16),Math.atan(Math.tan(T.MathUtils.degToRad(16))*camera.aspect)),distance=radius/Math.sin(halfFov)*1.08/zoom;
+      const radius=size.length()/2,halfFov=Math.min(T.MathUtils.degToRad(16),Math.atan(Math.tan(T.MathUtils.degToRad(16))*camera.aspect)),distance=radius/Math.sin(halfFov)*1.08*(interactive ? inspectionFitScale : 1)/zoom;
       camera.clearViewOffset();camera.zoom=1;camera.position.copy(dir).multiplyScalar(distance);camera.near=Math.max(.001,distance-radius*1.2);camera.far=distance+radius*4;camera.lookAt(0,0,0);camera.updateProjectionMatrix();camera.updateMatrixWorld(true);pivot.rotation.set(pitch,yaw,0,'YXZ');scene.updateMatrixWorld(true);
       const box=new T.Box3().setFromObject(pivot),corners=[];if(supportY!==null)box.min.y=supportY;for(const x of[box.min.x,box.max.x])for(const y of[box.min.y,box.max.y])for(const z of[box.min.z,box.max.z])corners.push(new T.Vector3(x,y,z));
       const screenBounds=()=>{let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;const point=new T.Vector3(),include=v=>{v.project(camera);minX=Math.min(minX,v.x);maxX=Math.max(maxX,v.x);minY=Math.min(minY,v.y);maxY=Math.max(maxY,v.y);};if(resting){pivot.traverse(o=>{const a=o.geometry?.attributes?.position;if(!a)return;for(let i=0;i<a.count;i++){point.fromBufferAttribute(a,i).applyMatrix4(o.matrixWorld);if(supportY===null||point.y>=supportY-1e-6)include(point);}});}else for(const p of corners)include(point.copy(p));return{minX,maxX,minY,maxY};};

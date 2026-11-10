@@ -1,3 +1,5 @@
+import { wirePosterDialoguesR40 } from './posterContestR40.js';
+import { wirePosterContestDialoguesR39 } from './posterContestR39.js';
 import { electionDialogue } from "./election.js";
 import { wireRegistrationDialogues } from "./registration.js";
 import { babaFountainDialogue, oilRefillRule } from "./fountain.js";
@@ -530,4 +532,4 @@ const baseDialogues = [
   }
 ];
 
-export const dialogues = wireToniAftermathDialogues(wireRegistrationDialogues(baseDialogues));
+export const dialogues = wirePosterDialoguesR40(wirePosterContestDialoguesR39(wireToniAftermathDialogues(wireRegistrationDialogues(baseDialogues))));

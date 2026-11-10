@@ -39,7 +39,7 @@ test('new quest preserves reusable photo, gates music and original diploma, and 
   assert.equal(ctx.inventory.has('item.fake_diploma'),false);
   assert.equal(requirementsMet(diplomaTakeRule.requirements,ctx),false);
   const finish=chapter1.dialogues.find(d=>d.id==='dialogue.tony_fridge').nodes.start.choices.find(c=>c.next==='contest_result').effect;
-  ctx.state.swappedOwnRakiaWithWater=true;use(finish,ctx);assert.equal(ctx.state.flags.tonyPassedOut,true);
+  ctx.state.flags.tonyChallengeStarted=true;ctx.state.swappedOwnRakiaWithWater=true;use(finish,ctx);assert.equal(ctx.state.flags.tonyPassedOut,true);
   use(diplomaTakeRule,ctx);use(pepaDiplomaRule,ctx);
   assert.equal(ctx.inventory.has('item.tony_diploma'),false);assert.equal(ctx.inventory.has('item.mitko_photo'),true);
   assert.equal(ctx.inventory.has('item.fake_diploma'),true);assert.equal(ctx.state.suspicion,14);

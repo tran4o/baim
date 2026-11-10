@@ -120,7 +120,7 @@ export function mountItemModelViewer(host, { modelUrl, fallbackUrl, text, liquid
         flattened.add(new T.Mesh(geometry, Array.isArray(m) ? materials : materials[0]));
         return;
       }
-      if (!Array.isArray(m) && !m.transparent) {
+      if (!Array.isArray(m) && !m.transparent && !m.map) {
         // Untextured cap primitives have mixed UV/index layouts; retain position
         // and normals, then normalize indexing before batching their exact triangles.
         for (const name of Object.keys(geometry.attributes)) if (!['position','normal'].includes(name)) geometry.deleteAttribute(name);

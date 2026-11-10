@@ -1,7 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {chapter1} from '../src/content/chapter1/index.js';
+import {chapter1 as currentChapter1} from '../src/content/chapter1/index.js';
+import {restorePosterContestR39Snapshot} from './helpers/poster-contest-r39-preservation.js';
+// Historical R23 table contract; R39 current behavior is covered separately.
+const chapter1={...currentChapter1,scenes:restorePosterContestR39Snapshot('scenes',currentChapter1.scenes),dialogues:restorePosterContestR39Snapshot('dialogues',currentChapter1.dialogues)};
 import {DEFAULT_SAVE} from '../src/engine/ids.js';
 import {SaveSystem} from '../src/engine/SaveSystem.js';
 import {requirementsMet,applyEffects} from '../src/engine/EffectSystem.js';

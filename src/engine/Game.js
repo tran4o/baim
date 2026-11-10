@@ -2125,7 +2125,7 @@ export class Game {
     let propControls = null;
     if (asset.inspection === 'prop') {
       for (const key of ['loading','unavailable','controls']) text[key] = this.t('wardrobe.prop_' + key);
-      this.receivedItemViewer = mountObjectProp(viewer, { modelUrl: asset.model, text, interactive: true, cameraDirection: asset.cameraDirection });
+      this.receivedItemViewer = mountObjectProp(viewer, { modelUrl: asset.model, text, interactive: true, cameraDirection: asset.cameraDirection, inspectionFitScale: asset.inspectionFitScale });
       propControls = document.createElement('p'); propControls.textContent = text.controls;
     } else this.receivedItemViewer = mountItemModelViewer(viewer, { modelUrl: asset.model, fallbackUrl: asset.icon, text, liquidColor: asset.liquidColor, inspection: asset.inspection });
     const description = document.createElement('p'); description.textContent = this.t(item.descriptionKey);

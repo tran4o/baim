@@ -72,9 +72,9 @@ async function support(g,{baba,tony,watched=false}){
     use(g,'hotspot.square.fountain','item.empty_rakia_bottle');reload(g);
     await leave(g,'exit.square.to_mehana');talk(g,'npc.tony_fridge');
     choose(g,'dialogue.tony.choice.challenge');choose(g,'dialogue.tony.choice.accept');choose(g,'dialogue.tony.choice.prepare');
-    if(watched)use(g,'hotspot.mehana.bai_mitko_rakia_glass','item.fountain_water_bottle');
+    if(watched)use(g,'npc.tony_fridge','item.fountain_water_bottle');
     use(g,'npc.tony_fridge','item.accordion');
-    use(g,'hotspot.mehana.bai_mitko_rakia_glass','item.fountain_water_bottle');reload(g);
+    use(g,'npc.tony_fridge','item.fountain_water_bottle');reload(g);
     talk(g,'npc.tony_fridge');choose(g,'dialogue.tony.choice.finish_challenge');
     assert.equal(g.dialogue.current,null,'contest dialogue closes for blackout');
     g.updateSceneAction(.45);assert.equal(g.state.flags.tonyPassedOut,true);assert.equal(g.state.tonyVote,true);

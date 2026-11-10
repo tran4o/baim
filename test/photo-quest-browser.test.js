@@ -46,6 +46,8 @@ test('3D cupboard puzzle, persisted progress and Pepa transactions work in BG/EN
       assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.campaign_pamphlets')),false,'music first');
       await page.evaluate(()=>{const g=window.__comradeCandidateTest.game,k=g.currentScene.interactables.find(t=>t.id==='hotspot.square.kiosk');g.useInventoryItemOnTarget('item.accordion',k);g.useInventoryItemOnTarget('item.mitko_photo',k);});
       assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.campaign_pamphlets')),true);
+      assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.mitko_photo')),false,'R40 photo becomes poster');
+      assert.equal(await page.evaluate(()=>!!window.__comradeCandidateTest.game.state.flags.campaignPosted),false,'R40 posting remains a separate action');
       await page.evaluate(async()=>{
         const g=window.__comradeCandidateTest.game; await g.changeScene('scene.chapter1.mehana');
         g.takeTarget(g.currentScene.interactables.find(t=>t.id==='hotspot.mehana.tony_diploma'));
@@ -55,14 +57,14 @@ test('3D cupboard puzzle, persisted progress and Pepa transactions work in BG/EN
       assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.tony_diploma')),false,'awake Tony guards diploma');
       // The native journey exercises the real contest. This controlled transaction
       // still waits for the normal blackout before attempting the guarded pickup.
-      await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;g.state.swappedOwnRakiaWithWater=true;g.dialogue.start('dialogue.tony_fridge');const c=g.dialogue.getNode().choices.find(c=>c.next==='contest_result');g.applyContentEffect(c.effect);g.dialogue.close();});
+      await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;g.state.flags.tonyChallengeStarted=true;g.state.swappedOwnRakiaWithWater=true;g.dialogue.start('dialogue.tony_fridge');const c=g.dialogue.getNode().choices.find(c=>c.next==='contest_result');g.applyContentEffect(c.effect);g.dialogue.close();});
       await page.waitForFunction(()=>{const g=window.__comradeCandidateTest.game;return g.state.flags.tonyPassedOut&&!g.sceneAction.active;});
       await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;g.takeTarget(g.currentScene.interactables.find(t=>t.id==='hotspot.mehana.tony_diploma'));});
       assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.tony_diploma')),true);
       await page.evaluate(async()=>{const g=window.__comradeCandidateTest.game;await g.changeScene('scene.chapter1.village_square');g.useInventoryItemOnTarget('item.tony_diploma',g.currentScene.interactables.find(t=>t.id==='hotspot.square.kiosk'));g.save();g.renderUi();});
       await page.reload();await page.evaluate(()=>window.__comradeCandidateTest.ready);
       const result=await page.evaluate(()=>{const s=window.__comradeCandidateTest.game.state;return {music:s.flags.pepaMusicPlayed,photo:s.inventory.includes('item.mitko_photo'),diploma:s.hasFakeDiploma,original:s.inventory.includes('item.tony_diploma')};});
-      assert.deepEqual(result,{music:true,photo:true,diploma:true,original:false});assert.deepEqual(errors,[]);
+      assert.deepEqual(result,{music:true,photo:false,diploma:true,original:false});assert.deepEqual(errors,[]);
       await context.close();
     }
   } finally {await browser?.close();server.kill();}

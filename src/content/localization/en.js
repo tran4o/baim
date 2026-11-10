@@ -1,3 +1,5 @@
+import { posterContestR40En } from './chapter1PosterContestR40.js';
+import { posterContestR39En } from './chapter1PosterContestR39.js';
 import { electionEn } from "./chapter1Election.js";
 import { archiveEn } from "./chapter1Archive.js";
 import { registrationEn } from "./chapter1Registration.js";
@@ -448,4 +450,6 @@ export const en = {
   "ending.chapter1.narrow_win.body": "Bai Mitko wins by one vote and half an invalid ballot that occupies the commission until evening. The old mayor leaves to appeal the direction of the wind. The village accepts the result because the Mehana has opened.",
   "ending.chapter1.loss.title": "An honourable loss recorded as an attempt",
   "ending.chapter1.loss.body": "Bai Mitko loses, but earns enough votes to be registered as a local phenomenon. The commission gives him a copy of the protocol without its final page. The campaign ends; the unpaid bills begin another independent term."
+  ,...posterContestR39En
+  ,...posterContestR40En
 };

@@ -289,11 +289,11 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
     browser = await chromium.launch({ headless: true });
     for (const language of ["bg", "en"]) {
       const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, serviceWorkers: "block",
-        recordVideo: { dir: evidenceRoot, size: { width: 1280, height: 720 } } });
+        ...(process.env.BAIM_RECORD_NATIVE_VIDEO === "1" ? {recordVideo: { dir: evidenceRoot, size: { width: 1280, height: 720 } }} : {}) });
       const page = await context.newPage();
       if(normalReview)await page.addInitScript(()=>Object.defineProperty(window,'__comradeCandidateTest',{get(){const fit=window.__comradeCandidateAnimationFit;return fit?{game:fit.game,ready:new Promise(resolve=>{if(fit.game.inputBound)return resolve();const timer=setInterval(()=>{if(fit.game.inputBound){clearInterval(timer);resolve();}},20);})}:undefined;}}));
       const imageNetwork = observeImageRequests(page);
-      const videoPath = await page.video().path(), marks = [], startedAtMs = Date.now();
+      const videoPath = page.video() ? await page.video().path() : null, marks = [], startedAtMs = Date.now();
       const mark = async name => {
         const state = await page.evaluate(() => {
           const g = window.__comradeCandidateTest.game;
@@ -348,7 +348,7 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
       const handover = await page.evaluate(() => window.__comradeCandidateTest.game.t('photoquest.make_poster'));
       await page.getByRole("button", { name: handover, exact: true }).click();
       await waitFor(() => window.__comradeCandidateTest.game.inventory.has("item.campaign_pamphlets"));
-      assert.equal(await page.evaluate(() => window.__comradeCandidateTest.game.inventory.has('item.mitko_photo')), true);
+      assert.equal(await page.evaluate(() => window.__comradeCandidateTest.game.inventory.has('item.mitko_photo')), false);
       const pamphletIcon = page.locator('[data-item-id="item.campaign_pamphlets"] img');
       await waitForLoadedImage(page, '[data-item-id="item.campaign_pamphlets"] img', { network: imageNetwork });
       assert.equal(await pamphletIcon.isVisible(), true);
@@ -403,7 +403,7 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
       await talk('npc.tony_fridge');
       for(const key of ['dialogue.tony.choice.challenge','dialogue.tony.choice.accept','dialogue.tony.choice.prepare'])await choice(key);
       assert.equal(await page.evaluate(()=>Boolean(window.__comradeCandidateTest.game.state.flags.tonyDistracted)),false);
-      await useItem('item.fountain_water_bottle');await clickTarget('hotspot.mehana.bai_mitko_rakia_glass');
+      await useItem('item.fountain_water_bottle');await clickTarget('npc.tony_fridge');
       await waitFor(()=>window.__comradeCandidateTest.game.state.swappedOwnRakiaWithWater);
       await mark('toni-water-prepared-before-contest');
       await talk('npc.tony_fridge');await choice('dialogue.tony.choice.finish_challenge');
@@ -411,14 +411,14 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
       await waitFor(()=>{const g=window.__comradeCandidateTest.game;return g.state.flags.tonyPassedOut&&!g.sceneAction.active;});
       const aftermath = await page.evaluate(async()=>{
         const g=window.__comradeCandidateTest.game,{requirementsMet}=await import('/src/engine/EffectSystem.js');
-        const visible=g.currentScene.foregroundLayers.filter(l=>!l.requirements||requirementsMet(l.requirements,g.effectContext())).filter(l=>!l.hiddenWhenFlag||!g.state.flags[l.hiddenWhenFlag]);
+        const visible=g.currentScene.foregroundLayers.filter(l=>g.renderer.sceneLayerVisible(l));
         const sleep=g.assets.getSceneImage(g.currentScene.id,'tonySleepingIdle');
         return { vote:g.state.tonyVote, influence:g.state.influence, speech:g.npcSpeechBubble?.text,
           expectedSpeech:g.t('photoquest.kiro_cleanup'), sleepLoaded:g.assets.isLoaded(sleep),
           visibleContestProps:visible.filter(l=>/layer.mehana.(tony_rakia|tony_glass|mitko_.*(bottle|glass))/.test(l.id)).map(l=>l.id) };
       });
       assert.equal(aftermath.vote,true);assert.equal(aftermath.speech,aftermath.expectedSpeech);
-      assert.equal(aftermath.sleepLoaded,true);assert.deepEqual(aftermath.visibleContestProps,[]);
+      assert.equal(aftermath.sleepLoaded,true);assert.deepEqual(aftermath.visibleContestProps,['layer.mehana.tony_rakia_empty_side']);
       await mark('toni-blackout-revealed-cleanup-and-sleep');
       await page.waitForTimeout(5000); // Observe one complete native4.8s sleeping loop in the recorded game.
       await mark('toni-complete-native-sleep-loop');
@@ -448,7 +448,7 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
       await go('exit.mehana.to_square','scene.chapter1.village_square');
       await talk('hotspot.square.kiosk');await choice('photoquest.make_diploma');
       await waitFor(()=>window.__comradeCandidateTest.game.inventory.has('item.fake_diploma'));
-      assert.deepEqual(await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;return {original:g.state.inventory.filter(id=>id==='item.tony_diploma').length,altered:g.state.inventory.filter(id=>id==='item.fake_diploma').length,photo:g.state.inventory.filter(id=>id==='item.mitko_photo').length};}),{original:0,altered:1,photo:1});
+      assert.deepEqual(await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;return {original:g.state.inventory.filter(id=>id==='item.tony_diploma').length,altered:g.state.inventory.filter(id=>id==='item.fake_diploma').length,photo:g.state.inventory.filter(id=>id==='item.mitko_photo').length};}),{original:0,altered:1,photo:0});
       await page.reload();await page.evaluate(()=>window.__comradeCandidateTest.ready);
       assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.state.flags.pepaDiplomaAltered),true);
       await mark('pepa-altered-copy-and-photo-persist');
@@ -581,11 +581,10 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
     }
   } finally {
     await browser?.close();
-    if (server.exitCode === null) server.kill("SIGTERM");
-    await new Promise(resolve => {
-      if (server.exitCode !== null) resolve();
-      else server.once("exit", resolve);
-    });
+    if (server.exitCode === null && server.signalCode === null) {
+      const exited = new Promise(resolve => server.once("exit", resolve));
+      server.kill("SIGTERM"); await exited;
+    }
   }
 });
 
@@ -688,11 +687,10 @@ test("fountain repair supports real clicks, safe oil self-use and mid-puzzle rel
     assert.deepEqual(saved, { repaired: true, vote: true, influence: 15, completed: true });
   } finally {
     await browser?.close();
-    if (server.exitCode === null) server.kill("SIGTERM");
-    await new Promise(resolve => {
-      if (server.exitCode !== null) resolve();
-      else server.once("exit", resolve);
-    });
+    if (server.exitCode === null && server.signalCode === null) {
+      const exited = new Promise(resolve => server.once("exit", resolve));
+      server.kill("SIGTERM"); await exited;
+    }
   }
 });
 

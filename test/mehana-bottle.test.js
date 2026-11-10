@@ -15,7 +15,7 @@ function reload(c){let raw;const save=new SaveSystem({getItem:()=>raw,setItem:(_
 function apply(rule,c){if(!rule||!requirementsMet(rule.requirements,c))return false;applyEffects(rule.effects,c);return true;}
 const fountain=(id,c)=>firstMatchingRule((id===oil?statueItemRules:fountainItemRules).filter(r=>r.itemId===id),c);
 const mehana=chapter1.scenes.find(s=>s.id==='scene.chapter1.mehana');
-const glass=mehana.interactables.find(x=>x.id==='hotspot.mehana.bai_mitko_rakia_glass');
+const glass=mehana.npcs.find(x=>x.id==='npc.tony_fridge');
 const finish=chapter1.dialogues.find(d=>d.id==='dialogue.tony_fridge').nodes.start.choices.find(c=>c.textKey==='dialogue.tony.choice.finish_challenge');
 const swap=(id,c)=>firstMatchingRule(glass.itemUseRules.filter(r=>r.itemId===id),c);
 const bottleCount=c=>[...c.state.inventory,...c.state.droppedItems.map(r=>r.itemId)].filter(id=>bottleItemIds.includes(id)).length;
@@ -26,10 +26,10 @@ test('complete bottle chain survives every save; repeat fills/swaps cannot dupli
  assert.equal(c.state.flags.fountainRepaired,true); // Repair now completes directly on the statue.
  apply(firstMatchingRule(fountainUseRules,c),c);c=reload(c);apply(fountain(empty,c),c);c=reload(c);assert.deepEqual(c.state.inventory,[water]);assert.equal(fountain(empty,c),null);
  c.state.flags.tonyChallengeStarted=true;const suspicion=c.state.suspicion;assert.equal(c.inventory.has('item.accordion'),false);apply(swap(water,c),c);assert.equal(c.state.suspicion,suspicion);assert.equal(c.state.flags.tonyDistracted,undefined);assert.equal(c.state.flags.pepaMusicPlayed,undefined);
- c=reload(c);assert.deepEqual(c.state.inventory,[empty]);assert.equal(c.state.swappedOwnRakiaWithWater,true);assert.equal(swap(water,c),null);
+ c=reload(c);assert.deepEqual(c.state.inventory,[empty]);assert.equal(c.state.swappedOwnRakiaWithWater,true);assert.equal(swap(water,c).reject,true);
  apply(finish.effect,c);apply(babaSupportRule,c);const rewards=[c.state.influence,c.state.suspicion,c.state.publicMood];c=reload(c);
  assert.equal(requirementsMet(finish.requirements,c),false);assert.equal(requirementsMet(babaSupportRule.requirements,c),false);
- for(let i=0;i<4;i++){apply(fountain(empty,c),c);assert.equal(swap(water,c),null);c=reload(c);assert.equal(bottleCount(c),1);}
+ for(let i=0;i<4;i++){apply(fountain(empty,c),c);assert.equal(swap(water,c).reject,true);c=reload(c);assert.equal(bottleCount(c),1);}
  assert.deepEqual([c.state.influence,c.state.suspicion,c.state.publicMood],rewards);assert.equal(c.state.tonyVote,true);assert.equal(c.state.babaStoyankaVote,true);
 });
 

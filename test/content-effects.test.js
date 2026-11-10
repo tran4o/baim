@@ -81,14 +81,14 @@ test("Tony vote rules remain reachable with only the fountain water bottle", () 
   const mehana = chapter1.scenes.find((scene) => scene.id === "scene.chapter1.mehana");
   const accordion = chapter1.items.find((item) => item.id === "item.accordion");
   const tony = mehana.npcs.find((target) => target.id === "npc.tony_fridge");
-  const mitkoGlass = mehana.interactables.find(
-    (target) => target.id === "hotspot.mehana.bai_mitko_rakia_glass"
+  const mitkoGlass = mehana.npcs.find(
+    (target) => target.id === "npc.tony_fridge"
   );
   const tonyDialogue = chapter1.dialogues.find((dialogue) => dialogue.id === "dialogue.tony_fridge");
   const inventory = inventoryWith();
   const state = {
     tonyVote: false,
-    swappedOwnRakiaWithWater: false,
+    swappedOwnRakiaWithWater: false, chapter1Completed: false,
     influence: 0,
     suspicion: 0,
     publicMood: 50,
@@ -112,7 +112,7 @@ test("Tony vote rules remain reachable with only the fountain water bottle", () 
     mitkoGlass.itemUseRules.filter((rule) => rule.itemId === "item.fountain_water_bottle"),
     context
   );
-  assert.equal(swap.messageKey, "msg.water_swap_ready");
+  assert.equal(swap.messageKey, "r39.toni.water_ready");
   applyEffects(swap.effects, context);
 
   assert.equal(state.swappedOwnRakiaWithWater, true);
@@ -285,7 +285,7 @@ test("legacy cellar flags cannot expose a second ballot box", () => {
 test("Tony quest exposes one outstanding objective for each unresolved puzzle stage", () => {
   const quest = chapter1.quests.find((candidate) => candidate.id === "quest.chapter1.tony_vote");
   const objectiveFor = (flags, state = {}) => firstMatchingRule(quest.stages, {
-    state: { tonyVote: false, swappedOwnRakiaWithWater: false, flags, ...state },
+    state: { tonyVote: false, swappedOwnRakiaWithWater: false, chapter1Completed: false, flags, ...state },
     inventory: inventoryWith()
   });
 
@@ -313,7 +313,7 @@ test("refusing Tony safely defers the challenge, reveals Kiro's clue, and permit
   );
   const state = {
     tonyVote: false,
-    swappedOwnRakiaWithWater: false,
+    swappedOwnRakiaWithWater: false, chapter1Completed: false,
     suspicion: 7,
     flags: {}
   };
@@ -336,13 +336,13 @@ test("refusing Tony safely defers the challenge, reveals Kiro's clue, and permit
 
 test("Tony water preparation needs no distraction, adds no suspicion and cannot consume twice", () => {
   const mehana = chapter1.scenes.find((scene) => scene.id === "scene.chapter1.mehana");
-  const mitkoGlass = mehana.interactables.find(
-    (target) => target.id === "hotspot.mehana.bai_mitko_rakia_glass"
+  const mitkoGlass = mehana.npcs.find(
+    (target) => target.id === "npc.tony_fridge"
   );
   const inventory = inventoryWith("item.fountain_water_bottle");
   const state = {
     tonyVote: false,
-    swappedOwnRakiaWithWater: false,
+    swappedOwnRakiaWithWater: false, chapter1Completed: false,
     suspicion: 0,
     flags: { tonyChallengeStarted: true }
   };
@@ -350,7 +350,7 @@ test("Tony water preparation needs no distraction, adds no suspicion and cannot 
   const waterRules = mitkoGlass.itemUseRules.filter((rule) => rule.itemId === "item.fountain_water_bottle");
 
   const caught = firstMatchingRule(waterRules, context);
-  assert.equal(caught.messageKey, "msg.water_swap_ready");
+  assert.equal(caught.messageKey, "r39.toni.water_ready");
   applyEffects(caught.effects, context);
   assert.equal(state.flags.tonyCaughtWaterAttempt, undefined);
   assert.equal(state.flags.tonyDistracted, undefined);
@@ -361,7 +361,7 @@ test("Tony water preparation needs no distraction, adds no suspicion and cannot 
   assert.equal(inventory.has("item.empty_rakia_bottle"), true);
 
   const repeated = firstMatchingRule(waterRules, context);
-  assert.equal(repeated, null);
+  assert.equal(repeated.reject, true);
   assert.equal(state.suspicion, 0);
   assert.equal(inventory.has("item.fountain_water_bottle"), false);
 });

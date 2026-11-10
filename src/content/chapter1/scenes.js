@@ -1,3 +1,7 @@
+import { stagePosterContestR45 } from './posterContestR45.js';
+import { stagePosterContestR41 } from './posterContestR41.js';
+import { stagePosterContestR40 } from './posterContestR40.js';
+import { stagePosterContestR39 } from './posterContestR39.js';
 import { apartmentWindowActions, apartmentWindowPresentation } from "./apartmentWindow.generated.js";
 import { accordionCue, footstepSurfaces } from "./audio.js";
 import { electionObjectGeometry } from "./sceneObjectGeometry.generated.js";
@@ -817,4 +821,4 @@ function applyObjectGeometry(objects = [], geometryByObjectId) {
     });
 }
 
-export const scenes = wireEntrances(stageToniTable(geometryScenes));
+export const scenes = stagePosterContestR45(stagePosterContestR41(stagePosterContestR40(stagePosterContestR39(wireEntrances(stageToniTable(geometryScenes))))));
