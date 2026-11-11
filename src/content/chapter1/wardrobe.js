@@ -35,6 +35,7 @@ export const wardrobeCloseup = {
     shelfPose: { rotation: [0, 0.3817993877991494, 0], supportMesh: 'accordion_Aged_mahogany_varnish' } },
     { target: wardrobePhotoPuzzle, rect: { x: 42, y: 69, w: 15.5, h: 5.95 },
       modelUrl: 'assets/chapter1/puzzles/photo-puzzle-seven-plain-photo-r34.glb',
+      collectedPhotoFlag: 'childPhotoRecovered', hiddenPhotoNodes: ['earned_photo_face'],
       cameraDirection: [0.03, 0.4, 1], fitBounds: true, verticalAlign: 'bottom',
       shelfPose: { rotation: [0, -0.15, 0] } }]
 };

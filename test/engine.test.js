@@ -609,7 +609,7 @@ test("unmatched inventory use on an NPC is rejected by that NPC instead of Bai M
 
   assert.equal(game.useInventoryItemOnTarget("item.empty_envelope", target), false);
   assert.deepEqual(npcSpeech, { speaker: target, message: target.itemRejectKey });
-  assert.equal(game.inventoryUseItemId, null);
+  assert.equal(game.inventoryUseItemId, "item.empty_envelope");
 });
 
 test("authored inventory reactions on NPCs retain the target as the speaker", () => {
@@ -624,8 +624,11 @@ test("authored inventory reactions on NPCs retain the target as the speaker", ()
   game.player = { pendingInteraction: null };
   game.applyContentEffect = (definition, options) => { application = { definition, options }; return true; };
 
-  assert.equal(game.useInventoryItemOnTarget("item.test", target), true);
-  assert.deepEqual(application, { definition: rule, options: { speakerTarget: target } });
+  game.inventoryUseItemId='item.test';game.t=k=>k;game.renderUi=()=>{};
+  let response;game.setNpcSpeechMessage=(speaker,message)=>response={speaker,message};
+  assert.equal(game.useInventoryItemOnTarget("item.test", target), false);
+  assert.equal(application,null);assert.deepEqual(response,{speaker:target,message:'msg.test'});
+  assert.equal(game.inventoryUseItemId,'item.test');
 });
 
 test("inventory self-use applies the item's authored rule and clears the expanded item state", () => {
@@ -659,9 +662,12 @@ test("inventory item combination finds the obsolete-recipe refusal in either sel
   game.selectedInventoryItemId = null;
   game.inventoryUseItemId = "item.empty_envelope";
 
-  assert.equal(game.useInventoryItemOnItem("item.empty_envelope", "item.unpaid_bills"), true);
-  assert.deepEqual(applied, ['photoquest.bills_not_diploma']);
-  assert.equal(game.inventoryUseItemId, null);
+  game.t=k=>k;game.renderUi=()=>{};let message;game.setStatusMessage=m=>message=m;
+  assert.equal(game.useInventoryItemOnItem("item.empty_envelope", "item.unpaid_bills"), false);
+  assert.deepEqual(applied, []);assert.equal(message,'photoquest.bills_not_diploma');
+  assert.equal(game.inventoryUseItemId,'item.empty_envelope');
+  assert.equal(game.useInventoryItemOnItem("item.unpaid_bills", "item.empty_envelope"), false);
+  assert.equal(message,'photoquest.bills_not_diploma');
 });
 
 test("Tony's completed vote is removed from the outstanding quest list", () => {

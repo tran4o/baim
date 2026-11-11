@@ -35,7 +35,7 @@ test('Mehana bottle chain through actual BG/EN gameplay, inspection, save/load a
    // Set only the expected assertion value, never game state.
    const exit=async(id,scene)=>{await page.evaluate(scene=>window.__expectedScene=scene,scene);await go(id,scene);};
    const talk=async id=>{await verb('talk');await click(id);await wait(()=>!!window.__comradeCandidateTest.game.dialogue.current,'dialogue');};
-   const itemAction=async(id,key)=>{await page.locator('[data-item-id="'+id+'"]').click();const label=await page.evaluate(key=>window.__comradeCandidateTest.game.t(key),key);await page.locator('.inventory-item-actions').getByRole('button',{name:label,exact:true}).click();};
+   const itemAction=async(id,key)=>{if(await page.evaluate(()=>Boolean(window.__comradeCandidateTest.game.inventoryUseItemId)))await page.locator('#game').click({button:'right',position:{x:680,y:530}});await page.locator('[data-item-id="'+id+'"]').click();const label=await page.evaluate(key=>window.__comradeCandidateTest.game.t(key),key);await page.locator('.inventory-item-actions').getByRole('button',{name:label,exact:true}).click();};
    const use=async(id,target)=>{await itemAction(id,'ui.inventory.use');await click(target);await settled();};
    const shot=async(name,durationMs=1500)=>{phase=name;await advance(0);const path=`${root}/${language}-${String(frames.length).padStart(3,'0')}-${name}.png`;await page.screenshot({path});frames.push({path,durationMs,name});};
    const snapshot=()=>page.evaluate(()=>{const g=window.__comradeCandidateTest.game;return structuredClone(g.state);});

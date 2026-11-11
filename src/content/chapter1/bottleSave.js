@@ -2,6 +2,9 @@
 export const bottleItemIds = ["item.fountain_water_bottle", "item.empty_rakia_bottle", "item.sunflower_oil"];
 export function normalizeBottleSave(state) {
   if (state.chapter1Completed) return;
+  // Older saves split oiling and turning the valve. Keep the earned repair
+  // when migrating to the combined oil-repair route, without granting support.
+  if (state.flags.fountainValveOiled) state.flags.fountainRepaired = true;
   const held = bottleItemIds.find(id => state.inventory.includes(id));
   const dropped = state.droppedItems.find(record => bottleItemIds.includes(record.itemId));
   let selected = held || dropped?.itemId;

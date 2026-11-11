@@ -1,23 +1,14 @@
 import { stampCue } from "./audio.js";
 import { clerkArchiveChoices } from "./archive.js";
-const receipt = "item.suspicious_receipt";
 const diploma = "item.fake_diploma";
 const unfinished = { chapter1Completed: false };
-export const receiptAvailable = { absentItems: [receipt], notFlags: ["journalistHasReceipt"], state: unfinished };
-export const receiptReward = { type: "addItem", itemId: receipt, requirements: receiptAvailable };
-export const receiptRule = { requirements: receiptAvailable, effects: [receiptReward], messageKey: "registration.receipt_obtained" };
-export const receiptHandover = {
-  itemId: receipt,
-  requirements: { items: [receipt], flags: ["campaignPosted"], notFlags: ["journalistHasReceipt"], state: unfinished },
-  effects: [
-    { type: "removeItem", itemId: receipt },
-    { type: "setFlag", key: "journalistHasReceipt" },
-    { type: "setFlag", key: "journalistInOffice" },
-    { type: "startQuest", questId: "quest.chapter1.journalist" }
-  ], messageKey: "registration.receipt_handover"
+export const journalistMeeting = {
+  requirements: { flags: ['campaignPosted'], notFlags: ['journalistInOffice', 'candidateRegistrationStamped'], state: unfinished },
+  effects: [{ type: 'setFlag', key: 'journalistInOffice' }, { type: 'startQuest', questId: 'quest.chapter1.journalist' }],
+  messageKey: 'registration.arrange_meeting'
 };
 export const stampRequirements = {
-  items: [diploma], flags: ["journalistHasReceipt", "journalistInOffice", "municipalityCredentialsAccepted"],
+  items: [diploma], flags: ["journalistInOffice", "municipalityCredentialsAccepted"],
   notFlags: ["mayorDiplomaStamped", "candidateRegistrationStamped"], state: unfinished
 };
 export const stampRule = {
@@ -67,7 +58,7 @@ export const mayorDialogue = {
   }
 };
 export const registrationStages = [
-  { id: "stage.registration.evidence", titleKey: "registration.quest.evidence", requirements: { notFlags: ["journalistHasReceipt", "candidateRegistrationStamped"] } },
+  { id: "stage.registration.evidence", titleKey: "registration.quest.evidence", requirements: { notFlags: ["journalistInOffice", "candidateRegistrationStamped"] } },
   { id: "stage.registration.clerk", titleKey: "registration.quest.clerk", requirements: { notFlags: ["municipalityCredentialsAccepted", "candidateRegistrationStamped"] } },
   { id: "stage.registration.mayor", titleKey: "registration.quest.mayor", requirements: { notFlags: ["mayorDiplomaStamped", "candidateRegistrationStamped"] } },
   { id: "stage.registration.register", titleKey: "registration.quest.register", requirements: { notFlags: ["candidateRegistrationStamped"] } }
@@ -76,26 +67,15 @@ export const registrationStages = [
 export function wireRegistrationDialogues(dialogues) {
   return [...dialogues.map(dialogue => {
     if (dialogue.id === clerkDialogue.id) return clerkDialogue;
-    if (dialogue.id === "dialogue.tony_fridge") {
-      const choices = dialogue.nodes.start.choices;
-      choices.find(choice => choice.next === "contest_result").effect.effects.push(receiptReward);
-      choices.unshift({ textKey: "registration.collect_receipt", requirements: { ...receiptAvailable, state: { ...unfinished, tonyVote: true } }, effect: receiptRule });
-      dialogue.nodes.contest_result.lineKey = "registration.tony_result";
-    }
-    if (dialogue.id === "dialogue.mehana_waiter") {
-      dialogue.nodes.start.choices.unshift({ textKey: "registration.kiro_receipt", requirements: { ...receiptAvailable, flags: ["journalistEvidenceRequested"] }, effect: receiptRule });
-    }
     if (dialogue.id === "dialogue.journalist") {
       const choices = dialogue.nodes.start.choices;
       // Keep the old final interview after recovery; it no longer introduces her.
       for (const choice of choices.slice(0, -1)) choice.requirements = { ...choice.requirements, flags: [...(choice.requirements?.flags || []), "ballotBoxRecovered"] };
       dialogue.nodes.start.lineKey = "registration.journalist_start";
       choices.unshift(
-        { textKey: "registration.give_receipt", requirements: receiptHandover.requirements, effect: receiptHandover },
-        { textKey: "registration.ask_evidence", requirements: { notFlags: ["journalistHasReceipt"], state: unfinished }, next: "evidence_request", effect: { effects: [{ type: "setFlag", key: "journalistEvidenceRequested" }, { type: "startQuest", questId: "quest.chapter1.journalist" }] } },
-        { textKey: "registration.next", requirements: { flags: ["journalistHasReceipt"], notFlags: ["ballotBoxRecovered"] }, next: "registration_next" }
+        { textKey: 'registration.request_meeting', requirements: journalistMeeting.requirements, effect: journalistMeeting },
+        { textKey: "registration.next", requirements: { flags: ["journalistInOffice"], notFlags: ["ballotBoxRecovered"] }, next: "registration_next" }
       );
-      dialogue.nodes.evidence_request = { lineKey: "registration.evidence_request", choices: [leave] };
       dialogue.nodes.registration_next = { lineKey: "registration.reporter_next", choices: [leave] };
     }
     return dialogue;
@@ -109,7 +89,7 @@ export function wireRegistrationScenes(scenes) {
         accessRequirements: { anyOf: [{ flags: ["campaignPosted"] }, { flags: ["candidateRegistrationStamped"] }, { state: { chapter1Completed: true } }] },
         blockedMessageKey: "registration.guard_blocked" };
       if (exit.id === "exit.municipality.to_mayor_office") return { ...exit,
-        accessRequirements: { anyOf: [{ flags: ["journalistHasReceipt"] }, { flags: ["candidateRegistrationStamped"] }, { state: { chapter1Completed: true } }] },
+        accessRequirements: { anyOf: [{ flags: ["journalistInOffice"] }, { flags: ["candidateRegistrationStamped"] }, { state: { chapter1Completed: true } }] },
         blockedMessageKey: "registration.office_blocked" };
       return exit;
     }),
@@ -129,7 +109,7 @@ export function wireRegistrationScenes(scenes) {
         itemUseRules: [{ itemId: diploma, effects: [], messageKey: "registration.talk_mayor" }] };
       if (npc.id === "npc.journalist" && scene.id === "scene.chapter1.village_square") return { ...npc,
         requirements: { anyOf: [{ flags: ["campaignPosted"] }, { flags: ["ballotBoxRecovered"] }, { state: { hasBallotBox: true } }], notFlags: ["journalistInOffice"], state: unfinished },
-        itemUseRules: [receiptHandover] };
+        itemUseRules: [] };
       return npc;
     })
   }));

@@ -137,11 +137,7 @@ test("browser completes the required Chapter 1 path and restores the ending afte
       };
       choose("dialogue.penka_kiosk", "campaign.kiosk.choice.pamphlets");
       game.useInventoryItemOnTarget("item.campaign_pamphlets", find(game.currentScene.interactables, "hotspot.square.poster_board"));
-      choose("dialogue.journalist", "registration.ask_evidence");
-      await game.changeScene("scene.chapter1.mehana");
-      choose("dialogue.mehana_waiter", "registration.kiro_receipt");
-      await game.changeScene("scene.chapter1.village_square");
-      game.useInventoryItemOnTarget("item.suspicious_receipt", find(game.currentScene.npcs, "npc.journalist"));
+      choose("dialogue.journalist", "registration.request_meeting");
       await game.changeScene("scene.chapter1.municipality");
       game.useInventoryItemOnTarget("item.fake_diploma", find(game.currentScene.npcs, "npc.municipality_clerk"));
       await game.changeScene("scene.chapter1.mayor_office");
@@ -453,12 +449,7 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
       assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.state.flags.pepaDiplomaAltered),true);
       await mark('pepa-altered-copy-and-photo-persist');
       await talk("npc.journalist");
-      await choice("registration.ask_evidence");
-      await choice("registration.leave");
-      // Tony's completed contest already awarded the receipt; Kiro is only its fallback.
-      assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.suspicious_receipt')),true);
-      await talk("npc.journalist");
-      await choice("registration.give_receipt");
+      await choice("registration.request_meeting");
       await waitFor(() => window.__comradeCandidateTest.game.state.flags.journalistInOffice);
       await page.reload();
       await page.evaluate(() => window.__comradeCandidateTest.ready);

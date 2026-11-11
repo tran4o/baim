@@ -42,6 +42,11 @@ function migrateSave(save, previousPhotoVersion = 0) {
     completedQuests: Array.isArray(save.completedQuests) ? save.completedQuests : [],
     expiredQuests: Array.isArray(save.expiredQuests) ? save.expiredQuests : []
   };
+  // Obsolete evidence is retired, including dropped copies. Earned handover progress survives.
+  normalized.inventory = normalized.inventory.filter(id => id !== 'item.suspicious_receipt');
+  normalized.droppedItems = normalized.droppedItems.filter(record => record.itemId !== 'item.suspicious_receipt');
+  if (normalized.flags.journalistHasReceipt && !normalized.flags.candidateRegistrationStamped && !normalized.chapter1Completed)
+    normalized.flags.journalistInOffice = true;
   normalizeBottleSave(normalized);
   normalizePhotoQuestSave(normalized, previousPhotoVersion);
   // Preserve earned registration in old saves, including saves from before the
