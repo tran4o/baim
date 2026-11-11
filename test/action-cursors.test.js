@@ -20,7 +20,7 @@ test('each selected action animates only when it meaningfully applies', () => {
   assert.deepEqual(['look', 'talk', 'use', 'take'].map(v => supports(game, target, v)), [true, false, false, false]);
   assert.equal(supports(game, { dialogueId: 'talk' }, 'talk'), true);
   assert.equal(supports(game, { takeItemId: 'cup' }, 'take'), true);
-  assert.equal(supports(game, { useRules: [{ effects: [] }] }, 'use'), true);
+  assert.equal(supports(game, { useRules: [{ effects: [] }] }, 'use'), false);
   assert.equal(supports(game, null), false);
 });
 test('inventory compatibility respects explicit rejection and does not execute effects', () => {
@@ -57,11 +57,11 @@ test('action requirements, rejected talk/look rules, solved puzzles and exits st
 });
 test('presentation switches between C, still Talk on a statue and animated Talk on a speaker without altering the selected verb', () => {
   const {game}=fixture(),canvas={},ui={},cursor=Object.create(ActionCursor.prototype);let under=canvas,target=null;
-  Object.assign(cursor,{canvas,pointer:{x:100,y:100},surface:{contains:()=>true},document:{hidden:false,elementFromPoint:()=>under},overlay:{style:{},dataset:{}},ctx:{clearRect(){},drawImage(){}},images:Object.fromEntries(['neutral','look','talk','use','take'].map(v=>[v,{complete:true,naturalWidth:v==='neutral'?96:768}]))});
+  Object.assign(cursor,{canvas,pointer:{x:100,y:100},surface:{contains:()=>true},document:{hidden:false,elementFromPoint:()=>under},itemOverlay:{style:{},dataset:{}},overlay:{style:{},dataset:{}},ctx:{clearRect(){},drawImage(){}},images:Object.fromEntries(['neutral','look','talk','use','take'].map(v=>[v,{complete:true,naturalWidth:v==='neutral'?96:768}]))});
   canvas.style={};Object.assign(game,{selectedVerb:'talk',renderer:{screenToWorld:()=>({x:100,y:100})},sceneTargetAt:()=>target});
   cursor.update(game,100);assert.equal(cursor.overlay.dataset.verb,'neutral');assert.equal(cursor.overlay.dataset.frame,'0');
   target={id:'statue',nameKey:'statue'};cursor.update(game,200);cursor.update(game,400);assert.equal(cursor.overlay.dataset.verb,'talk');assert.equal(cursor.overlay.dataset.active,'false');assert.equal(cursor.overlay.dataset.frame,'0');
-  target={id:'speaker',talkKey:'hi'};cursor.update(game,500);cursor.update(game,600);assert.equal(cursor.overlay.dataset.active,'true');assert.equal(cursor.overlay.dataset.frame,'2');
+  target={id:'speaker',kind:'npc',talkKey:'hi'};cursor.update(game,500);cursor.update(game,600);assert.equal(cursor.overlay.dataset.active,'true');assert.equal(cursor.overlay.dataset.frame,'2');
   game.sceneTransitionPending=true;cursor.update(game,700);assert.equal(cursor.overlay.dataset.verb,'neutral');assert.equal(cursor.overlay.style.display,'block');
   game.sceneTransitionPending=false;under=ui;cursor.update(game,800);assert.equal(cursor.overlay.dataset.verb,'neutral');assert.equal(game.selectedVerb,'talk');
   under=canvas;target={id:'door',kind:'exit',nameKey:'door'};
@@ -69,7 +69,7 @@ test('presentation switches between C, still Talk on a statue and animated Talk 
     game.selectedVerb=verb;cursor.update(game,900);cursor.update(game,1100);
     assert.equal(cursor.overlay.dataset.verb,'neutral');assert.equal(cursor.overlay.dataset.active,'false');assert.equal(cursor.overlay.dataset.frame,'0');assert.equal(game.selectedVerb,verb);
   }
-  game.inventoryUseItemId='oil';cursor.update(game,1200);assert.equal(cursor.overlay.dataset.verb,'neutral');assert.equal(cursor.overlay.dataset.active,'false');
+  game.clearInventoryInteraction=()=>{game.inventoryUseItemId=null;};game.inventoryUseItemId='oil';cursor.update(game,1200);assert.equal(cursor.overlay.dataset.verb,'neutral');assert.equal(cursor.overlay.dataset.active,'false');
 });
 test('neutral runtime frame preserves the chosen C source and its precise hotspot', () => {
   const meta=JSON.parse(readFileSync(new URL('../assets_src/ui/action-cursors/neutral-r11.json',import.meta.url))),hash=b=>createHash('sha256').update(b).digest('hex');

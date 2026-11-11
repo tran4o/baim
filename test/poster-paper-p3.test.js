@@ -3,7 +3,12 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {PNG} from 'pngjs';
-import {assetManifest} from '../src/content/art/assetManifest.js';
+import {assetManifest as currentAssetManifest} from '../src/content/art/assetManifest.js';
+// Exact accepted R51 paper remains a retained source; current wording is covered by R53.
+const assetManifest=structuredClone(currentAssetManifest);
+assetManifest.items['item.campaign_pamphlets'].icon='assets/chapter1/items/campaign-poster-p3-r51/front.png';
+assetManifest.items['item.campaign_pamphlets'].model='assets/chapter1/items/campaign-poster-p3-r51/poster.glb';
+assetManifest.scenes['scene.chapter1.village_square'].mitkoPosterR45='assets/chapter1/scenes/village_square/poster-p3-r51/posted.png';
 import {fullPosterPanelR45} from '../src/content/chapter1/posterContestR45.js';
 const hash=b=>createHash('sha256').update(b).digest('hex');
 test('selected P3 native paper uses exact accepted artwork and complete textured UVs/material maps',()=>{

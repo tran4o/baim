@@ -1,7 +1,8 @@
+import {mountItemImageView} from './ItemImageView.js';
 import { interactionSideFacing, canFaceStoppedInteraction, hasVerticalRest } from "./InteractionFacing.js";
 import { createReviewSaveSystem } from "./ReviewState.js";
 import { AudioSystem } from "./AudioSystem.js";
-import { ActionCursor, cursorTargetSupportsAction } from './ActionCursor.js';
+import { ActionCursor, cursorTargetSupportsAction, effectiveTargetVerb } from './ActionCursor.js';
 import { planRefusalApproach, refusalTargetPoint } from './RefusalApproach.js';
 import { createObjectCloseup } from './ObjectCloseupView.js';
 import { mountObjectProp } from './ObjectPropView.js';
@@ -324,6 +325,7 @@ export class Game {
         this.audio.setAmbience(this.currentScene?.ambience);
       }
     };
+    document.addEventListener('contextmenu',event=>{if(!this.inventoryUseItemId)return;event.preventDefault();event.stopImmediatePropagation();this.clearInventoryInteraction();this.renderUi();this.actionCursor?.update(this);},true);
     window.addEventListener("pointerdown", resumeAudio);
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) this.audio.setEnabled(false);
@@ -1255,10 +1257,7 @@ export class Game {
       this.handleTarget(target, point);
       return;
     }
-    if (this.inventoryUseItemId) {
-      this.clearInventoryInteraction();
-      this.renderUi();
-    }
+    if (this.inventoryUseItemId) {this.setStatusMessage(this.t('msg.inventory.cannot_use_with',{item:this.t(this.content.items[this.inventoryUseItemId]?.nameKey),target:this.t('ui.inventory.ground')}),{reject:true});return;}
     if (this.currentScene?.playerMode === "closeup") return;
     const destination = isWalkable(this.currentScene, point)
       ? point
@@ -1312,6 +1311,8 @@ export class Game {
     if (this.objectCloseup || this.puzzleOpen || this.inspectedItemId || this.sceneAction?.active) return;
     if (target.kind !== "exit") this.rememberInteractionTarget(target, clickPoint);
     else { this.player.interactionFacingPoint = null; this.player.interactionFacingTargetId = null; }
+    if(this.inventoryUseItemId&&!cursorTargetSupportsAction(this,target)){this.useInventoryItemOnTarget(this.inventoryUseItemId,target);return;}
+    if(!this.inventoryUseItemId)this.selectedVerb=effectiveTargetVerb(this,target);
     if (this.selectedVerb === VERBS.LOOK && !this.inventoryUseItemId && target.kind !== 'exit') {
       this.player.pendingInteraction = null;
       this.player.pendingFacingPoint = { ...this.player.interactionFacingPoint };
@@ -1380,7 +1381,6 @@ export class Game {
       const fallback = firstMatchingRule((this.content.items[itemId]?.targetUseRules || [])
         .filter(r => this.itemTargetRuleMatches(r, target)), context);
       rule = explicit || fallback;
-      this.clearInventoryInteraction();
     } else {
       const configured = target.actions?.[this.selectedVerb];
       rule = Array.isArray(configured) ? firstMatchingRule(configured, context) : configured;
@@ -1389,7 +1389,7 @@ export class Game {
       }
     }
     this.player.interactionDebug = { ...this.player.interactionDebug, availabilityAtDispatch: nowAvailable };
-    if (!nowAvailable && rule?.reject && this.targetAvailable(target)
+    if (!itemId && !nowAvailable && rule?.reject && this.targetAvailable(target)
       && (!itemId || this.inventory.has(itemId)) && requirementsMet(rule.requirements, context)) {
       return this.applyContentEffect(rule, { speakerTarget: target.kind === 'npc' ? target : null });
     }
@@ -1408,7 +1408,7 @@ export class Game {
     if (target.kind === "exit") return this.approachExit(target);
     if (this.selectedVerb === VERBS.LOOK && !this.inventoryUseItemId) return false;
     const characterTarget = this.interactionCharacterTarget(target);
-    if (characterTarget && !this.actionSequenceApproachPoint(this.actionSequenceForTarget(target, this.selectedVerb))) {
+    if (characterTarget && !target.interactionApproach && !this.actionSequenceApproachPoint(this.actionSequenceForTarget(target, this.selectedVerb))) {
       return this.approachCharacter(target, characterTarget);
     }
     if (this.currentScene?.playerMode === "closeup" || (this.currentScene?.playerMode === "seated" && !target.interactionApproach)) return false;
@@ -1551,6 +1551,7 @@ export class Game {
     const pending = this.player.pendingInteraction;
     if (!pending || this.player.target || this.player.animation === "walk") return;
     this.player.pendingInteraction = null;
+    if (pending.inventoryUseItemId && (this.inventoryUseItemId !== pending.inventoryUseItemId || !this.inventory.has(pending.inventoryUseItemId))) return;
     if (pending.target.kind === 'exit' && distance(this.player.position, pending.approach) > EXACT_ACTION_APPROACH_EPSILON) return;
     if (pending.entryFacing) this.player.facing = pending.entryFacing;
     if (pending.sideFacing) this.faceInteractionSide(pending.sideFacing);
@@ -1633,6 +1634,8 @@ export class Game {
   }
 
   faceInteractionSide(facing) {
+    // Remembering a target must not restart an already settled side pose.
+    if (this.player.facing === facing && !hasVerticalRest(this.player) && !this.player.arrivalTurn) return;
     this.player.arrivalTurn = null;
     this.player.facing = facing;
     if (facing === "east" || facing === "west") this.player.lastHorizontalFacing = facing;
@@ -1889,7 +1892,11 @@ export class Game {
   beginInventoryItemUse(itemId) {
     if (this.inspectedItemId || this.sceneAction?.active) return false;
     if (!itemId || !this.inventory.has(itemId)) return false;
+    this.clearInventoryInteraction();
     this.selectedInventoryItemId = null;
+    const icon=[...(this.uiRoot?.querySelectorAll('.inventory-item') || [])].find(e=>e.dataset.itemId===itemId)?.querySelector('img');
+    const box=icon?.getBoundingClientRect();this.inventoryCursorSize=box?{width:box.width,height:box.height}:{width:78,height:78};
+    this.inventoryCursorSlot=firstMatchingRule(this.content?.items?.[itemId]?.iconRules,this.effectContext())?.slot||'icon';
     this.inventoryUseItemId = itemId;
     this.selectedVerb = VERBS.USE;
     this.clearStatusMessage();
@@ -1901,6 +1908,7 @@ export class Game {
     if (this.player?.pendingInteraction?.inventoryUseItemId) this.player.pendingInteraction = null;
     this.selectedInventoryItemId = null;
     this.inventoryUseItemId = null;
+    if(this.actionCursor?.itemOverlay)this.actionCursor.itemOverlay.style.display='none';
   }
 
   useInventoryItemOnTarget(itemId, target) {
@@ -1915,8 +1923,12 @@ export class Game {
       this.effectContext()
     );
     const rule = explicitRule || fallbackRule;
-    this.clearInventoryInteraction();
-    if (rule) return this.applyContentEffect(rule, { speakerTarget: target.kind === "npc" ? target : null });
+    if (rule && !rule.reject && (rule.effects?.length || rule.soundCue || rule.sceneSequence || rule.endingTrigger || rule.animation)) {
+      const applied = this.applyContentEffect(rule, { speakerTarget: target.kind === "npc" ? target : null });
+      if (applied !== false) this.clearInventoryInteraction();
+      return applied;
+    }
+    if(rule?.messageKey){if(target.kind==='npc')this.setNpcSpeechMessage(target,this.t(rule.messageKey));else this.setStatusMessage(this.t(rule.messageKey),{reject:true});this.renderUi();return false;}
     if (target.kind === "npc") {
       this.setNpcSpeechMessage(target, this.t(target.itemRejectKey || "msg.inventory.npc_reject_generic"));
       return false;
@@ -1940,8 +1952,11 @@ export class Game {
     if (!this.inventory.has(itemId) || this.inspectedItemId) return false;
     const item = this.content.items[itemId];
     const rule = firstMatchingRule(item?.selfUseRules, this.effectContext());
-    this.clearInventoryInteraction();
-    if (rule) return this.applyContentEffect(rule);
+    if (rule && !rule.reject) {
+      const applied = this.applyContentEffect(rule);
+      if (applied !== false) this.clearInventoryInteraction();
+      return applied;
+    }
     this.setStatusMessage(this.t("msg.inventory.cannot_use_on_self", {
       item: this.t(item?.nameKey || itemId)
     }), { reject: true });
@@ -1950,11 +1965,6 @@ export class Game {
   }
 
   useInventoryItemOnItem(sourceItemId, targetItemId) {
-    if (sourceItemId === targetItemId) {
-      this.clearInventoryInteraction();
-      this.renderUi();
-      return false;
-    }
     const source = this.content.items[sourceItemId];
     const target = this.content.items[targetItemId];
     const directRule = firstMatchingRule(
@@ -1965,9 +1975,13 @@ export class Game {
       (target?.itemUseRules || []).filter((candidate) => candidate.itemId === sourceItemId),
       this.effectContext()
     );
-    this.clearInventoryInteraction();
-    if (directRule || reverseRule) return this.applyContentEffect(directRule || reverseRule);
-    this.setStatusMessage(this.t("msg.inventory.cannot_combine", {
+    const rule = directRule || reverseRule;
+    if (rule && !rule.reject) {
+      const applied = this.applyContentEffect(rule);
+      if (applied !== false) this.clearInventoryInteraction();
+      return applied;
+    }
+    this.setStatusMessage(this.t(rule?.messageKey || "msg.inventory.cannot_combine", {
       item: this.t(source?.nameKey || sourceItemId),
       target: this.t(target?.nameKey || targetItemId)
     }), { reject: true });
@@ -2108,7 +2122,7 @@ export class Game {
 
   createItemInspection() {
     const item = this.content.items[this.inspectedItemId];
-    const asset = this.assets.manifest.items[item.id];
+    const asset = this.assets.manifest.items[item.id] || {};
     const panel = element('section', 'received-item-screen');
     panel.tabIndex = -1;
     queueMicrotask(() => { if (panel.isConnected) panel.focus(); });
@@ -2123,9 +2137,10 @@ export class Game {
     }
     text.name = this.t(item.nameKey);
     let propControls = null;
-    if (asset.inspection === 'prop') {
+    if (!asset.model) {this.receivedItemViewer=mountItemImageView(viewer,{imageUrl:this.assets.getItemAssetPath(item.id,firstMatchingRule(item.iconRules,this.effectContext())?.slot||'icon'),text});}
+    else if (asset.inspection === 'prop') {
       for (const key of ['loading','unavailable','controls']) text[key] = this.t('wardrobe.prop_' + key);
-      this.receivedItemViewer = mountObjectProp(viewer, { modelUrl: asset.model, text, interactive: true, cameraDirection: asset.cameraDirection, inspectionFitScale: asset.inspectionFitScale });
+      this.receivedItemViewer = mountObjectProp(viewer, { modelUrl: asset.model, text, interactive: true, cameraDirection: asset.cameraDirection, inspectionFitScale: asset.inspectionFitScale, inspectionDefaultZoom: asset.inspectionDefaultZoom });
       propControls = document.createElement('p'); propControls.textContent = text.controls;
     } else this.receivedItemViewer = mountItemModelViewer(viewer, { modelUrl: asset.model, fallbackUrl: asset.icon, text, liquidColor: asset.liquidColor, inspection: asset.inspection });
     const description = document.createElement('p'); description.textContent = this.t(item.descriptionKey);
@@ -2352,6 +2367,7 @@ export class Game {
   }
 
   renderUi() {
+    if(this.inventoryUseItemId&&(!this.inventory.has(this.inventoryUseItemId)||this.objectCloseup||this.puzzleOpen||this.inspectedItemId||this.menuOpen||this.dialogue.current||this.sceneTransitionPending))this.clearInventoryInteraction();
     this.objectCloseupView?.dispose(); this.objectCloseupView = null;
     this.puzzleView?.dispose(); this.puzzleView = null;
     this.receivedItemViewer?.dispose(); this.receivedItemViewer = null;
@@ -2403,6 +2419,7 @@ export class Game {
           actionKey: item.target.puzzleId ? 'verb.use' : 'verb.take',
           imageSrc: this.assets.getItemImage(item.target.takeItemId)?.src,
           modelUrl: item.modelUrl || (item.modelAsset ? this.assets.manifest.items[item.target.takeItemId]?.[item.modelAsset] : null),
+          hiddenNodes: item.collectedPhotoFlag && this.state.flags[item.collectedPhotoFlag] ? item.hiddenPhotoNodes : [],
           cameraDirection: item.cameraDirection, fitBounds: item.fitBounds, verticalAlign: item.verticalAlign, shelfPose: item.shelfPose
         })),
         onTake: itemId => this.takeObjectCloseupItem(itemId), onClose: () => this.closeObjectCloseup()
@@ -2572,12 +2589,12 @@ export class Game {
           : []),
         button(this.t("ui.inventory.inspect"), () => {
           this.clearInventoryInteraction();
-          if (this.assets.manifest.items[selectedItem.id]?.model) {
+          {
             this.inspectedItemId = selectedItem.id;
             this.player.target = null; this.player.walkPath = [];
             this.player.pendingInteraction = null; this.player.pendingFacingPoint = null;
             this.renderUi();
-          } else this.setStatusMessage(this.t(selectedItem.descriptionKey));
+          }
         }),
         button(this.t("ui.inventory.drop"), () => this.dropInventoryItem(selectedItem)),
         button(this.t("ui.inventory.close"), () => {

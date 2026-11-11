@@ -126,7 +126,6 @@ export const items = [
     }]
   },
   { id: "item.campaign_pamphlets", nameKey: "item.campaign_pamphlets.name", descriptionKey: "item.campaign_pamphlets.desc" },
-  { id: "item.suspicious_receipt", nameKey: "item.suspicious_receipt.name", descriptionKey: "item.suspicious_receipt.desc" },
   { id: "item.pickle_jar", nameKey: "item.pickle_jar.name", descriptionKey: "item.pickle_jar.desc" },
   { id: "item.ballot_box", nameKey: "item.ballot_box.name", descriptionKey: "item.ballot_box.desc" },
   { id: "item.municipality_stamp", nameKey: "item.municipality_stamp.name", descriptionKey: "item.municipality_stamp.desc" }

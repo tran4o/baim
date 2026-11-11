@@ -11,8 +11,14 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-noble@sha256:5b8f294aff9041b7191c34a4bab3ac270157a28774d4b0660e9743297b697e48
+      options: --ipc=host
     env:
       BAIM_REQUIRE_BROWSER_TESTS: "1"
+      GIT_CONFIG_COUNT: "1"
+      GIT_CONFIG_KEY_0: safe.directory
+      GIT_CONFIG_VALUE_0: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -20,8 +26,21 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Install required Chromium and system dependencies
-        run: npx playwright install --with-deps chromium
+      - name: Verify pinned Playwright and launch required Chromium
+        run: |
+          git show :assets_src/characters/bai_mitko/external_animation_v1/look-into-distance-source-history.md > /dev/null
+          node <<'NODE'
+          const expected = '1.61.1';
+          const actual = require('playwright/package.json').version;
+          const locked = require('./package-lock.json').packages['node_modules/playwright'].version;
+          if (actual !== expected || locked !== expected) throw new Error('Playwright image/package version mismatch');
+          const { chromium } = require('playwright');
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            console.log('Required Chromium launched:', browser.version());
+            await browser.close();
+          })().catch(error => { console.error(error); process.exitCode = 1; });
+          NODE
       - run: npm test
       - name: Print saved image-decode diagnostics
         if: always()

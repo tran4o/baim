@@ -1,5 +1,6 @@
 import { firstMatchingRule, requirementsMet } from './EffectSystem.js';
 import { childPhotoRecovery } from '../content/chapter1/photoQuest.js';
+import { isCharacterInteraction } from './InteractionApproach.js';
 
 export const CURSOR_ART = Object.freeze({
   look: { id: 'LOOK-A', hotspot: [2, 2] },
@@ -8,6 +9,15 @@ export const CURSOR_ART = Object.freeze({
   take: { id: 'TAKE-A', hotspot: [2, 2] }
 });
 export const NEUTRAL_CURSOR_ART = Object.freeze({ id: 'N-C', hotspot: [4, 3] });
+
+export function meaningfulUseRule(rule) {
+  return Boolean(rule && !rule.reject && (rule.effects?.length || rule.soundCue || rule.sceneSequence || rule.endingTrigger || rule.animation));
+}
+
+export function effectiveTargetVerb(game,target,verb=game.selectedVerb) {
+  return !game.inventoryUseItemId && isCharacterInteraction(target) && (target.dialogueId || target.talkRules?.length || target.talkKey)
+    && cursorTargetSupportsAction(game,target,'talk') ? 'talk' : verb;
+}
 
 export function cursorInteractionBlocked(game) {
   return Boolean(game.editMode || game.devHome || game.simpleAnimTest || game.objectCloseup || game.puzzleOpen || game.inspectedItemId
@@ -26,7 +36,7 @@ export function cursorTargetSupportsAction(game, target, verb = game.selectedVer
     const explicit = firstMatchingRule((target.itemUseRules || []).filter(rule => rule.itemId === id), context);
     const fallback = firstMatchingRule((game.content.items[id]?.targetUseRules || [])
       .filter(rule => game.itemTargetRuleMatches(rule, target)), context);
-    return accepts(explicit || fallback);
+    return meaningfulUseRule(explicit || fallback);
   }
   if (target.kind === 'exit') return (verb === 'look' || verb === 'use')
     && requirementsMet(target.accessRequirements, context);
@@ -36,12 +46,13 @@ export function cursorTargetSupportsAction(game, target, verb = game.selectedVer
     return rule ? accepts(rule) : Boolean(target.lookKey || target.nameKey);
   }
   if (verb === 'take' && target.takeItemId && game.inventory.has(target.takeItemId)) return false;
+  if (verb === 'use' && target.plainUseAvailable === false) return false;
   const configured = target.actions?.[verb];
   const sequence = Array.isArray(configured) ? firstMatchingRule(configured, context) : configured;
   if (sequence && requirementsMet(sequence.requirements, context)) return accepts(sequence);
   if (verb === 'talk') {
     const rule = firstMatchingRule(target.talkRules, context);
-    return rule ? accepts(rule) : Boolean(target.talkKey || target.dialogueId);
+    return rule ? accepts(rule) : Boolean(target.dialogueId || (isCharacterInteraction(target) && target.talkKey));
   }
   // Game routes both verbs to the same puzzle/recovery handler.
   if ((verb === 'use' || verb === 'take') && target.puzzleId === 'photo_cupboard') {
@@ -52,9 +63,10 @@ export function cursorTargetSupportsAction(game, target, verb = game.selectedVer
     return rule ? accepts(rule) : true;
   }
   if (verb === 'use') {
+    if (target.plainUseAvailable === false) return false;
     if (target.endingTrigger) return !game.state.chapter1Completed
       && requirementsMet(target.endingTrigger.requirements, context);
-    return Boolean(target.objectCloseup || target.useDialogueId) || accepts(firstMatchingRule(target.useRules, context));
+    return Boolean(target.objectCloseup || target.useDialogueId || target.television) || meaningfulUseRule(firstMatchingRule(target.useRules, context));
   }
   return false;
 }
@@ -85,6 +97,9 @@ export class ActionCursor {
     this.overlay.style.cssText = 'position:fixed;width:32px;height:32px;pointer-events:none;z-index:10000;display:none;';
     this.ctx = this.overlay.getContext('2d');
     doc.body.append(this.overlay);
+    this.itemOverlay=doc.createElement('img');this.itemOverlay.className='inventory-item-cursor';
+    this.itemOverlay.setAttribute('aria-hidden','true');this.itemOverlay.draggable=false;
+    this.itemOverlay.style.cssText='position:fixed;object-fit:contain;pointer-events:none;z-index:10001;display:none;';doc.body.append(this.itemOverlay);
     for (const verb of [...Object.keys(CURSOR_ART), 'neutral']) {
       const image = new this.view.Image();
       image.src = new URL(`../../assets/ui/action-cursors/${verb}.png`, import.meta.url).href;
@@ -104,6 +119,7 @@ export class ActionCursor {
     this.pointer = null;
     this.key = null;
     if (this.overlay) this.overlay.style.display = 'none';
+    if(this.itemOverlay)this.itemOverlay.style.display='none';
   }
 
   update(game, now = globalThis.performance?.now?.() || 0) {
@@ -112,21 +128,32 @@ export class ActionCursor {
     const pointer = this.pointer;
     const underPointer = pointer && this.document.elementFromPoint(pointer.x, pointer.y);
     if (!pointer || this.document.hidden || !this.surface.contains(underPointer)) {
+      this.itemOverlay.style.display='none';
       this.overlay.style.display = 'none';
       this.key = null;
       return;
     }
+    const itemId=game.inventoryUseItemId;
+    if(itemId&&!game.inventory.has(itemId)){game.clearInventoryInteraction();}
+    if(itemId&&game.inventory.has(itemId)&&!cursorInteractionBlocked(game)){
+      const size=game.inventoryCursorSize||{width:78,height:78};
+      const imagePath=game.assets.getItemAssetPath(itemId,game.inventoryCursorSlot||'icon');
+      if(this.itemOverlay.dataset.assetPath!==imagePath){this.itemOverlay.src=imagePath;this.itemOverlay.dataset.assetPath=imagePath;}
+      Object.assign(this.itemOverlay.style,{width:size.width+'px',height:size.height+'px',left:(pointer.x-4)+'px',top:(pointer.y-4)+'px',display:'block'});
+      this.itemOverlay.dataset.itemId=itemId;this.overlay.style.display='none';return;
+    }
+    this.itemOverlay.style.display='none';
     const point = game.renderer.screenToWorld(pointer.x, pointer.y);
     const target = !cursorInteractionBlocked(game) && underPointer === this.canvas ? game.sceneTargetAt(point) : null;
     const closeupButton=game.objectCloseup&&!game.puzzleOpen ? underPointer.closest?.('.object-closeup-item[data-closeup-action]') : null;
     const closeupVerb=closeupButton?.dataset.closeupAction;
-    const verb = closeupButton&&['take','use'].includes(closeupVerb) ? closeupVerb : target && target.kind !== 'exit' ? game.selectedVerb : 'neutral';
+    const verb = closeupButton&&['take','use'].includes(closeupVerb) ? closeupVerb : target && target.kind !== 'exit' ? effectiveTargetVerb(game,target) : 'neutral';
     const art = verb === 'neutral' ? NEUTRAL_CURSOR_ART : CURSOR_ART[verb], image = this.images[verb];
     if (!art || !image?.complete || !image.naturalWidth) {
       this.overlay.style.display = 'none';
       return;
     }
-    const active = closeupButton ? !closeupButton.disabled : verb !== 'neutral' && cursorTargetSupportsAction(game, target);
+    const active = closeupButton ? !closeupButton.disabled : verb !== 'neutral' && cursorTargetSupportsAction(game, target,verb);
     const targetId=closeupButton?.dataset.itemId || target?.id || '';
     const key = `${verb}:${targetId || 'ground'}:${active}:${game.inventoryUseItemId || ''}`;
     if (key !== this.key) { this.key = key; this.startedAt = now; }

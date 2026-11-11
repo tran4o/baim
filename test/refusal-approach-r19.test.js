@@ -57,7 +57,7 @@ test('refusal arrival rechecks availability, retains authored rejection, and can
 test('invalid item response uses the existing rejecting rule without consuming an unrelated item',()=>{
  const {g,owned}=fixture();owned.add('oil');g.inventoryUseItemId='oil';g.content.items.oil={nameKey:'oil'};
  g.refuseTargetAction({id:'wall',itemUseRules:[{itemId:'oil',reject:true,messageKey:'wrong'}]});
- assert.equal(g.message,'wrong');assert.ok(owned.has('oil'));assert.equal(g.inventoryUseItemId,null);
+ assert.equal(g.message,'wrong');assert.ok(owned.has('oil'));assert.equal(g.inventoryUseItemId,'oil');
 });
 test('real fountain rejections preserve diagnosis, attempted valve and subsequent oil clue',()=>{
  const {g}=fixture();g.selectedVerb='use';const t={id:'fountain',useRules:fountainUseRules};

@@ -34,8 +34,8 @@ export const assetManifest = {
     },
     "scene.chapter1.village_square": {
       campaignPoster: "assets/chapter1/scenes/village_square/campaign-poster-c05.png",
-      mitkoPosterR45: "assets/chapter1/scenes/village_square/poster-p3-r51/posted.png",
-      incumbentPosterR40: "assets/chapter1/scenes/village_square/poster-r40/incumbent.png",
+      mitkoPosterR45: "assets/chapter1/scenes/village_square/poster-r54/mitko.png",
+      incumbentPosterR40: "assets/chapter1/scenes/village_square/poster-r53/incumbent.png",
       fountainForeground: "assets/chapter1/scenes/village_square/fountain-stone-foreground-affinity-r01.png",
       fountainShallowWater: "assets/chapter1/scenes/village_square/fountain-shallow-water-c05.png",
       squareFlagWind: "assets/chapter1/scenes/village_square/flag-wind-c01.png",
@@ -137,8 +137,7 @@ export const assetManifest = {
     'item.mitko_child_photo': { icon: 'assets/chapter1/scenes/apartment/ad-r08/child-photo.png' },
     'item.tony_diploma': { icon: 'assets/chapter1/items/tony-diploma.png', model: 'assets/chapter1/items/tony-diploma-inspection.glb', inspection: 'document' },
     "item.fake_diploma": { icon: "assets/chapter1/items/fake-diploma-v1.png", pepaIcon: 'assets/chapter1/items/pepa-mitko-diploma.png', childIcon: 'assets/chapter1/scenes/apartment/ad-r08/child-diploma.png', stampedIcon: "assets/chapter1/items/stamped-diploma-v1.png" },
-    "item.campaign_pamphlets": { icon: 'assets/chapter1/items/campaign-poster-p3-r51/front.png', model: 'assets/chapter1/items/campaign-poster-p3-r51/poster.glb', inspection: 'prop', cameraDirection: [0,0,1], inspectionFitScale: 1.5 },
-    "item.suspicious_receipt": { icon: "assets/chapter1/items/suspicious-receipt-v1.png" },
+    "item.campaign_pamphlets": { icon: 'assets/chapter1/items/campaign-poster-p3-r54/front.png', model: 'assets/chapter1/items/campaign-poster-p3-r54/poster.glb', inspection: 'prop', cameraDirection: [0,0,1], inspectionFitScale: 1.5, inspectionDefaultZoom: 1.5 },
     "item.rakia": { icon: "assets/chapter1/items/rakia-v1.png" },
     "item.shopska_salad": { icon: "assets/chapter1/items/shopska-salad-v1.png" },
     "item.tripe_soup": { icon: "assets/chapter1/items/tripe-soup-v1.png" },
@@ -150,7 +149,7 @@ export const assetManifest = {
       icon: "assets/chapter1/scenes/municipality/municipality-seal-v1.png"
     },
     "item.accordion": {
-      icon: "assets/chapter1/items/accordion.png",
+      icon: "assets/chapter1/items/accordion-r08/icon-r52.png",
       model: "assets/chapter1/items/accordion-r08/accordion-r08.glb",
       inspection: 'prop', cameraDirection: [0.18, 0.12, 1], reviewStatus: 'source-accepted-context-review'
     },
