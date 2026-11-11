@@ -16,6 +16,9 @@ jobs:
       options: --ipc=host
     env:
       BAIM_REQUIRE_BROWSER_TESTS: "1"
+      GIT_CONFIG_COUNT: "1"
+      GIT_CONFIG_KEY_0: safe.directory
+      GIT_CONFIG_VALUE_0: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -25,6 +28,7 @@ jobs:
       - run: npm ci
       - name: Verify pinned Playwright and launch required Chromium
         run: |
+          git show :assets_src/characters/bai_mitko/external_animation_v1/look-into-distance-source-history.md > /dev/null
           node <<'NODE'
           const expected = '1.61.1';
           const actual = require('playwright/package.json').version;

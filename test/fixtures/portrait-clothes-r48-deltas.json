@@ -807,6 +807,16 @@
           "before": " assert.equal(g.message,'wrong');assert.ok(owned.has('oil'));assert.equal(g.inventoryUseItemId,null);\n"
         }
       ]
+    },
+    "test/browser-availability.test.js": {
+      "beforeSHA256": "53a16d44c21b70864293884f9fbb7547d2ed1f9eac8815cc10a9964389f5e996",
+      "afterSHA256": "2f616d210c2296938c7362859cbbb16b491250161f34f08f3f347710f5afc46f",
+      "splice": {
+        "start": 1195,
+        "before": "installs Chromium before tests and all browser journeys use the required guard\", () => {\n  const workflow = readFileSync(\".github/workflows/test.yml\", \"utf8\");\n  assert.match(workflow, /uses: actions\\/checkout@v5/);\n  assert.match(workflow, /uses: actions\\/setup-node@v5/);\n  assert.match(workflow, /node-version: 22/);\n  const install = workflow.indexOf(\"npx playwright install --with-deps chromium\");\n  assert.ok(install >= 0 && install < workflow.indexOf(\"- run: npm test\")",
+        "afterLength": 1043
+      },
+      "scope": "Exact approved Playwright CI contract change only; historical baseline remains immutable; unexpected bytes still fail the historical comparison."
     }
   },
   "snapshots": {
