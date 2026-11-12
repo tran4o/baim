@@ -205,18 +205,6 @@ const baseDialogues = [
           },
           { textKey: "fountain.kiro.choice.hint", next: "fountain_oil_hint" },
           {
-            textKey: "dialogue.waiter.choice.water",
-            requirements: { absentItems: ["item.glass_of_water"] },
-            effect: {
-              requirements: { absentItems: ["item.glass_of_water"] },
-              effects: [
-                { type: "addItem", itemId: "item.glass_of_water" },
-                { type: "setState", key: "hasGlassOfWater", value: true }
-              ],
-              messageKey: "msg.taken"
-            }
-          },
-          {
             textKey: "dialogue.waiter.choice.rakia",
             next: "rakia_serving"
           },

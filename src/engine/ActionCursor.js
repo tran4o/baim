@@ -139,7 +139,7 @@ export class ActionCursor {
       const size=game.inventoryCursorSize||{width:78,height:78};
       const imagePath=game.assets.getItemAssetPath(itemId,game.inventoryCursorSlot||'icon');
       if(this.itemOverlay.dataset.assetPath!==imagePath){this.itemOverlay.src=imagePath;this.itemOverlay.dataset.assetPath=imagePath;}
-      Object.assign(this.itemOverlay.style,{width:size.width+'px',height:size.height+'px',left:(pointer.x-4)+'px',top:(pointer.y-4)+'px',display:'block'});
+      Object.assign(this.itemOverlay.style,{width:(size.width*0.4)+'px',height:(size.height*0.4)+'px',left:(pointer.x-4)+'px',top:(pointer.y-4)+'px',transform:'rotate(-8deg)',transformOrigin:'4px 4px',display:'block'});
       this.itemOverlay.dataset.itemId=itemId;this.overlay.style.display='none';return;
     }
     this.itemOverlay.style.display='none';

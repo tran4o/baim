@@ -64,7 +64,7 @@ export const statueItemRules = [
       { type: "setFlag", key: "fountainValveOiled" }, { type: "setFlag", key: "fountainRepaired" }],
     messageKey: "fountain.oil.applied"
   },
-  ...["item.glass_of_water", "item.rakia", "item.village_wine"].map(itemId => ({
+  ...["item.rakia", "item.village_wine"].map(itemId => ({
     itemId, messageKey: "fountain.wrong_liquid", reject: true
   }))
 ];
@@ -72,7 +72,7 @@ export const statueItemRules = [
 export const fountainItemRules = [
   ...fountainRefillRules,
   { itemId: "item.sunflower_oil", messageKey: "fountain.oil.statue_only", reject: true },
-  ...statueItemRules.filter(rule => ["item.glass_of_water", "item.rakia", "item.village_wine"].includes(rule.itemId))
+  ...statueItemRules.filter(rule => ["item.rakia", "item.village_wine"].includes(rule.itemId))
 ];
 
 export const oldMenRules = [
@@ -94,7 +94,7 @@ export const babaSupportRule = {
 };
 
 const giftKeys = [
-  ["item.unpaid_bills", "offer_bills"], ["item.glass_of_water", "offer_water"],
+  ["item.unpaid_bills", "offer_bills"],
   ["item.shopska_salad", "offer_shopska"], ["item.tripe_soup", "offer_tripe_soup"],
   ["item.rakia", "offer_rakia"], ["item.sunflower_oil", "offer_oil"],
   ["item.village_wine", "offer_wine"]

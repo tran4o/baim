@@ -1,6 +1,6 @@
 export const photoQuestEn = {
   "photoquest.diploma_loading": "Opening the diploma…",
-  "photoquest.diploma_unavailable": "The 3D view is unavailable. Showing the diploma illustration.",
+  "photoquest.diploma_unavailable": "The 3D view is unavailable.",
   "photoquest.diploma_controls": "Drag to tilt the diploma. Scroll to zoom in and out.",
   "photoquest.kiro_cleanup_choice": "Where did the glasses and bottles go?",
   "photoquest.kiro_cleanup": "Kiro: I took the glasses to wash and the bottles to refill. Toni wakes up thirsty in a couple of hours. His thirst is a natural disaster with a timetable.",
@@ -63,7 +63,7 @@ export const photoQuestEn = {
 
 export const photoQuestBg = {
   "photoquest.diploma_loading": "Дипломата се отваря…",
-  "photoquest.diploma_unavailable": "3D изгледът не е достъпен. Показана е илюстрацията на дипломата.",
+  "photoquest.diploma_unavailable": "3D изгледът не е достъпен.",
   "photoquest.diploma_controls": "Плъзни, за да наклониш дипломата. Приближи и отдалечи с колелцето.",
   "photoquest.kiro_cleanup_choice": "Къде изчезнаха чашите и бутилките?",
   "photoquest.kiro_cleanup": "Киро: Чашите ги взех да ги измия, бутилките — да ги напълня. След два часа Тони ще се събуди жаден. При него това е природно бедствие с разписание.",

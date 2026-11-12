@@ -66,9 +66,11 @@ test('tavern floor, Kiro recovery and fixed spit render in BG/EN through normal 
    }
    assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.dialogue.current?.id),'dialogue.mehana_waiter');
    assert.deepEqual(await page.evaluate(()=>({...window.__comradeCandidateTest.game.player.position})),{x:650,y:550});
-   const label=await page.evaluate(()=>window.__comradeCandidateTest.game.t('dialogue.waiter.choice.water'));
-   await page.locator('.dialogue-choice-list').getByRole('button',{name:label,exact:true}).click();
-   assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.glass_of_water')),true);await shot('kiro-water-acquired',1000);
+   assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.content.items['item.glass_of_water']),undefined);
+   await shot('kiro-dialogue-no-obsolete-water',1000);
+   const farewell=await page.evaluate(()=>window.__comradeCandidateTest.game.t('dialogue.waiter.choice.leave'));
+   await page.locator('.dialogue-choice-list').getByRole('button',{name:farewell,exact:true}).click();
+   assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.dialogue.current),null);
    // Actual Talk Tony click must walk behind the right table before opening dialogue.
    const tonyPoint=await page.evaluate(async()=>{const g=window.__comradeCandidateTest.game,{findTargetAt}=await import('/src/engine/SceneGeometry.js');for(let y=305;y<440;y+=4)for(let x=880;x<1060;x+=4)if(findTargetAt(g.currentScene,{x,y},t=>g.targetAvailable(t))?.id==='npc.tony_fridge')return {x,y};throw Error('Tony has no exposed hit target');});
    await page.locator('#game').click({position:tonyPoint});
@@ -79,7 +81,7 @@ test('tavern floor, Kiro recovery and fixed spit render in BG/EN through normal 
    assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.dialogue.current?.id),'dialogue.tony_fridge');
    assert.deepEqual(await page.evaluate(()=>({...window.__comradeCandidateTest.game.player.position})),{x:740,y:580});await shot('tony-behind-table',1000);
    await page.reload();await page.evaluate(()=>window.__comradeCandidateTest.ready);await advance(0);
-   assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.glass_of_water')),true);
+   assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.glass_of_water')),false);
    await page.evaluate(async()=>{const g=window.__comradeCandidateTest.game;await g.changeScene('scene.chapter1.village_square');await g.changeScene('scene.chapter1.mehana');});await advance(0);await shot('scene-reentry',1000);
    // Fresh normal owner URL, same earned save, no testHarness and no forced source assets.
    // The harness has finished. Release its decoded atlases before booting another game;

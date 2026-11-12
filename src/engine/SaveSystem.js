@@ -47,6 +47,13 @@ function migrateSave(save, previousPhotoVersion = 0) {
   normalized.droppedItems = normalized.droppedItems.filter(record => record.itemId !== 'item.suspicious_receipt');
   if (normalized.flags.journalistHasReceipt && !normalized.flags.candidateRegistrationStamped && !normalized.chapter1Completed)
     normalized.flags.journalistInOffice = true;
+  // Retire the obsolete tavern jug without touching the reusable quest bottle.
+  normalized.inventory = normalized.inventory.filter(id => id !== 'item.glass_of_water');
+  normalized.droppedItems = normalized.droppedItems.filter(record => record.itemId !== 'item.glass_of_water');
+  delete normalized.hasGlassOfWater;
+  delete normalized.flags.hasGlassOfWater;
+  for (const key of ['selectedInventoryItemId', 'inventoryUseItemId', 'inspectedItemId'])
+    if (normalized[key] === 'item.glass_of_water') delete normalized[key];
   normalizeBottleSave(normalized);
   normalizePhotoQuestSave(normalized, previousPhotoVersion);
   // Preserve earned registration in old saves, including saves from before the

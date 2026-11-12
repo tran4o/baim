@@ -55,6 +55,7 @@ test("scene preload discovery includes action-timed and persistent raster layers
 });
 
 test("inventory preload discovery includes every authored high-resolution item icon", () => {
+  assert.equal(Object.values(currentAssetManifest.items).flatMap(imageAssetPaths).includes("assets/chapter1/items/glass-of-water-v1.png"), false, "active preloads exclude the retired item; historical inverse below stays byte-exact");
   const paths = Object.values(assetManifest.items).flatMap((itemAssets) => imageAssetPaths(itemAssets));
   assert.deepEqual(paths.sort(), [
     assetManifest.items["item.accordion"].icon,

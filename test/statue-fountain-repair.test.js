@@ -24,7 +24,7 @@ function game(overrides={}) {
  return g;
 }
 test('oil basin rejection and all wrong liquid uses leave inventory and quest state exact',()=>{
- for(const target of [statue,basin])for(const item of ['item.rakia','item.glass_of_water','item.village_wine',water,...(target===basin?[oil]:[])]){
+ for(const target of [statue,basin])for(const item of ['item.rakia','item.village_wine',water,...(target===basin?[oil]:[])]){
   const g=game({inventory:[item]}),before=structuredClone(g.state);
   g.useInventoryItemOnTarget(item,target);assert.deepEqual(g.state,before);assert.equal(g.sceneAction.active,false);
  }
@@ -53,7 +53,7 @@ test('empty before repair and ordinary Look/Use after repair never refill',()=>{
  assert.equal(statueItemRules[0],fountainItemRules[0]);
 });
 test('repaired statue rejects more oil/full bottles, stale pending source cancels without flags, and dropped bottles block replacement',()=>{
- for(const target of [statue,basin])for(const item of [oil,water,'item.glass_of_water']){
+ for(const target of [statue,basin])for(const item of [oil,water]){
   const g=game({inventory:[item],flags:{fountainRepaired:true}}),before=structuredClone(g.state);
   g.useInventoryItemOnTarget(item,target);assert.deepEqual(g.state,before);assert.equal(g.sceneAction.active,false);
  }

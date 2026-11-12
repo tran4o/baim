@@ -133,47 +133,233 @@ export const assetManifest = {
     }
   },
   items: {
-    'item.mitko_photo': { icon: 'assets/chapter1/items/adult-portrait-tracksuit-r48/print.png', model: 'assets/chapter1/items/adult-portrait-tracksuit-r48/portrait-only.glb', inspection: 'prop', cameraDirection: [0,0,1] },
-    'item.mitko_child_photo': { icon: 'assets/chapter1/scenes/apartment/ad-r08/child-photo.png' },
-    'item.tony_diploma': { icon: 'assets/chapter1/items/tony-diploma.png', model: 'assets/chapter1/items/tony-diploma-inspection.glb', inspection: 'document' },
-    "item.fake_diploma": { icon: "assets/chapter1/items/fake-diploma-v1.png", pepaIcon: 'assets/chapter1/items/pepa-mitko-diploma.png', childIcon: 'assets/chapter1/scenes/apartment/ad-r08/child-diploma.png', stampedIcon: "assets/chapter1/items/stamped-diploma-v1.png" },
-    "item.campaign_pamphlets": { icon: 'assets/chapter1/items/campaign-poster-p3-r54/front.png', model: 'assets/chapter1/items/campaign-poster-p3-r54/poster.glb', inspection: 'prop', cameraDirection: [0,0,1], inspectionFitScale: 1.5, inspectionDefaultZoom: 1.5 },
-    "item.rakia": { icon: "assets/chapter1/items/rakia-v1.png" },
-    "item.shopska_salad": { icon: "assets/chapter1/items/shopska-salad-v1.png" },
-    "item.tripe_soup": { icon: "assets/chapter1/items/tripe-soup-v1.png" },
-    "item.village_wine": { icon: "assets/chapter1/items/village-wine-v1.png" },
-
-    "item.pickle_jar": { icon: "assets/chapter1/scenes/archive/jar-v1.png" },
-    "item.ballot_box": { icon: "assets/chapter1/scenes/archive/box-v1.png" },
+    "item.mitko_photo": {
+      "nativeSource": "assets_src/chapter1/items/adult-portrait-tracksuit-r48/portrait.blend",
+      "icon": "assets/chapter1/items/adult-portrait-tracksuit-r48/print.png",
+      "model": "assets/chapter1/items/adult-portrait-tracksuit-r48/portrait-only.glb",
+      "inspection": "prop",
+      "cameraDirection": [
+        0,
+        0,
+        1
+      ]
+    },
+    "item.mitko_child_photo": {
+      "icon": "assets/chapter1/scenes/apartment/ad-r08/child-photo.png",
+      "model": "assets/chapter1/items/inventory-inspection-r56/mitko_child_photo-default.glb",
+      "nativeSource": "assets_src/chapter1/items/inventory-inspection-r56/inventory-documents-r56.blend",
+      "nativeCollection": "mitko_child_photo-default",
+      "inspection": "prop",
+      "cameraDirection": [
+        0,
+        0,
+        1
+      ]
+    },
+    "item.tony_diploma": {
+      "nativeSource": "assets_src/chapter1/items/inventory-inspection-r56/toni-diploma.blend",
+      "icon": "assets/chapter1/items/tony-diploma.png",
+      "model": "assets/chapter1/items/tony-diploma-inspection.glb",
+      "inspection": "document"
+    },
+    "item.fake_diploma": {
+      "icon": "assets/chapter1/items/fake-diploma-v1.png",
+      "pepaIcon": "assets/chapter1/items/pepa-mitko-diploma.png",
+      "childIcon": "assets/chapter1/scenes/apartment/ad-r08/child-diploma.png",
+      "stampedIcon": "assets/chapter1/items/stamped-diploma-v1.png",
+      "inspectionModels": {
+        "pepaIcon": {
+          "model": "assets/chapter1/items/inventory-inspection-r56/fake_diploma-pepa.glb",
+          "nativeSource": "assets_src/chapter1/items/inventory-inspection-r56/inventory-documents-r56.blend",
+          "nativeCollection": "fake_diploma-pepa",
+          "inspection": "document",
+          "cameraDirection": [
+            0,
+            0,
+            1
+          ]
+        },
+        "childIcon": {
+          "model": "assets/chapter1/items/inventory-inspection-r56/fake_diploma-child.glb",
+          "nativeSource": "assets_src/chapter1/items/inventory-inspection-r56/inventory-documents-r56.blend",
+          "nativeCollection": "fake_diploma-child",
+          "inspection": "document",
+          "cameraDirection": [
+            0,
+            0,
+            1
+          ]
+        },
+        "stampedIcon": {
+          "model": "assets/chapter1/items/inventory-inspection-r56/fake_diploma-stamped.glb",
+          "nativeSource": "assets_src/chapter1/items/inventory-inspection-r56/inventory-documents-r56.blend",
+          "nativeCollection": "fake_diploma-stamped",
+          "inspection": "document",
+          "cameraDirection": [
+            0,
+            0,
+            1
+          ]
+        }
+      },
+      "model": "assets/chapter1/items/inventory-inspection-r56/fake_diploma-legacy.glb",
+      "nativeSource": "assets_src/chapter1/items/inventory-inspection-r56/inventory-documents-r56.blend",
+      "nativeCollection": "fake_diploma-legacy",
+      "inspection": "document",
+      "cameraDirection": [
+        0,
+        0,
+        1
+      ]
+    },
+    "item.campaign_pamphlets": {
+      "nativeSource": "assets_src/chapter1/items/campaign-poster-p3-r54/selected-p3.blend",
+      "icon": "assets/chapter1/items/campaign-poster-p3-r54/front.png",
+      "model": "assets/chapter1/items/campaign-poster-p3-r54/poster.glb",
+      "inspection": "prop",
+      "cameraDirection": [
+        0,
+        0,
+        1
+      ],
+      "inspectionFitScale": 1.5,
+      "inspectionDefaultZoom": 1.5
+    },
+    "item.rakia": {
+      "icon": "assets/chapter1/items/rakia-v1.png",
+      "model": "assets/chapter1/items/inventory-inspection-r56/rakia-default.glb",
+      "nativeSource": "assets_src/chapter1/items/inventory-inspection-r56/inventory-physical-r56.blend",
+      "nativeCollection": "rakia-default",
+      "inspection": "prop",
+      "cameraDirection": [
+        0,
+        0,
+        1
+      ]
+    },
+    "item.shopska_salad": {
+      "icon": "assets/chapter1/items/shopska-salad-v1.png",
+      "model": "assets/chapter1/items/inventory-inspection-r56/shopska_salad-default.glb",
+      "nativeSource": "assets_src/chapter1/items/inventory-inspection-r56/inventory-physical-r56.blend",
+      "nativeCollection": "shopska_salad-default",
+      "inspection": "prop",
+      "cameraDirection": [
+        0,
+        0,
+        1
+      ]
+    },
+    "item.tripe_soup": {
+      "icon": "assets/chapter1/items/tripe-soup-v1.png",
+      "model": "assets/chapter1/items/inventory-inspection-r56/tripe_soup-default.glb",
+      "nativeSource": "assets_src/chapter1/items/inventory-inspection-r56/inventory-physical-r56.blend",
+      "nativeCollection": "tripe_soup-default",
+      "inspection": "prop",
+      "cameraDirection": [
+        0,
+        0,
+        1
+      ]
+    },
+    "item.village_wine": {
+      "icon": "assets/chapter1/items/village-wine-v1.png",
+      "model": "assets/chapter1/items/inventory-inspection-r56/village_wine-default.glb",
+      "nativeSource": "assets_src/chapter1/items/inventory-inspection-r56/inventory-physical-r56.blend",
+      "nativeCollection": "village_wine-default",
+      "inspection": "prop",
+      "cameraDirection": [
+        0,
+        0,
+        1
+      ]
+    },
+    "item.pickle_jar": {
+      "icon": "assets/chapter1/scenes/archive/jar-v1.png",
+      "model": "assets/chapter1/items/inventory-inspection-r56/pickle_jar-default.glb",
+      "nativeSource": "assets_src/chapter1/items/inventory-inspection-r56/inventory-physical-r56.blend",
+      "nativeCollection": "pickle_jar-default",
+      "inspection": "prop",
+      "cameraDirection": [
+        0,
+        0,
+        1
+      ]
+    },
+    "item.ballot_box": {
+      "icon": "assets/chapter1/scenes/archive/box-v1.png",
+      "model": "assets/chapter1/items/inventory-inspection-r56/ballot_box-default.glb",
+      "nativeSource": "assets_src/chapter1/items/inventory-inspection-r56/inventory-physical-r56.blend",
+      "nativeCollection": "ballot_box-default",
+      "inspection": "prop",
+      "cameraDirection": [
+        0,
+        0,
+        1
+      ]
+    },
     "item.municipality_stamp": {
-      icon: "assets/chapter1/scenes/municipality/municipality-seal-v1.png"
+      "icon": "assets/chapter1/scenes/municipality/municipality-seal-v1.png",
+      "model": "assets/chapter1/items/inventory-inspection-r56/municipality_stamp-default.glb",
+      "nativeSource": "assets_src/chapter1/items/inventory-inspection-r56/inventory-physical-r56.blend",
+      "nativeCollection": "municipality_stamp-default",
+      "inspection": "prop",
+      "cameraDirection": [
+        0,
+        0,
+        1
+      ]
     },
     "item.accordion": {
-      icon: "assets/chapter1/items/accordion-r08/icon-r52.png",
-      model: "assets/chapter1/items/accordion-r08/accordion-r08.glb",
-      inspection: 'prop', cameraDirection: [0.18, 0.12, 1], reviewStatus: 'source-accepted-context-review'
+      "nativeSource": "assets_src/chapter1/items/accordion-r08/accordion-r08.blend",
+      "icon": "assets/chapter1/items/accordion-r08/icon-r52.png",
+      "model": "assets/chapter1/items/accordion-r08/accordion-r08.glb",
+      "inspection": "prop",
+      "cameraDirection": [
+        0.18,
+        0.12,
+        1
+      ],
+      "reviewStatus": "source-accepted-context-review"
     },
     "item.unpaid_bills": {
-      icon: "assets/chapter1/items/unpaid_bills.png"
+      "icon": "assets/chapter1/items/unpaid_bills.png",
+      "model": "assets/chapter1/items/inventory-inspection-r56/unpaid_bills-default.glb",
+      "nativeSource": "assets_src/chapter1/items/inventory-inspection-r56/inventory-physical-r56.blend",
+      "nativeCollection": "unpaid_bills-default",
+      "inspection": "prop",
+      "cameraDirection": [
+        0,
+        0,
+        1
+      ]
     },
     "item.empty_envelope": {
-      icon: "assets/chapter1/items/empty_envelope.png"
+      "icon": "assets/chapter1/items/empty_envelope.png",
+      "model": "assets/chapter1/items/inventory-inspection-r56/empty_envelope-default.glb",
+      "nativeSource": "assets_src/chapter1/items/inventory-inspection-r56/inventory-physical-r56.blend",
+      "nativeCollection": "empty_envelope-default",
+      "inspection": "prop",
+      "cameraDirection": [
+        0,
+        0,
+        1
+      ]
     },
     "item.sunflower_oil": {
-      icon: "assets/chapter1/items/kiro-bottle/oil-200ml-r07.png",
-      model: "assets/chapter1/items/kiro-bottle/oil-200ml-r08.glb"
+      "nativeSource": "assets_src/props/kiro-bottle/game-materials-r08.blend",
+      "icon": "assets/chapter1/items/kiro-bottle/oil-200ml-r07.png",
+      "model": "assets/chapter1/items/kiro-bottle/oil-200ml-r08.glb"
     },
     "item.empty_rakia_bottle": {
-      icon: "assets/chapter1/items/kiro-bottle/empty-r07.png",
-      model: "assets/chapter1/items/kiro-bottle/empty-r08.glb"
+      "nativeSource": "assets_src/props/kiro-bottle/game-materials-r08.blend",
+      "icon": "assets/chapter1/items/kiro-bottle/empty-r07.png",
+      "model": "assets/chapter1/items/kiro-bottle/empty-r08.glb"
     },
     "item.fountain_water_bottle": {
-      icon: "assets/chapter1/items/kiro-bottle/fountain-water-olive-r02.png",
-      model: "assets/chapter1/items/kiro-bottle/fountain-water-olive-r01.glb",
-      liquidColor: null
-    },
-    "item.glass_of_water": {
-      icon: "assets/chapter1/items/glass-of-water-v1.png"
+      "nativeSource": "assets_src/chapter1/items/kiro-water-olive-r01/water-olive-r02.blend",
+      "icon": "assets/chapter1/items/kiro-bottle/fountain-water-olive-r02.png",
+      "model": "assets/chapter1/items/kiro-bottle/fountain-water-olive-r01.glb",
+      "liquidColor": null
     }
   }
 };

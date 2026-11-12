@@ -18,7 +18,7 @@ test('oil bottle preserves the workshop GLB, embedded label and measured geometr
   assert.ok(!gltf.animations?.length); assert.ok(!gltf.cameras?.length);
 });
 
-test('received 3D item rotates, rests without rendering, disposes and falls back safely', { timeout:90_000 }, async t => {
+test('received 3D item rotates, rests without rendering, disposes and reports model failure explicitly', { timeout:90_000 }, async t => {
   if (!browserAvailable(t,chromium.executablePath())) return;
   const probe=createServer(); await new Promise(resolve=>probe.listen(0,'127.0.0.1',resolve));
   const port=probe.address().port; await new Promise(resolve=>probe.close(resolve));
@@ -81,17 +81,17 @@ test('received 3D item rotates, rests without rendering, disposes and falls back
       assert.equal(await viewer.getAttribute('data-distance'),distance,'zoom keeps camera position fixed');
       await page.waitForTimeout(100);const renders=await viewer.getAttribute('data-renders');await page.waitForTimeout(150);
       assert.equal(await viewer.getAttribute('data-renders'),renders,'no idle rendering loop');
-      t.diagnostic(`${language}: verify remount and context-loss fallback`);
+      t.diagnostic(`${language}: verify remount and explicit context-loss error`);
       await page.evaluate(()=>window.__comradeCandidateTest.game.renderUi());
       await page.locator('.item-model-viewer[data-model-state=ready]').waitFor();assert.equal(await page.locator('.item-model-viewer canvas').count(),1);
       await page.locator('.item-model-viewer canvas').evaluate(c=>c.dispatchEvent(new Event('webglcontextlost',{cancelable:true})));
-      await page.locator('.item-model-viewer[data-model-state=fallback] img').waitFor();
-      await page.waitForFunction(()=>document.querySelector('.item-model-viewer img')?.naturalWidth>0,null,{polling:100});
+      await page.locator('.item-model-viewer[data-model-state=error]').waitFor();
+      assert.equal(await page.locator('.item-model-viewer img').count(), 0, 'context loss does not replace the3D object with a flat image');
       await page.locator('.received-item-screen > button:last-child').click();
       assert.equal(await page.locator('.item-model-viewer').count(),0);
       assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.state.inventory.filter(id=>id==='item.sunflower_oil').length),1);
     }
-    t.diagnostic('verify late model disposal and failed-request fallback');
+    t.diagnostic('verify late model disposal and explicit failed-request error');
     // Close while a model request is pending: its late result must not resurrect a viewer.
     let release;const hold=new Promise(resolve=>release=resolve);
     await page.route('**/oil-200ml-r08.glb',async route=>{await hold;await route.continue();});
@@ -106,7 +106,8 @@ test('received 3D item rotates, rests without rendering, disposes and falls back
     await page.goto(`http://127.0.0.1:${port}/?play=1&testHarness=1`);
     await page.evaluate(()=>window.__comradeCandidateTest.ready);
     await page.route('**/oil-200ml-r08.glb',route=>route.abort());
-    await receive('en');await page.locator('.item-model-viewer[data-model-state=fallback]').waitFor();
+    await receive('en');await page.locator('.item-model-viewer[data-model-state=error]').waitFor();
+    assert.equal(await page.locator('.item-model-viewer img').count(), 0, 'no silent static substitute for a failed3D model');
     await page.locator('.received-item-screen > button:last-child').click();
     assert.deepEqual(errors,[]);
   } finally { await browser?.close();server.kill(); }

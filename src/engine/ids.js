@@ -34,7 +34,6 @@ export const DEFAULT_SAVE = {
   hasFakeDiploma: false,
   hasSunflowerOil: false,
   hasRakia: false,
-  hasGlassOfWater: false,
   hasBallotBox: false,
   ballotBoxDelivered: false,
   hasMunicipalityStamp: false,

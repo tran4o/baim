@@ -1,3 +1,4 @@
+import {stripPortraitClothesR48} from './portrait-clothes-r48-preservation.js';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 const sha=s=>createHash('sha256').update(s).digest('hex');
@@ -9,6 +10,7 @@ const paintWait="   // Network quiet does not mean asynchronous startup decodes/
 const addition="   // The harness has finished. Release its decoded atlases before booting another game;\n   // keep the context so the normal page still uses the exact earned save.\n   await page.waitForLoadState('networkidle');await page.close();assert.equal(page.isClosed(),true);\n";
 export function stripTavernPageLifetime(source){
  source=String(source).replaceAll('\r\n','\n');
+ source=stripPortraitClothesR48('test/tavern-cleanup-browser.test.js',source);
  if(sha(source)===painted){source=source.replace(paintWait,'');assert.equal(sha(source),observed,'exact first-render readiness inverse');}
  if(sha(source)===observed){
   source=source.replace('   await diagnostic.installLifecycle();\n','').replace("    }catch(error){evidence.error={name:error.name,message:error.message};if(im){try{const c=document.createElement('canvas');c.width=2;c.height=2;c.getContext('2d').drawImage(im,0,0,2,2);evidence.afterFailureDraw={pixels:Array.from(c.getContext('2d').getImageData(0,0,2,2).data)};}catch(drawError){evidence.afterFailureDraw={error:{name:drawError.name,message:drawError.message}};}}throw error;}","    }catch(error){evidence.error={name:error.name,message:error.message};throw error;}");

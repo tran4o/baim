@@ -1,4 +1,4 @@
-import {mountItemImageView} from './ItemImageView.js';
+import { resolveItemInspectionAsset, mountUnavailableItemInspection } from './ItemInspectionAssets.js';
 import { interactionSideFacing, canFaceStoppedInteraction, hasVerticalRest } from "./InteractionFacing.js";
 import { createReviewSaveSystem } from "./ReviewState.js";
 import { AudioSystem } from "./AudioSystem.js";
@@ -2122,7 +2122,8 @@ export class Game {
 
   createItemInspection() {
     const item = this.content.items[this.inspectedItemId];
-    const asset = this.assets.manifest.items[item.id] || {};
+    const iconSlot = firstMatchingRule(item.iconRules, this.effectContext())?.slot || 'icon';
+    const asset = resolveItemInspectionAsset(this.assets.manifest.items[item.id], iconSlot);
     const panel = element('section', 'received-item-screen');
     panel.tabIndex = -1;
     queueMicrotask(() => { if (panel.isConnected) panel.focus(); });
@@ -2130,6 +2131,10 @@ export class Game {
     panel.setAttribute('aria-label', this.t(item.nameKey));
     const title = document.createElement('h2'); title.textContent = this.t(item.nameKey);
     const viewer = element('div', 'item-model-viewer');
+    viewer.dataset.itemId = item.id;
+    viewer.dataset.inspectionSlot = iconSlot;
+    viewer.dataset.modelUrl = asset.model || '';
+    viewer.dataset.nativeSource = asset.nativeSource || '';
     const text = Object.fromEntries(['loading','unavailable','controls'].map(key => [key, this.t('ui.received_oil.' + key)]));
     if (asset.inspection === 'document') {
       viewer.classList.add('item-model-viewer-document');
@@ -2137,7 +2142,7 @@ export class Game {
     }
     text.name = this.t(item.nameKey);
     let propControls = null;
-    if (!asset.model) {this.receivedItemViewer=mountItemImageView(viewer,{imageUrl:this.assets.getItemAssetPath(item.id,firstMatchingRule(item.iconRules,this.effectContext())?.slot||'icon'),text});}
+    if (!asset.model) this.receivedItemViewer = mountUnavailableItemInspection(viewer, text, asset.inspectionFailure);
     else if (asset.inspection === 'prop') {
       for (const key of ['loading','unavailable','controls']) text[key] = this.t('wardrobe.prop_' + key);
       this.receivedItemViewer = mountObjectProp(viewer, { modelUrl: asset.model, text, interactive: true, cameraDirection: asset.cameraDirection, inspectionFitScale: asset.inspectionFitScale, inspectionDefaultZoom: asset.inspectionDefaultZoom });
@@ -2367,7 +2372,9 @@ export class Game {
   }
 
   renderUi() {
-    if(this.inventoryUseItemId&&(!this.inventory.has(this.inventoryUseItemId)||this.objectCloseup||this.puzzleOpen||this.inspectedItemId||this.menuOpen||this.dialogue.current||this.sceneTransitionPending))this.clearInventoryInteraction();
+    if(this.selectedInventoryItemId&&!this.content.items[this.selectedInventoryItemId])this.selectedInventoryItemId=null;
+    if(this.inspectedItemId&&!this.content.items[this.inspectedItemId])this.inspectedItemId=null;
+    if(this.inventoryUseItemId&&(!this.content.items[this.inventoryUseItemId]||!this.inventory.has(this.inventoryUseItemId)||this.objectCloseup||this.puzzleOpen||this.inspectedItemId||this.menuOpen||this.dialogue.current||this.sceneTransitionPending))this.clearInventoryInteraction();
     this.objectCloseupView?.dispose(); this.objectCloseupView = null;
     this.puzzleView?.dispose(); this.puzzleView = null;
     this.receivedItemViewer?.dispose(); this.receivedItemViewer = null;
