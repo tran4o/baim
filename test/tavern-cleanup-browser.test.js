@@ -6,6 +6,7 @@ import {mkdirSync,writeFileSync} from 'node:fs';
 import {chromium} from 'playwright';
 import {browserAvailable} from './helpers/browser-availability.js';
 import {observeImageDecode} from './helpers/image-decode-diagnostics.js';
+import {chooseHudVerb} from './helpers/hud-ui.js';
 
 test('tavern floor, Kiro recovery and fixed spit render in BG/EN through normal generated assets', {timeout:180000},async t=>{
  if(!browserAvailable(t,chromium.executablePath()))return;
@@ -56,8 +57,7 @@ test('tavern floor, Kiro recovery and fixed spit render in BG/EN through normal 
    await advance(125.001);await shot('return-polishing',700);
    const phase=await page.evaluate(()=>{const g=window.__comradeCandidateTest.game,l=g.currentScene.foregroundLayers.find(l=>l.id==='layer.mehana.waiter_idle');return g.sceneIdleVariationPresentation(g.currentScene,l).phase;});assert.equal(phase,'idle');
    // Existing actual bottle journey separately verifies acquisition, self-use refusal and Tony swap.
-   const talkLabel=await page.evaluate(()=>window.__comradeCandidateTest.game.t('verb.talk'));
-   await page.getByRole('button',{name:talkLabel,exact:true}).click();
+   await chooseHudVerb(page,'talk');
    const talkPoint=await page.evaluate(async()=>{const g=window.__comradeCandidateTest.game,{findTargetAt}=await import('/src/engine/SceneGeometry.js');for(let y=230;y<340;y+=4)for(let x=730;x<815;x+=4)if(findTargetAt(g.currentScene,{x,y},t=>g.targetAvailable(t))?.id==='npc.mehana_waiter')return {x,y};throw Error('Kiro has no exposed hit target');});
    await page.locator('#game').click({position:talkPoint});
    for(let i=0;i<100;i++){

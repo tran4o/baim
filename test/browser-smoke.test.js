@@ -1,3 +1,4 @@
+import { chooseHudVerb, chooseHudLanguage, inventoryItem, collapseInventory, expandInventory } from './helpers/hud-ui.js';
 import test from "node:test";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
@@ -305,7 +306,7 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
       await page.waitForFunction(()=>window.__comradeCandidateTest?.game.inputBound);
       await page.evaluate(() => window.__comradeCandidateTest.ready);
       // Language is setup; all progression below uses normal mouse input.
-      await page.evaluate(language => window.__comradeCandidateTest.game.setLanguage(language), language);
+      await chooseHudLanguage(page, language);
       await mark('fresh-start');
       const waitFor = (predicate) => page.waitForFunction(predicate, undefined, { timeout: 25_000 });
       const verb = name => selectVerb(page, name);
@@ -345,13 +346,14 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
       await page.getByRole("button", { name: handover, exact: true }).click();
       await waitFor(() => window.__comradeCandidateTest.game.inventory.has("item.campaign_pamphlets"));
       assert.equal(await page.evaluate(() => window.__comradeCandidateTest.game.inventory.has('item.mitko_photo')), false);
+      await expandInventory(page);
       const pamphletIcon = page.locator('[data-item-id="item.campaign_pamphlets"] img');
       await waitForLoadedImage(page, '[data-item-id="item.campaign_pamphlets"] img', { network: imageNetwork });
       assert.equal(await pamphletIcon.isVisible(), true);
       assert.equal(await pamphletIcon.evaluate(image => image.complete && image.naturalWidth > 0), true);
       await page.mouse.move(0, 0);
       const posterBefore = await page.screenshot({ clip: { x: 1047, y: 255, width: 60, height: 153 } });
-      await page.locator('[data-item-id="item.campaign_pamphlets"]').click();
+      await (await inventoryItem(page,"item.campaign_pamphlets")).click();
       const use = await page.evaluate(() => window.__comradeCandidateTest.game.t("ui.inventory.use"));
       await page.locator(".inventory-item-actions").getByRole("button", { name: use, exact: true }).click();
       await clickTarget("hotspot.square.poster_board");
@@ -382,7 +384,7 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
         await page.waitForFunction(id => window.__comradeCandidateTest.game.currentScene.id === id, destination);
       };
       const useItem = async id => {
-        await page.locator('[data-item-id="'+id+'"]').click();
+        await (await inventoryItem(page,id)).click();
         await page.locator('.inventory-item-actions').getByRole('button',{name:use,exact:true}).click();
       };
       await verb('look');await clickTarget('hotspot.square.fountain');
@@ -433,7 +435,7 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
       assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.state.inventory.filter(id=>id==='item.tony_diploma').length),1);
       await page.reload();await page.evaluate(()=>window.__comradeCandidateTest.ready);
       assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.state.flags.tonyDiplomaTaken),true);
-      await page.locator('[data-item-id="item.tony_diploma"]').click();
+      await (await inventoryItem(page,"item.tony_diploma")).click();
       const inspect=await page.evaluate(()=>window.__comradeCandidateTest.game.t('ui.inventory.inspect'));
       await page.locator('.inventory-item-actions').getByRole('button',{name:inspect,exact:true}).click();
       await page.locator('.item-model-viewer[data-model-state=ready]').waitFor();
@@ -614,7 +616,7 @@ test("fountain repair supports real clicks, safe oil self-use and mid-puzzle rel
       await page.locator(".dialogue-choice-list").getByRole("button", { name: label, exact: true }).click();
     };
     const oilAction = async key => {
-      await page.locator('[data-item-id="item.sunflower_oil"]').click();
+      await (await inventoryItem(page,"item.sunflower_oil")).click();
       const label = await page.evaluate(key => window.__comradeCandidateTest.game.t(key), key);
       await page.locator(".inventory-item-actions").getByRole("button", { name: label, exact: true }).click();
     };
@@ -686,14 +688,10 @@ test("fountain repair supports real clicks, safe oil self-use and mid-puzzle rel
 });
 
 async function selectVerb(page, name) {
-        const label = await page.evaluate(name => window.__comradeCandidateTest.game.t(`verb.${name}`), name);
-        for (let step = 0; step < 4; step++) {
-          if ((await page.locator(".hud-verb").textContent()) === label) return;
-          await page.locator(".hud-verb").click();
-        }
-        assert.fail(`Could not select ${name}`);
+  await chooseHudVerb(page, name);
 }
 async function clickSceneTarget(page, id) {
+        await collapseInventory(page);
         // Inspect hit geometry to choose an unobstructed point; do not invoke actions.
         const point = await page.evaluate(async id => {
           const { game } = window.__comradeCandidateTest;

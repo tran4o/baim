@@ -2,7 +2,7 @@ import { resolveItemInspectionAsset, mountUnavailableItemInspection } from './It
 import { interactionSideFacing, canFaceStoppedInteraction, hasVerticalRest } from "./InteractionFacing.js";
 import { createReviewSaveSystem } from "./ReviewState.js";
 import { AudioSystem } from "./AudioSystem.js";
-import { ActionCursor, cursorTargetSupportsAction, effectiveTargetVerb } from './ActionCursor.js';
+import { ActionCursor, CURSOR_ART, cursorTargetSupportsAction, effectiveTargetVerb } from './ActionCursor.js';
 import { planRefusalApproach, refusalTargetPoint } from './RefusalApproach.js';
 import { createObjectCloseup } from './ObjectCloseupView.js';
 import { mountObjectProp } from './ObjectPropView.js';
@@ -105,6 +105,8 @@ export class Game {
     this.selectedVerb = VERBS.LOOK;
     this.selectedInventoryItemId = null;
     this.inventoryUseItemId = null;
+    this.inventoryExpanded = false;
+    this.inventoryScrollTop = 0;
     this.questListTab = "outstanding";
     this.message = this.t("ui.hint");
     this.speechBubble = null;
@@ -2372,6 +2374,8 @@ export class Game {
   }
 
   renderUi() {
+    const previousDock = this.uiRoot?.querySelector?.(".inventory-dock");
+    if (previousDock && this.inventoryExpanded) this.inventoryScrollTop = previousDock.scrollTop;
     if(this.selectedInventoryItemId&&!this.content.items[this.selectedInventoryItemId])this.selectedInventoryItemId=null;
     if(this.inspectedItemId&&!this.content.items[this.inspectedItemId])this.inspectedItemId=null;
     if(this.inventoryUseItemId&&(!this.content.items[this.inventoryUseItemId]||!this.inventory.has(this.inventoryUseItemId)||this.objectCloseup||this.puzzleOpen||this.inspectedItemId||this.menuOpen||this.dialogue.current||this.sceneTransitionPending))this.clearInventoryInteraction();
@@ -2475,7 +2479,13 @@ export class Game {
 
     const verb = element("button", "hud-verb");
     verb.type = "button";
-    verb.textContent = this.t(`verb.${this.selectedVerb}`);
+    const verbIcon = element("span", "hud-verb-icon");
+    verbIcon.setAttribute("aria-hidden", "true");
+    verbIcon.dataset.cursorArt = CURSOR_ART[this.selectedVerb].id;
+    verbIcon.style.backgroundImage = 'url("' + new URL('../../assets/ui/action-cursors/' + this.selectedVerb + '.png', import.meta.url).href + '")';
+    const verbText = element("span", "hud-verb-text");
+    verbText.textContent = this.t(`verb.${this.selectedVerb}`);
+    verb.append(verbIcon, verbText);
     verb.setAttribute("aria-label", `${this.t("ui.verb")}: ${this.t(`verb.${this.selectedVerb}`)}`);
     verb.addEventListener("pointerdown", (event) => event.stopPropagation());
     verb.addEventListener("click", (event) => {
@@ -2490,7 +2500,7 @@ export class Game {
 
     hud.append(meters, verb);
     const items = this.inventory.list();
-    if (items.length) hud.appendChild(this.createInventoryDock(items));
+    hud.appendChild(this.createInventoryDock(items));
     if (this.inventoryUseItemId) hud.appendChild(this.createInventoryUseIndicator());
     return hud;
   }
@@ -2529,6 +2539,29 @@ export class Game {
 
   createInventoryDock(items) {
     const panel = element("div", "inventory-dock-panel");
+    panel.classList.toggle("expanded", Boolean(this.inventoryExpanded));
+    const toggle = button("", () => {
+      this.inventoryExpanded = !this.inventoryExpanded;
+      this.selectedInventoryItemId = null;
+      this.renderUi();
+      queueMicrotask(() => this.uiRoot.querySelector('.inventory-toggle')?.focus({ preventScroll: true }));
+    });
+    toggle.className = "inventory-toggle";
+    const toggleIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    toggleIcon.setAttribute("viewBox", "0 0 24 28");
+    toggleIcon.setAttribute("aria-hidden", "true");
+    const togglePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    togglePath.setAttribute("d", "M6 16L12 10L18 16");
+    toggleIcon.appendChild(togglePath);
+    toggle.appendChild(toggleIcon);
+    toggle.setAttribute("aria-label", this.t(this.inventoryExpanded ? "ui.inventory.collapse" : "ui.inventory.expand"));
+    toggle.setAttribute("aria-expanded", String(Boolean(this.inventoryExpanded)));
+    toggle.setAttribute("aria-controls", "inventory-grid");
+    panel.appendChild(toggle);
+    const hoverLabel = element("span", "inventory-hover-label");
+    hoverLabel.setAttribute("role", "tooltip");
+    hoverLabel.hidden = true;
+    panel.appendChild(hoverLabel);
     panel.addEventListener("pointerdown", (event) => event.stopPropagation());
     panel.addEventListener("pointerup", (event) => event.stopPropagation());
     panel.addEventListener("click", (event) => event.stopPropagation());
@@ -2537,9 +2570,12 @@ export class Game {
       event.stopPropagation();
     });
     const dock = element("div", "inventory-dock");
+    dock.id = "inventory-grid";
     dock.setAttribute("role", "toolbar");
+    dock.dataset.rows = this.inventoryExpanded ? "3" : "1";
     dock.setAttribute("aria-label", this.t("ui.inventory"));
-    items.forEach((item, index) => {
+    const shownItems = this.inventoryExpanded ? items : items.slice(0, 3);
+    shownItems.forEach((item, index) => {
       const itemName = this.t(item.nameKey);
       const tooltipId = `inventory-tooltip-${item.id.replaceAll(".", "-")}`;
       const itemButton = element("button", "inventory-item");
@@ -2548,6 +2584,13 @@ export class Game {
       itemButton.setAttribute("aria-label", itemName);
       itemButton.setAttribute("aria-describedby", tooltipId);
       itemButton.dataset.itemId = item.id;
+      itemButton.title = itemName;
+      const showLabel = () => { if (!this.selectedInventoryItemId) { hoverLabel.textContent = itemName; hoverLabel.hidden = false; } };
+      const hideLabel = () => { hoverLabel.hidden = true; };
+      itemButton.addEventListener("mouseenter", showLabel);
+      itemButton.addEventListener("focus", showLabel);
+      itemButton.addEventListener("mouseleave", hideLabel);
+      itemButton.addEventListener("blur", hideLabel);
       const iconRule = firstMatchingRule(item.iconRules, this.effectContext());
       const iconPath = this.assets.getItemAssetPath(item.id, iconRule?.slot || "icon");
       if (iconPath) {
@@ -2581,6 +2624,15 @@ export class Game {
       });
       dock.appendChild(itemButton);
     });
+    const slots = this.inventoryExpanded ? Math.max(9, Math.ceil(items.length / 3) * 3) : 3;
+    for (let index = shownItems.length; index < slots; index++) {
+      const empty = element("div", "inventory-item inventory-slot-empty");
+      empty.setAttribute("aria-hidden", "true");
+      empty.dataset.empty = "true";
+      dock.appendChild(empty);
+    }
+    dock.addEventListener("scroll", () => { if (this.inventoryExpanded) this.inventoryScrollTop = dock.scrollTop; });
+    if (this.inventoryExpanded) queueMicrotask(() => { if (dock.isConnected) dock.scrollTop = this.inventoryScrollTop || 0; });
     dock.addEventListener("keydown", (event) => this.handleInventoryDockKeydown(event, dock));
     panel.appendChild(dock);
     const selectedItem = items.find((item) => item.id === this.selectedInventoryItemId);
@@ -2682,17 +2734,20 @@ export class Game {
   }
 
   handleInventoryDockKeydown(event, dock) {
-    const items = [...dock.querySelectorAll(".inventory-item")];
+    const items = [...dock.querySelectorAll("button.inventory-item")];
     const currentIndex = items.indexOf(document.activeElement);
-    if (currentIndex < 0 || !["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    if (currentIndex < 0 || !["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
     let nextIndex = currentIndex;
     if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + items.length) % items.length;
     if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % items.length;
+    if (event.key === "ArrowUp") nextIndex = Math.max(0, currentIndex - 3);
+    if (event.key === "ArrowDown") nextIndex = Math.min(items.length - 1, currentIndex + 3);
     if (event.key === "Home") nextIndex = 0;
     if (event.key === "End") nextIndex = items.length - 1;
     items.forEach((item, index) => { item.tabIndex = index === nextIndex ? 0 : -1; });
     items[nextIndex]?.focus();
+    items[nextIndex]?.scrollIntoView({ block: "nearest", inline: "nearest" });
   }
 
   createTopBar() {
@@ -2714,14 +2769,13 @@ export class Game {
       this.clearInventoryInteraction();
       this.performTargetAction(returnExit);
     }));
-    right.append(
-      button(this.t("verb.look"), () => this.selectVerb(VERBS.LOOK)),
-      button(this.t("verb.talk"), () => this.selectVerb(VERBS.TALK)),
-      button(this.t("verb.use"), () => this.selectVerb(VERBS.USE)),
-      button(this.t("verb.take"), () => this.selectVerb(VERBS.TAKE)),
-      button("BG", () => this.setLanguage("bg")),
-      button("EN", () => this.setLanguage("en"))
-    );
+    const language = button(this.state.language.toUpperCase(), () => {
+      this.setLanguage(this.state.language === "bg" ? "en" : "bg");
+      queueMicrotask(() => this.uiRoot.querySelector('.hud-language-toggle')?.focus({ preventScroll: true }));
+    });
+    language.className = "hud-language-toggle";
+    language.setAttribute("aria-label", this.t("ui.language.switch"));
+    right.append(language);
     bar.append(left, right);
     return bar;
   }
