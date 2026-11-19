@@ -443,7 +443,6 @@ const rawScenes = [
           state: { tonyVote: false }
         },
         itemUseRules: [
-          { itemId: "item.glass_of_water", messageKey: "bottle.glass_refused", reject: true },
           {
             itemId: "item.fountain_water_bottle",
             requirements: {
@@ -484,26 +483,6 @@ const rawScenes = [
         rect: { x: 1138, y: 292, w: 44, h: 97 },
         lookKey: "look.mehana.oil",
         requirements: { disabled: true }
-      },
-      {
-        id: "hotspot.mehana.water_jug",
-        kind: "hotspot",
-        nameKey: "hotspot.water_jug.name",
-        rect: { x: 1190, y: 320, w: 75, h: 83 },
-        lookKey: "look.mehana.water_jug",
-        takeItemId: "item.glass_of_water",
-        flagOnTake: "hasGlassOfWater",
-        requirements: { disabled: true },
-        useRules: [
-          {
-            requirements: { items: ["item.glass_of_water"] },
-            effects: [
-              { type: "removeItem", itemId: "item.glass_of_water" },
-              { type: "adjustState", key: "rakiaGlasses", amount: -1, min: 0, max: 10, timestampKey: "rakiaLastChangedAt" }
-            ],
-            messageKey: "msg.water_recovery"
-          }
-        ]
       },
       {
         id: "hotspot.mehana.newspaper",
@@ -589,17 +568,7 @@ const rawScenes = [
               messageKey: "msg.tony.gift_not_vote",
               reject: true
             })
-          ),
-          {
-            itemId: "item.glass_of_water",
-            requirements: {
-              flags: ["tonyChallengeStarted"],
-              state: { tonyVote: false }
-            },
-            effects: [],
-            messageKey: "msg.water_tony_wrong_glass",
-            reject: true
-          }
+          )
         ]
       }
     ]

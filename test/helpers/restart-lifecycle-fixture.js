@@ -50,7 +50,7 @@ async function papers(g,route='kiosk'){
   await leave(g,'exit.apartment.to_square');
   if(route==='combine'){
     g.takeTarget(target(g,'hotspot.square.empty_envelope'));
-    assert.equal(g.useInventoryItemOnItem('item.unpaid_bills','item.empty_envelope'),true);
+    assert.equal(g.useInventoryItemOnItem('item.unpaid_bills','item.empty_envelope'),false);
     assert.equal(g.inventory.has('item.fake_diploma'),false,'obsolete recipe grants nothing');
   }else {g.useInventoryItemOnTarget('item.unpaid_bills',target(g,'hotspot.square.kiosk'));assert.equal(g.inventory.has('item.fake_diploma'),false,'kiosk bills grant nothing');}
   g.state.hasFakeDiploma=true;g.state.flags.legacyPhotoCredentials=true;g.inventory.add('item.fake_diploma');
@@ -83,11 +83,8 @@ async function support(g,{baba,tony,watched=false}){
   }
 }
 async function register(g,{stopAtMayor=false}={}){
-  if(!g.inventory.has('item.suspicious_receipt')){
-    talk(g,'npc.journalist');choose(g,'registration.ask_evidence');choose(g,'registration.leave');
-    await leave(g,'exit.square.to_mehana');talk(g,'npc.mehana_waiter');choose(g,'registration.kiro_receipt');await leave(g,'exit.mehana.to_square');
-  }
-  use(g,'npc.journalist','item.suspicious_receipt');reload(g);
+  if(!g.state.flags.journalistInOffice){talk(g,'npc.journalist');choose(g,'registration.request_meeting');}
+  reload(g);
   await leave(g,'exit.square.to_municipality');use(g,'npc.municipality_clerk','item.fake_diploma');
   await leave(g,'exit.municipality.to_mayor_office');if(stopAtMayor)return;talk(g,'npc.mayor');
   for(const key of ['confront','listen','stay_candidate','watch_stamp','leave'])choose(g,'registration.'+key);

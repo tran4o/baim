@@ -12,8 +12,8 @@ test('new entry preserves exact seven-piece partial state across save/reload and
 test('earned photo remains owned and solved puzzle cannot reopen or duplicate through new entry',()=>{
  const s=structuredClone(DEFAULT_SAVE);s.flags.photoCupboardSolved=true;s.flags.childPhotoRecovered=true;s.inventory=['item.mitko_child_photo'];const g=game(s);g.openObjectCloseup(wardrobe);g.takeObjectCloseupItem(wardrobePhotoPuzzle.id);assert.equal(g.puzzleOpen,undefined);assert.equal(g.message,'photoquest.cupboard_empty');assert.deepEqual(g.state.inventory,['item.mitko_child_photo']);assert.equal(g.objectCloseupItemAvailable(wardrobePhotoPuzzle),true,'box stays visible after reward');
 });
-test('accepted R08 runtime model matches owner hash and old icon/item identity is retained',()=>{
- const a=assetManifest.items['item.accordion'];assert.equal(a.icon,'assets/chapter1/items/accordion.png');assert.equal(a.inspection,'prop');assert.equal(createHash('sha256').update(readFileSync(a.model)).digest('hex'),'5272ddfe911cf44fbbff6c3199b8f8257a756914e7a56c4b5da910422849a500');assert.equal(a.reviewStatus,'source-accepted-context-review');
+test('accepted R08 model and R52 rendered thumbnail retain item identity',()=>{
+ const a=assetManifest.items['item.accordion'];assert.equal(a.icon,'assets/chapter1/items/accordion-r08/icon-r52.png');assert.equal(a.inspection,'prop');assert.equal(createHash('sha256').update(readFileSync(a.model)).digest('hex'),'5272ddfe911cf44fbbff6c3199b8f8257a756914e7a56c4b5da910422849a500');assert.equal(a.reviewStatus,'source-accepted-context-review');
 });
 test('current BG/EN photo guidance directs to wardrobe rather than old low cupboard',()=>{
  for(const lang of ['bg','en']){for(const key of ['photoquest.cupboard_look','photoquest.pepa_requirements','photoquest.stage.photo','campaign.opening_recap']){const text=strings[lang][key];assert.match(text,lang==='en'?/wardrobe/i:/гардероб/i);assert.doesNotMatch(text,/low cupboard|low apartment cupboard|ниския шкаф/);}assert.match(strings[lang]['photoquest.photo_desc'],lang==='en'?/above (?:my|the) bed/:/над леглото/);}

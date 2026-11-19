@@ -31,7 +31,8 @@ test('tavern blocked furniture and bar cannot be entered; all floor routes avoid
 
 test('removed props and obsolete chair overlays cannot render or intercept input',()=>{
  for(const suffix of ['rear_chairs','table_group_left','table_group_right','kaliakra_oil','water_jug','newspaper_left_table'])assert.ok(!scene.foregroundLayers.some(l=>l.id==='layer.mehana.'+suffix));
- for(const suffix of ['oil','water_jug','newspaper'])assert.equal(requirementsMet(scene.interactables.find(t=>t.id==='hotspot.mehana.'+suffix).requirements),false);
+ assert.equal(scene.interactables.some(t=>t.id==='hotspot.mehana.water_jug'),false);
+ for(const suffix of ['oil','newspaper'])assert.equal(requirementsMet(scene.interactables.find(t=>t.id==='hotspot.mehana.'+suffix).requirements),false);
 });
 
 test('NPC occluders retain exact approved pixels only around Kiro and Tony, with no chair or floor masks over player routes',async()=>{
@@ -48,26 +49,15 @@ test('NPC occluders retain exact approved pixels only around Kiro and Tony, with
  }
 });
 
-test('Kiro supplies existing recovery glass, blocks duplicates including dropped glasses, and permits refill after drinking',()=>{
- const state={inventory:[],flags:{},rakiaGlasses:4,hasGlassOfWater:false,droppedItems:[]},inventory=new InventorySystem({},state);
- const context={state,inventory,now:()=>1234};
- assert.equal(requirementsMet(water.requirements,context),true);assert.equal(applyEffects(water.effect.effects,context),true);
- assert.equal(inventory.has('item.glass_of_water'),true);assert.equal(state.hasGlassOfWater,true);assert.equal(state.rakiaGlasses,4);
- assert.equal(requirementsMet(water.requirements,context),false);
- const item=chapter1.items.find(i=>i.id==='item.glass_of_water');assert.equal(applyEffects(item.selfUseRules[0].effects,context),true);
- assert.equal(state.rakiaGlasses,3);assert.equal(state.rakiaLastChangedAt,1234);assert.equal(requirementsMet(water.requirements,context),true);
- state.droppedItems.push({itemId:'item.glass_of_water'});assert.equal(requirementsMet(water.requirements,context),false);
-});
-
-test('legacy acquired glass remains consumable and Kiro water effect failure grants nothing',()=>{
- const raw={currentSceneId:scene.id,inventory:['item.glass_of_water'],hasGlassOfWater:true,rakiaGlasses:5,flags:{}};
- const storage={getItem:()=>JSON.stringify(raw),setItem(){}};const saved=new SaveSystem(storage).load();
- const inventory=new InventorySystem({},saved),context={state:saved,inventory,now:()=>5678};
- assert.equal(applyEffects(chapter1.items.find(i=>i.id==='item.glass_of_water').selfUseRules[0].effects,context),true);assert.equal(saved.rakiaGlasses,4);
- const state={inventory:[],flags:{},droppedItems:[]},g=Object.create(Game.prototype);g.state=state;g.inventory=new InventorySystem({},state);
- g.effectContext=()=>({state,inventory:g.inventory});g.renderUi=()=>{};
- const before=structuredClone(state);
- assert.equal(applyEffects([...water.effect.effects,{type:'replaceItem',itemId:'missing',withItemId:'item.rakia'}],g.effectContext()),false);assert.deepEqual(state,before);assert.equal(g.inventory.has('item.glass_of_water'),false);
+test('Kiro no longer offers obsolete water and old held/dropped jug saves migrate without affecting intoxication',()=>{
+ assert.equal(water,undefined);assert.equal(scene.interactables.some(t=>t.id==='hotspot.mehana.water_jug'),false);
+ for(const chapter1Completed of [false,true]){
+ const raw={currentSceneId:scene.id,chapter1Completed,inventory:['item.glass_of_water','item.fountain_water_bottle'],droppedItems:[{itemId:'item.glass_of_water'}],hasGlassOfWater:true,rakiaGlasses:5,flags:{hasGlassOfWater:true},inventoryUseItemId:'item.glass_of_water',selectedInventoryItemId:'item.glass_of_water',inspectedItemId:'item.glass_of_water'};
+ const saved=new SaveSystem({getItem:()=>JSON.stringify(raw)}).load();
+ assert.deepEqual(saved.inventory,['item.fountain_water_bottle']);assert.deepEqual(saved.droppedItems,[]);assert.equal(saved.rakiaGlasses,5);
+ for(const key of ['hasGlassOfWater','inventoryUseItemId','selectedInventoryItemId','inspectedItemId'])assert.equal(saved[key],undefined);
+ assert.equal(saved.flags.hasGlassOfWater,undefined);
+ }
 });
 
 test('fixed Kiro runtime preserves all36 frames/timing and originals, with padded registration and clear frame boundaries',async()=>{

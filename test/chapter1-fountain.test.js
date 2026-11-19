@@ -107,14 +107,12 @@ test("Kiro is the sole source; self-use preserves oil and dropped bottles preven
 });
 
 test("early repair works without visiting Baba or the chorus; repeated failures give a stronger hint", () => {
-  const ctx = context({ inventory: ["item.sunflower_oil", "item.glass_of_water"] });
+  const ctx = context({ inventory: ["item.sunflower_oil"] });
   const first = firstMatchingRule(fountainUseRules, ctx);
   apply(first, ctx);
   const hint = firstMatchingRule(fountainUseRules, ctx);
   assert.notEqual(first.messageKey, hint.messageKey);
   for (let i = 0; i < 3; i++) apply(hint, ctx);
-  apply(firstMatchingRule(fountainItemRules.filter(rule => rule.itemId === "item.glass_of_water"), ctx), ctx);
-  assert.equal(ctx.inventory.has("item.glass_of_water"), true);
   assert.equal(ctx.state.suspicion, 0);
   apply(firstMatchingRule(statueItemRules.filter(rule => rule.itemId === "item.sunflower_oil"), ctx), ctx);
   apply(firstMatchingRule(fountainUseRules, ctx), ctx);

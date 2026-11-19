@@ -33,10 +33,11 @@ test('complete bottle chain survives every save; repeat fills/swaps cannot dupli
  assert.deepEqual([c.state.influence,c.state.suspicion,c.state.publicMood],rewards);assert.equal(c.state.tonyVote,true);assert.equal(c.state.babaStoyankaVote,true);
 });
 
-test('ordinary water glass cannot prepare contest; unrelated drinking/recovery remains available',()=>{
- const c=ctx({inventory:['item.glass_of_water'],flags:{tonyChallengeStarted:true,tonyDistracted:true},rakiaGlasses:4});
- assert.equal(swap('item.glass_of_water',c).reject,true);apply(swap('item.glass_of_water',c),c);assert.equal(c.state.swappedOwnRakiaWithWater,false);assert.equal(c.inventory.has('item.glass_of_water'),true);
- apply(chapter1.items.find(i=>i.id==='item.glass_of_water').selfUseRules[0],c);assert.equal(c.state.rakiaGlasses,3);
+test('obsolete tavern jug cannot be obtained or substitute for the required quest bottle',()=>{
+ assert.equal(chapter1.items.some(i=>i.id==='item.glass_of_water'),false);
+ const c=reload(ctx({inventory:['item.glass_of_water'],hasGlassOfWater:true,flags:{tonyChallengeStarted:true},rakiaGlasses:4}));
+ assert.equal(c.inventory.has('item.glass_of_water'),false);assert.equal(c.state.swappedOwnRakiaWithWater,false);assert.equal(c.state.rakiaGlasses,4);
+ assert.equal(swap('item.glass_of_water',c),null);assert.equal(c.state.hasGlassOfWater,undefined);
 });
 
 for(const overrides of [{hasSunflowerOil:true},{drankOilBeforeTonyChallenge:true},{flags:{fountainValveOiled:true}},{flags:{fountainRepaired:true}},{flags:{fountainRepaired:true},inventory:[oil]}]){

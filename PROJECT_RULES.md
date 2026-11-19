@@ -2,6 +2,14 @@
 
 This file is the central working agreement for `/home/ZeShad/baim`. Read it before changing the repository. Keep detailed workflow rules here and project-specific game direction in `AGENTS.md` and the linked design documents.
 
+## Inventory objects — owner rule, 12 November 2026
+
+- Every current and future collectible must retain an editable, self-contained Blender `.blend` source and a matching runtime 3D model. Inventory **View** must open that model. A static picture, image transform or text fallback does not fulfill this requirement.
+- Use the shared bottle inspection controls from `InspectionControls.js`: drag pitch/yaw bounded to ±15°, no roll, automatic spin or orbit, wheel zoom from1×to1.5×, Home reset and pointer release/cancellation. Preserve inventory thumbnail sizes independently from the approved40%/-8°item cursor.
+- Verify all reachable item states and replacements. Alternate diploma prints, stamps, photos, consumed/refilled bottles and posted campaign editions must inspect the correct matching artwork/model for that state.
+- Keep accepted artwork, stable item IDs, quest effects and save continuity. Reuse accepted native sources first. Missing native assets require a concrete Blender workshop handoff; never disguise a flat image as a completed3D inspection. Model loading failure must remain an explicit unavailable state, not silently show a static substitute.
+- Follow `docs/inventory-3d-contract.md`; verify actual inventory View, bounded drag, wheel zoom, release/reset and model/native provenance before marking an item complete. This local followup does not amend frozenPR81 or authorize publication.
+
 ## Repository Boundary
 
 - Work only in `/home/ZeShad/baim` unless the user explicitly names another location.

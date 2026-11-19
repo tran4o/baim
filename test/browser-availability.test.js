@@ -18,13 +18,20 @@ test("optional local missing Chromium produces an explicit skip", () => {
   assert.equal(browserAvailable({ skip: value => { reason = value; } }, "/missing", { env: { CI: "false" }, exists: () => false }), false);
   assert.match(reason, /Playwright Chromium is not installed/);
 });
-test("CI installs Chromium before tests and all browser journeys use the required guard", () => {
+test("CI pins the matching browser image, launches Chromium before tests, and retains strict guards", () => {
   const workflow = readFileSync(".github/workflows/test.yml", "utf8");
   assert.match(workflow, /uses: actions\/checkout@v5/);
   assert.match(workflow, /uses: actions\/setup-node@v5/);
   assert.match(workflow, /node-version: 22/);
-  const install = workflow.indexOf("npx playwright install --with-deps chromium");
-  assert.ok(install >= 0 && install < workflow.indexOf("- run: npm test"));
+  const locked = JSON.parse(readFileSync('package-lock.json', 'utf8')).packages['node_modules/playwright'].version;
+  const image = workflow.match(/mcr\.microsoft\.com\/playwright:v([0-9.]+)-noble@sha256:[a-f0-9]{64}/);
+  assert.ok(image, 'official browser image must be digest-pinned');
+  assert.equal(image[1], locked, 'container and package lock versions must match');
+  assert.match(workflow, /options: --ipc=host/);
+  assert.doesNotMatch(workflow, /playwright install --with-deps/);
+  const launch = workflow.indexOf('await chromium.launch({ headless: true })');
+  assert.ok(launch >= 0 && launch < workflow.indexOf('- run: npm test'));
+  assert.match(workflow, /Playwright image\/package version mismatch/);
   assert.match(workflow, /BAIM_REQUIRE_BROWSER_TESTS: "1"/);
   const smoke = readFileSync("test/browser-smoke.test.js", "utf8");
   assert.equal((smoke.match(/if \(!browserAvailable\(t, chromium.executablePath\(\)\)\) return;/g) || []).length, 3);

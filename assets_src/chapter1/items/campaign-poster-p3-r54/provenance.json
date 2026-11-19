@@ -1,0 +1,36 @@
+{
+  "version": "R54",
+  "front": "assets/chapter1/items/campaign-poster-p3-r54/front.png",
+  "frontSHA256": "a3ad9cc276955a061f69f58734234fb2d685dc705f104cca030f416d8b294785",
+  "model": "assets/chapter1/items/campaign-poster-p3-r54/poster.glb",
+  "modelSHA256": "976bdb04dc353fdc07b446e9b53628dd256636178d18adde1941da86e446ce44",
+  "native": "selected-p3.blend",
+  "nativeSHA256": "b711afd12d1dfdfe08a82d7cc6caeda8f0d42252ab5ab7780a34bc34ca4929fb",
+  "acceptedPaperBase": "assets_src/chapter1/items/campaign-poster-p3-r51/selected-p3.blend",
+  "intermediateSourceSHA256": "60baa465b1dee9ff5c484bd89d423a4a82d2a59a51a22609140cae2e54d0d051",
+  "change": "Exact owner-approved R54 campaign layout, texture-only P3 derivative. Meshes/UVs/bow/thickness/materials/transforms and non-front buffers unchanged.",
+  "wall": "assets/chapter1/scenes/village_square/poster-r54/mitko.png",
+  "outputSHA256": "aa54cdd09872a7a11d98ebdb9fecaa58f5d33ccfa79dd76985ffefcc7bf507fb",
+  "wallSourceSHA256": "9494d424e495fc130b823e9296ed07ed1663ad136ebddb56eba64a5c2e5558f7",
+  "quad": [
+    [
+      1048,
+      250
+    ],
+    [
+      1117,
+      237
+    ],
+    [
+      1119,
+      421
+    ],
+    [
+      1051,
+      416
+    ]
+  ],
+  "mapping": "Complete tight RGB native front projected once, normalized UV0..1,4x4 edge coverage; wood preserved",
+  "incumbentUnchangedSHA256": "a6e4ce0c148f064353f5b7def5c6055a7c822532389c79201d268d638eff9775",
+  "publication": false
+}

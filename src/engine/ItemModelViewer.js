@@ -11,10 +11,10 @@ export function mountItemModelViewer(host, { modelUrl, fallbackUrl, text, liquid
   const fallback = () => {
     if (disposed) return;
     cleanup(); cleanup = () => {};
-    host.dataset.modelState = 'fallback';
+    host.dataset.modelState = 'error';
+    host.dataset.modelError = 'model-load-or-context-failed';
     host.querySelector('canvas')?.remove();
-    const image = document.createElement('img'); image.src = fallbackUrl; image.alt = text.name;
-    host.append(image); status.textContent = text.unavailable;
+    status.hidden = false; status.textContent = text.unavailable;
   };
   host.dataset.modelState = 'loading';
   (async () => {
@@ -103,7 +103,7 @@ export function mountItemModelViewer(host, { modelUrl, fallbackUrl, text, liquid
       backdropTexture.dispose(); envTarget.dispose(); renderer.dispose(); renderer.forceContextLoss(); };
     resize();
     const gltf = await new GLTFLoader().loadAsync(modelUrl);
-    if (disposed || host.dataset.modelState === 'fallback') { releaseModel(gltf.scene); return; }
+    if (disposed || host.dataset.modelState === 'error') { releaseModel(gltf.scene); return; }
     gltf.scene.updateMatrixWorld(true);
     const flattened = new T.Group(), opaque = new Map(), documentOriginalMaterials = new Set();
     gltf.scene.traverse(o => {
@@ -115,7 +115,7 @@ export function mountItemModelViewer(host, { modelUrl, fallbackUrl, text, liquid
         const materials = source.map(original => {
           documentOriginalMaterials.add(original);
           return new T.MeshBasicMaterial({ name: original.name, map: original.map,
-            color: original.color, side: T.FrontSide, toneMapped: false });
+            color: original.color, side: T.FrontSide, alphaTest: .95, toneMapped: false });
         });
         flattened.add(new T.Mesh(geometry, Array.isArray(m) ? materials : materials[0]));
         return;

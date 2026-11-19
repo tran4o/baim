@@ -8,7 +8,7 @@ import { SaveSystem } from "../src/engine/SaveSystem.js";
 import { Renderer } from "../src/engine/Renderer.js";
 import { Game } from "../src/engine/Game.js";
 import { applyEffects, firstMatchingRule, requirementsMet } from "../src/engine/EffectSystem.js";
-import { receiptRule, receiptHandover, stampRule, registerRule } from "../src/content/chapter1/registration.js";
+import { journalistMeeting, stampRule, registerRule } from "../src/content/chapter1/registration.js";
 import { campaignPosterRules } from "../src/content/chapter1/campaign.js";
 import { registrationEn, registrationBg } from "../src/content/localization/chapter1Registration.js";
 
@@ -30,7 +30,7 @@ function reload(ctx) {
 }
 const clerk = scene("municipality").npcs.find(n => n.id === "npc.municipality_clerk");
 
-test("campaign reveals journalist; she moves with receipt, witnesses stamp, then returns after registration", () => {
+test("campaign reveals journalist; dialogue sends her to the office, witnesses stamp, then returns after registration", () => {
   let ctx = context({ inventory: ["item.campaign_pamphlets", "item.fake_diploma"], hasFakeDiploma: true });
   const reporter = scene("village_square").npcs.find(n => n.id === "npc.journalist");
   const witness = scene("mayor_office").npcs.find(n => n.id === "npc.journalist");
@@ -40,8 +40,7 @@ test("campaign reveals journalist; she moves with receipt, witnesses stamp, then
   assert.equal(requirementsMet(stampRule.requirements, ctx), false);
   apply(firstMatchingRule(clerk.itemUseRules, ctx), ctx);
   assert.equal(ctx.state.flags.candidateRegistrationStamped, undefined);
-  apply(receiptRule, ctx);
-  apply(receiptHandover, ctx);
+  apply(journalistMeeting, ctx);
   ctx = reload(ctx);
   assert.equal(ctx.inventory.has("item.suspicious_receipt"), false);
   assert.equal(requirementsMet(reporter.requirements, ctx), false);
@@ -62,30 +61,21 @@ test("campaign reveals journalist; she moves with receipt, witnesses stamp, then
   assert.equal(requirementsMet(registerRule.requirements, ctx), false);
 });
 
-test("Tony reward and Kiro fallback never duplicate carried, dropped or delivered evidence", () => {
-  const win = dialogue("tony_fridge").nodes.start.choices.find(c => c.next === "contest_result");
-  const fallback = dialogue("mehana_waiter").nodes.start.choices.find(c => c.textKey === "registration.kiro_receipt");
-  const ctx = context({ swappedOwnRakiaWithWater: true });
-  ctx.state.flags.tonyChallengeStarted = true; // R39: preparation follows an agreed challenge.
-  assert.equal(requirementsMet(fallback.requirements, ctx), false);
-  apply(win.effect, ctx);
-  assert.ok(ctx.inventory.has("item.suspicious_receipt"));
-  ctx.state.flags.journalistEvidenceRequested = true;
-  assert.equal(requirementsMet(fallback.requirements, ctx), false);
-  ctx.inventory.remove("item.suspicious_receipt");
-  ctx.state.droppedItems.push({ itemId: "item.suspicious_receipt", sceneId: scene("mehana").id, x: 700, y: 500 });
-  assert.equal(requirementsMet(fallback.requirements, ctx), false);
-  applyEffects(win.effect.effects, ctx);
-  assert.equal(ctx.inventory.has("item.suspicious_receipt"), false);
-  ctx.state.droppedItems = [];
-  apply(fallback.effect, ctx);
-  ctx.state.flags.campaignPosted = true;
-  apply(receiptHandover, ctx);
-  assert.equal(requirementsMet(fallback.requirements, ctx), false);
-  const kiroFirst = context({ flags: { journalistEvidenceRequested: true, tonyChallengeStarted: true }, swappedOwnRakiaWithWater: true });
-  apply(fallback.effect, kiroFirst);
-  apply(win.effect, kiroFirst);
-  assert.equal(kiroFirst.state.inventory.filter(id => id === "item.suspicious_receipt").length, 1);
+test('obsolete receipt grants and requirements are gone; legacy saves retain only earned progress', () => {
+  assert.equal(chapter1.items.some(i=>i.id==='item.suspicious_receipt'),false);
+  const win=dialogue('tony_fridge').nodes.start.choices.find(c=>c.next==='contest_result');
+  const ctx=context({swappedOwnRakiaWithWater:true,flags:{tonyChallengeStarted:true}});
+  apply(win.effect,ctx);assert.equal(ctx.inventory.has('item.suspicious_receipt'),false);
+  assert.equal(JSON.stringify(chapter1.dialogues).includes('suspicious_receipt'),false);
+  const old=reload(context({inventory:['item.suspicious_receipt','item.fake_diploma'],droppedItems:[{itemId:'item.suspicious_receipt',sceneId:'scene.chapter1.mehana'}],flags:{journalistHasReceipt:true}}));
+  assert.equal(old.inventory.has('item.suspicious_receipt'),false);assert.equal(old.state.droppedItems.length,0);
+  assert.equal(old.inventory.has('item.fake_diploma'),true);assert.equal(old.state.flags.journalistInOffice,true);
+  assert.equal(old.state.flags.mayorDiplomaStamped,undefined);assert.equal(old.state.flags.candidateRegistrationStamped,undefined);
+  const unearned=reload(context({inventory:['item.suspicious_receipt'],flags:{campaignPosted:true}}));
+  assert.equal(unearned.state.flags.journalistInOffice,undefined);
+  assert.equal(requirementsMet(journalistMeeting.requirements,unearned),true);
+  const registered=reload(context({flags:{journalistHasReceipt:true,candidateRegistrationStamped:true}}));
+  assert.equal(registered.state.flags.journalistInOffice,false);assert.equal(registered.state.flags.candidateRegistrationStamped,true);
 });
 
 test("holding a legacy seal cannot register a fresh candidate or bypass the Mayor", () => {
@@ -140,7 +130,7 @@ test("visible doors explain campaign and evidence gates instead of allowing prem
   game.performTargetAction(officeDoor);
   assert.equal(game.message, "registration.office_blocked");
   assert.equal(game.destination, scene("municipality").id);
-  ctx.state.flags.journalistHasReceipt = true;
+  ctx.state.flags.journalistInOffice = true;
   game.performTargetAction(officeDoor);
   assert.equal(game.destination, scene("mayor_office").id);
 });

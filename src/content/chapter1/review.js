@@ -1,5 +1,5 @@
 const flags = {
-  chapter1OpeningHeard: true, campaignPosted: true, journalistHasReceipt: true,
+  chapter1OpeningHeard: true, campaignPosted: true,
   municipalityCredentialsAccepted: true, mayorDiplomaStamped: true,
   candidateRegistrationStamped: true, ballotBoxRecovered: true,
   archiveOpened: true, archiveLedgerRead: true, archiveJarPlaced: true,

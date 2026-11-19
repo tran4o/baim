@@ -451,7 +451,7 @@ test("every takeaway Mehana purchase can be offered to each authored NPC", () =>
 test("self-use rules consume refreshments and adjust intoxication in the intended direction", () => {
   const items = Object.fromEntries(chapter1.items.map((item) => [item.id, item]));
   const inventory = inventoryWith(
-    "item.rakia", "item.village_wine", "item.glass_of_water", "item.tripe_soup", "item.shopska_salad"
+    "item.rakia", "item.village_wine", "item.tripe_soup", "item.shopska_salad"
   );
   const state = { rakiaGlasses: 4, rakiaLastChangedAt: 1, flags: {} };
   const context = { state, inventory, now: () => 123 };
@@ -465,15 +465,13 @@ test("self-use rules consume refreshments and adjust intoxication in the intende
   assert.equal(state.rakiaGlasses, 6);
   useSelf("item.village_wine");
   assert.equal(state.rakiaGlasses, 7);
-  useSelf("item.glass_of_water");
-  assert.equal(state.rakiaGlasses, 6);
   useSelf("item.shopska_salad");
-  assert.equal(state.rakiaGlasses, 5);
+  assert.equal(state.rakiaGlasses, 6);
   useSelf("item.tripe_soup");
-  assert.equal(state.rakiaGlasses, 3);
+  assert.equal(state.rakiaGlasses, 4);
   assert.equal(state.rakiaLastChangedAt, 123);
   assert.equal([
-    "item.rakia", "item.village_wine", "item.glass_of_water", "item.shopska_salad", "item.tripe_soup"
+    "item.rakia", "item.village_wine", "item.shopska_salad", "item.tripe_soup"
   ].every((itemId) => !inventory.has(itemId)), true);
   assert.equal(items["item.accordion"].selfUseRules[0].effects.length, 0);
 });
@@ -520,16 +518,15 @@ test("Baba dialogue exposes a first-conversation choice that starts her vote que
   assert.equal(requirementsMet(startChoice.requirements, { state }), true);
 });
 
-test("apartment bottle, sofa-bed, water, and tripe soup author the intoxication loop", () => {
+test("apartment bottle, sofa-bed, and tripe soup author the intoxication loop", () => {
   const apartment = chapter1.scenes.find((scene) => scene.id === "scene.chapter1.apartment");
   const mehana = chapter1.scenes.find((scene) => scene.id === "scene.chapter1.mehana");
   const waiter = chapter1.dialogues.find((dialogue) => dialogue.id === "dialogue.mehana_waiter");
   const bottle = apartment.interactables.find((target) => target.id === "hotspot.apartment.rakia_bottle");
   const bed = apartment.interactables.find((target) => target.id === "hotspot.apartment.bed");
-  const water = chapter1.items.find(item=>item.id==='item.glass_of_water');
   const soup = waiter.nodes.tripe_soup_serving.choices
     .find((choice) => choice.textKey === "dialogue.waiter.choice.for_here");
-  const inventory = inventoryWith("item.glass_of_water");
+  const inventory = inventoryWith();
   const state = { rakiaGlasses: 5, tonyVote: false, flags: {} };
   const context = { state, inventory, now: () => 9000 };
 
@@ -537,9 +534,6 @@ test("apartment bottle, sofa-bed, water, and tripe soup author the intoxication 
   assert.equal(state.rakiaGlasses, 6);
   applyEffects(bed.useRules[0].effects, context);
   assert.equal(state.rakiaGlasses, 3);
-  applyEffects(firstMatchingRule(water.selfUseRules, context).effects, context);
-  assert.equal(state.rakiaGlasses, 2);
-  assert.equal(inventory.has("item.glass_of_water"), false);
   applyEffects(soup.effect.effects, context);
-  assert.equal(state.rakiaGlasses, 0);
+  assert.equal(state.rakiaGlasses, 1);
 });
