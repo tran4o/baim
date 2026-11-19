@@ -1,4 +1,4 @@
-import { chooseHudVerb, chooseHudLanguage, inventoryItem, collapseInventory, expandInventory } from './helpers/hud-ui.js';
+import { chooseHudVerb, chooseHudLanguage, inventoryItem, collapseInventory, expandInventory, useSelectedItemOnSelf } from './helpers/hud-ui.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
@@ -54,7 +54,8 @@ test('Mehana bottle chain through actual BG/EN gameplay, inspection, save/load a
    await advance(7371%125);await wait(()=>window.__comradeCandidateTest.game.sceneAction.state.phase==='received','receipt');
    await page.locator('.item-model-viewer[data-model-state=ready]').waitFor();await shot('oil-receipt');
    await page.locator('.received-item-screen > button:last-child').click();await reload();
-   await itemAction('item.sunflower_oil','ui.inventory.use_on_self');assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.sunflower_oil')),true);
+   await itemAction('item.sunflower_oil','ui.inventory.use');await useSelectedItemOnSelf(page);assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.sunflower_oil')),true);
+   await page.locator('#game').click({button:'right',position:{x:600,y:300}});
    await exit('exit.mehana.to_square','scene.chapter1.village_square');await use('item.sunflower_oil','hotspot.square.statue');
    assert.deepEqual((await snapshot()).inventory.filter(id=>id.includes('bottle')||id==='item.sunflower_oil'),['item.empty_rakia_bottle']);await shot('oil-applied-empty-kept');await reload();
    await verb('use');await click('hotspot.square.fountain');await settled();assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.empty_rakia_bottle')),true);await shot('ordinary-use-keeps-empty');

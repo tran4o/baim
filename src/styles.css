@@ -1331,3 +1331,25 @@ button.active {
 
 .inventory-hover-label { position:absolute; bottom:calc(100% + 35px); right:0; max-width:260px; padding:7px 10px; border:1px solid #a78b5c; border-radius:8px; background:#241c14f5; color:#fff0d0; font-size:14px; pointer-events:none; white-space:normal; }
 .inventory-hover-label[hidden] { display:none; }
+
+/* The selected wide ears slide beneath a stationary item, outside the scroller. */
+.inventory-dock-panel { right:46px; }
+.inventory-dock .inventory-item.selected { z-index:32; border-color:#d8b879; box-shadow:0 0 0 1px #c6aa6c77,0 6px 12px #0007; }
+.inventory-ear-actions { position:absolute; width:78px; height:78px; inset:auto; padding:0; margin:0; border:0; border-radius:0; background:none; box-shadow:none; pointer-events:none; z-index:31; }
+.inventory-ear-actions[hidden] { display:none; }
+.inventory-ear-actions .inventory-ear { position:absolute; top:50%; width:41px; height:66px; min-height:0; margin-top:-33px; padding:0; display:flex; align-items:center; justify-content:center; border:1px solid #bda16bb3; background:radial-gradient(ellipse at 70% 45%,#58452d,#30261b); box-shadow:0 4px 14px #0007,inset 0 0 9px #e7c78a12; pointer-events:auto; transition:transform 150ms cubic-bezier(.2,.8,.2,1); }
+.inventory-ear-left { left:0; border-radius:65% 0 0 65%; transform:translateX(6px); }
+.inventory-ear-actions .inventory-ear-right { right:0; border-radius:0 65% 65% 0; transform:translateX(-6px); background:radial-gradient(ellipse at 30% 45%,#58452d,#30261b); }
+.inventory-ear-actions.is-open .inventory-ear-left { transform:translateX(-36px); }
+.inventory-ear-actions.is-open .inventory-ear-right { transform:translateX(36px); }
+.inventory-ear-icon { display:block; width:22px; height:22px; background-repeat:no-repeat; background-size:176px auto; filter:drop-shadow(0 1px 1px #0009); pointer-events:none; }
+.inventory-ear:focus-visible { outline:2px solid #f3d6a3; outline-offset:-4px; }
+.inventory-ears-retiring { position:absolute; z-index:8; pointer-events:none; }
+.inventory-ears-retiring .inventory-ear { pointer-events:none; }
+.inventory-ear-cover { position:absolute; inset:0; width:100%; height:100%; z-index:32; border:1px solid #d8b879; border-radius:15px; background:radial-gradient(circle at 50% 32%,rgba(255,245,216,.14),rgba(43,34,24,.82)); transform:none; pointer-events:none; box-shadow:0 0 0 1px #c6aa6c77,0 6px 12px #0007; }
+.inventory-ear-cover img { display:block; width:100%; height:100%; object-fit:contain; box-sizing:border-box; padding:6px; filter:drop-shadow(0 5px 5px #0006); }
+@starting-style {
+  .inventory-ear-actions.is-entering.is-open .inventory-ear-left { transform:translateX(6px); }
+  .inventory-ear-actions.is-entering.is-open .inventory-ear-right { transform:translateX(-6px); }
+}
+@media (prefers-reduced-motion:reduce) { .inventory-ear-actions .inventory-ear { transition:none; } }

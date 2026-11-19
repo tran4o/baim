@@ -33,6 +33,7 @@ export function cursorTargetSupportsAction(game, target, verb = game.selectedVer
   if (game.inventoryUseItemId) {
     const id = game.inventoryUseItemId;
     if (!game.inventory.has(id)) return false;
+    if (target.inventorySelfUse) return meaningfulUseRule(firstMatchingRule(game.content.items[id]?.selfUseRules, context));
     const explicit = firstMatchingRule((target.itemUseRules || []).filter(rule => rule.itemId === id), context);
     const fallback = firstMatchingRule((game.content.items[id]?.targetUseRules || [])
       .filter(rule => game.itemTargetRuleMatches(rule, target)), context);

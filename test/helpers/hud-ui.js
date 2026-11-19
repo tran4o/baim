@@ -31,3 +31,8 @@ export async function collapseInventory(page) {
   const toggle = page.locator('.inventory-toggle');
   if (await toggle.count() && await toggle.getAttribute('aria-expanded') === 'true') await toggle.click();
 }
+
+export async function useSelectedItemOnSelf(page) {
+  const point = await page.evaluate(() => window.__comradeCandidateTest.game.playerReachOriginPoint());
+  await page.locator('#game').click({ position: point });
+}

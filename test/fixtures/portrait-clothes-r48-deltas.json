@@ -89,8 +89,63 @@
     },
     "src/engine/Game.js": {
       "beforeSHA256": "5286000ab1d2d9a05cb534e983f6677eea59f59fb59b50fd4d56c648312dc2f1",
-      "afterSHA256": "0cdf759985a758dd34d33e6972b35075f1bb4d5c79440243709ccaa9f6ff6709",
+      "afterSHA256": "ff1c4d9f5822f981fa7948abb6d96d16a840dbb3eb7537ae3050d30c0c8d7b14",
       "splices": [
+        {
+          "start": 129117,
+          "before": "",
+          "afterLength": 363
+        },
+        {
+          "start": 129073,
+          "before": "        }),\n        button(this.t(\"ui.inventory.drop\"), () => this.dropInventoryItem(selectedItem)),\n        button(this.t(\"ui.inventory.close\"), () => {\n          this.clearInventoryInteraction();\n          this.renderUi();\n        })\n      );\n      panel.appendChild(actions);\n",
+          "afterLength": 20
+        },
+        {
+          "start": 128261,
+          "before": "      const actions = element(\"div\", \"inventory-item-actions\");\n      const name = element(\"span\", \"inventory-item-actions-name\");\n      name.textContent = this.t(selectedItem.nameKey);\n      actions.append(\n        name,\n        button(this.t(\"ui.inventory.use\"), () => this.beginInventoryItemUse(selectedItem.id)),\n        ...(selectedItem.selfUseRules?.length\n          ? [button(this.t(\"ui.inventory.use_on_self\"), () => this.useInventoryItemOnSelf(selectedItem.id))]\n          : []),\n        button(this.t(\"ui.inventory.inspect\"), () => {\n",
+          "afterLength": 507
+        },
+        {
+          "start": 127193,
+          "before": "        this.selectedInventoryItemId = this.selectedInventoryItemId === item.id ? null : item.id;\n",
+          "afterLength": 150
+        },
+        {
+          "start": 113286,
+          "before": "",
+          "afterLength": 284
+        },
+        {
+          "start": 91529,
+          "before": "",
+          "afterLength": 76
+        },
+        {
+          "start": 61252,
+          "before": "",
+          "afterLength": 126
+        },
+        {
+          "start": 59383,
+          "before": "",
+          "afterLength": 818
+        },
+        {
+          "start": 57577,
+          "before": "      this.selectedInventoryItemId = null;\n      this.renderUi();\n",
+          "afterLength": 42
+        },
+        {
+          "start": 17744,
+          "before": "",
+          "afterLength": 382
+        },
+        {
+          "start": 874,
+          "before": "",
+          "afterLength": 71
+        },
         {
           "start": 132261,
           "before": "    right.append(\n      button(this.t(\"verb.look\"), () => this.selectVerb(VERBS.LOOK)),\n      button(this.t(\"verb.talk\"), () => this.selectVerb(VERBS.TALK)),\n      button(this.t(\"verb.use\"), () => this.selectVerb(VERBS.USE)),\n      button(this.t(\"verb.take\"), () => this.selectVerb(VERBS.TAKE)),\n      button(\"BG\", () => this.setLanguage(\"bg\")),\n      button(\"EN\", () => this.setLanguage(\"en\"))\n    );\n",
@@ -409,8 +464,28 @@
     },
     "test/browser-smoke.test.js": {
       "beforeSHA256": "d1ff5e92d0ddb7b786588f9fe98231e99ac8009bdc21cd2b951c1322edde34a7",
-      "afterSHA256": "84f8e39f0fb010228ced316a7f8a3e2ca3787e26f2358055e19d778247e42021",
+      "afterSHA256": "f5c68725a606783b34d89159de245213072c4b2050ad30d981fece4062ddcd0b",
       "splices": [
+        {
+          "start": 39376,
+          "before": "",
+          "afterLength": 90
+        },
+        {
+          "start": 37906,
+          "before": "",
+          "afterLength": 81
+        },
+        {
+          "start": 37641,
+          "before": "      const label = await page.evaluate(key => window.__comradeCandidateTest.game.t(key), key);\n",
+          "afterLength": 154
+        },
+        {
+          "start": 0,
+          "before": "import { chooseHudVerb, chooseHudLanguage, inventoryItem, collapseInventory, expandInventory } from './helpers/hud-ui.js';\n",
+          "afterLength": 146
+        },
         {
           "start": 41882,
           "before": "",
@@ -516,8 +591,18 @@
     },
     "test/mehana-bottle-browser.test.js": {
       "beforeSHA256": "d49a1e66bc503deb7b7ea066592a7618e97162c2fd7f73194edd5261a1c36a11",
-      "afterSHA256": "3a46b2d53a472cb7314a0fd3d54cd3b59a2392d03aed5d6f040db67d3fa3cd14",
+      "afterSHA256": "8c19eb622a8366bf52f9341e2865e91181cbca9057807a3ca0b612e31531dafe",
       "splices": [
+        {
+          "start": 7757,
+          "before": "   await itemAction('item.sunflower_oil','ui.inventory.use_on_self');assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.sunflower_oil')),true);\n",
+          "afterLength": 290
+        },
+        {
+          "start": 0,
+          "before": "import { chooseHudVerb, chooseHudLanguage, inventoryItem, collapseInventory, expandInventory } from './helpers/hud-ui.js';\n",
+          "afterLength": 146
+        },
         {
           "start": 4507,
           "before": "   const itemAction=async(id,key)=>{if(await page.evaluate(()=>Boolean(window.__comradeCandidateTest.game.inventoryUseItemId)))await page.locator('#game').click({button:'right',position:{x:680,y:530}});await page.locator('[data-item-id=\"'+id+'\"]').click();const label=await page.evaluate(key=>window.__comradeCandidateTest.game.t(key),key);await page.locator('.inventory-item-actions').getByRole('button',{name:label,exact:true}).click();};\n",
@@ -1033,8 +1118,13 @@
     },
     "src/engine/ActionCursor.js": {
       "beforeSHA256": "7e3976116a0105c3de7d057c5a84648e19ea6881889c88daecd899999562311b",
-      "afterSHA256": "ada974c820c2cad19f0e551d6e16fc056a2213a6185ad3b34107e7d05c6e7772",
+      "afterSHA256": "b2adacdcb72cb44ff0d5912a403be37b847e7d5923c2a209d766db40de592875",
       "splices": [
+        {
+          "start": 1821,
+          "before": "",
+          "afterLength": 125
+        },
         {
           "start": 7224,
           "before": "      Object.assign(this.itemOverlay.style,{width:size.width+'px',height:size.height+'px',left:(pointer.x-4)+'px',top:(pointer.y-4)+'px',display:'block'});\n",
@@ -1106,7 +1196,7 @@
           "before": ""
         }
       ],
-      "scope": "Exact approved R55 cursor and R56 native-item inspection changes before immutable historical comparisons; no baseline hash replacement or unknown-byte exclusion."
+      "scope": "Exact local R58 HUD controls/grid and real UI test migration, restoring immutable accepted historical bytes; unknown edits still reject."
     },
     "src/engine/ObjectCloseupView.js": {
       "beforeSHA256": "c6095c21e14e73fc3e265918c42483d2725a2a1cee27c0290a2ae9215767c238",
@@ -1487,9 +1577,14 @@
       "scope": "Exact local R58 HUD controls/grid and real UI test migration, restoring immutable accepted historical bytes; unknown edits still reject."
     },
     "src/styles.css": {
-      "afterSHA256": "ffce0b7a3d9db4d17ae8c4138d33e30bc12a7cb999bb5bc0a7d73d92eaba3b75",
+      "afterSHA256": "434ff375988fd48fb6a5de57d4cd36a1e32570e20cf5a9b842696ff4f84fd62e",
       "beforeSHA256": "dbd3ff1a6b27b830de9ed7ce7db9fee340e2050fbed3461f52a2d3d936a337d5",
       "splices": [
+        {
+          "start": 31393,
+          "before": "",
+          "afterLength": 2536
+        },
         {
           "start": 28100,
           "before": "",
