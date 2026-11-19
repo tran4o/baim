@@ -1,3 +1,4 @@
+import { chooseHudVerb, chooseHudLanguage, inventoryItem, collapseInventory, expandInventory } from './helpers/hud-ui.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
@@ -18,11 +19,11 @@ test('c05 square actual BG/EN entry, repair, bottle, repeat, reload and scene re
   browser=await chromium.launch({headless:true});
   for(const lang of ['bg','en']){
    const context=await browser.newContext({viewport:{width:1280,height:720},serviceWorkers:'block'}),page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(String(e)));
-   await page.addInitScript(()=>window.requestAnimationFrame=()=>0);await page.goto(origin+'/?play=1&testHarness=1');await page.evaluate(()=>window.__comradeCandidateTest.ready);await page.evaluate(lang=>window.__comradeCandidateTest.game.setLanguage(lang),lang);
+   await page.addInitScript(()=>window.requestAnimationFrame=()=>0);await page.goto(origin+'/?play=1&testHarness=1');await page.evaluate(()=>window.__comradeCandidateTest.ready);await chooseHudLanguage(page,lang);
    const advance=ms=>page.evaluate(ms=>{const g=window.__comradeCandidateTest.game;for(let left=ms;left>0;){const s=Math.min(50,left);g.tick(g.lastTime+s);left-=s;}},ms);
    const wait=async fn=>{for(let i=0;i<200;i++){if(await page.evaluate(fn))return;await advance(250);await page.waitForTimeout(10);}throw Error('Gameplay did not settle');};
-   const click=async id=>{const p=await page.evaluate(async id=>{const g=window.__comradeCandidateTest.game,{findTargetAt}=await import('/src/engine/SceneGeometry.js');for(let y=100;y<580;y+=8)for(let x=16;x<1260;x+=8)if(findTargetAt(g.currentScene,{x,y},t=>g.targetAvailable(t))?.id===id)return{x,y};throw Error('No target '+id);},id);await page.locator('#game').click({position:p});};
-   const verb=async name=>{for(let i=0;i<4;i++){if(await page.locator('.hud-verb').textContent()===await page.evaluate(name=>window.__comradeCandidateTest.game.t('verb.'+name),name))return;await page.locator('.hud-verb').click();}throw Error('Verb '+name);};
+   const click=async id=>{await collapseInventory(page);const p=await page.evaluate(async id=>{const g=window.__comradeCandidateTest.game,{findTargetAt}=await import('/src/engine/SceneGeometry.js');for(let y=100;y<580;y+=8)for(let x=16;x<1260;x+=8)if(findTargetAt(g.currentScene,{x,y},t=>g.targetAvailable(t))?.id===id)return{x,y};throw Error('No target '+id);},id);await page.locator('#game').click({position:p});};
+   const verb=name=>chooseHudVerb(page,name);
    const settled=()=>wait(()=>{const g=window.__comradeCandidateTest.game;return !g.player.pendingInteraction&&!g.sceneTransitionPending&&!g.player.actionSequence&&!g.sceneAction.active;});
    const choice=async key=>{const name=await page.evaluate(key=>window.__comradeCandidateTest.game.t(key),key);await page.locator('.dialogue-choice-list').getByRole('button',{name,exact:true}).click();};
    const shot=async name=>{await advance(1);await page.screenshot({path:`${root}/${lang}-${name}.png`});};
@@ -33,7 +34,7 @@ test('c05 square actual BG/EN entry, repair, bottle, repeat, reload and scene re
    await choice('campaign.kiosk.choice.requirements');await advance(1);assert.notEqual(await page.evaluate(()=>window.__comradeCandidateTest.game.npcSpeechAnimationTime('hotspot.square.kiosk')),null);await shot('pepa-reply-static');await choice('campaign.kiosk.choice.leave');await advance(1);assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.npcDialogueSpeech),null);
    await click('exit.square.to_mehana');await wait(()=>window.__comradeCandidateTest.game.currentScene.id==='scene.chapter1.mehana');await verb('talk');await click('npc.mehana_waiter');await wait(()=>!!window.__comradeCandidateTest.game.dialogue.current);await choice('fountain.kiro.choice.refill');await advance(8000);await wait(()=>window.__comradeCandidateTest.game.sceneAction.state.phase==='received');await page.locator('.received-item-screen > button:last-child').click();
    await click('exit.mehana.to_square');await wait(()=>window.__comradeCandidateTest.game.currentScene.id==='scene.chapter1.village_square');
-   const use=async item=>{await page.locator(`[data-item-id="${item}"]`).click();const label=await page.evaluate(()=>window.__comradeCandidateTest.game.t('ui.inventory.use'));await page.locator('.inventory-item-actions').getByRole('button',{name:label,exact:true}).click();await click(item==='item.sunflower_oil'?'hotspot.square.statue':'hotspot.square.fountain');await settled();};
+   const use=async item=>{await (await inventoryItem(page,item)).click();const label=await page.evaluate(()=>window.__comradeCandidateTest.game.t('ui.inventory.use'));await page.locator('.inventory-item-actions').getByRole('button',{name:label,exact:true}).click();await click(item==='item.sunflower_oil'?'hotspot.square.statue':'hotspot.square.fountain');await settled();};
    await use('item.sunflower_oil');assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.empty_rakia_bottle')),true);
    await verb('use');await click('hotspot.square.fountain');await settled();assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.empty_rakia_bottle')),true);
    await verb('use');await click('hotspot.square.fountain');await settled();assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.state.flags.fountainRepaired),true);await shot('repaired');

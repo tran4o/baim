@@ -1,3 +1,4 @@
+import { chooseHudVerb, chooseHudLanguage, inventoryItem, collapseInventory, expandInventory } from './helpers/hud-ui.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
@@ -24,18 +25,18 @@ test('Mehana bottle chain through actual BG/EN gameplay, inspection, save/load a
    const errors=[],failed=[],frames=[];let phase='startup';const receiptTrace=[];for(const event of ['request','requestfinished','requestfailed'])page.on(event,r=>{if(r.url().includes('suspicious-receipt'))receiptTrace.push({event,phase,time:Date.now(),url:r.url()});});page.on('pageerror',e=>errors.push(String(e)));page.on('requestfailed',r=>failed.push({url:r.url(),error:r.failure()?.errorText,phase}));page.on('response',r=>{if(r.status()>=400)failed.push(r.url());});
    await page.addInitScript(()=>window.requestAnimationFrame=()=>0);
    const url=`http://127.0.0.1:${port}/?play=1&testHarness=1`;await page.goto(url);await page.evaluate(()=>window.__comradeCandidateTest.ready);
-   await page.evaluate(language=>window.__comradeCandidateTest.game.setLanguage(language),language);
+   await chooseHudLanguage(page,language);
    const advance=ms=>page.evaluate(ms=>{const g=window.__comradeCandidateTest.game;let left=ms;do{const step=Math.min(50,left);g.tick(g.lastTime+step);left-=step;}while(left>0);},ms);
    const wait=async(predicate,label)=>{for(let i=0;i<160;i++){if(await page.evaluate(predicate))return;await advance(250);await page.waitForTimeout(20);}throw Error('Timed out: '+label);};
    const choice=async key=>{const label=await page.evaluate(key=>window.__comradeCandidateTest.game.t(key),key);await page.locator('.dialogue-choice-list').getByRole('button',{name:label,exact:true}).click();};
-   const verb=async name=>{const label=await page.evaluate(name=>window.__comradeCandidateTest.game.t('verb.'+name),name);for(let i=0;i<4;i++){if(await page.locator('.hud-verb').textContent()===label)return;await page.locator('.hud-verb').click();}assert.fail(name);};
-   const click=async id=>{const point=await page.evaluate(async id=>{const g=window.__comradeCandidateTest.game;const {findTargetAt}=await import('/src/engine/SceneGeometry.js');const points=[];for(let y=80;y<580;y+=8)for(let x=16;x<1260;x+=8)if(findTargetAt(g.currentScene,{x,y},t=>g.targetAvailable(t))?.id===id)points.push({x,y});if(!points.length)throw Error('No exposed target '+id);return points[Math.floor(points.length/2)];},id);await page.locator('#game').click({position:point});};
+   const verb=name=>chooseHudVerb(page,name);
+   const click=async id=>{await collapseInventory(page);const point=await page.evaluate(async id=>{const g=window.__comradeCandidateTest.game;const {findTargetAt}=await import('/src/engine/SceneGeometry.js');const points=[];for(let y=80;y<580;y+=8)for(let x=16;x<1260;x+=8)if(findTargetAt(g.currentScene,{x,y},t=>g.targetAvailable(t))?.id===id)points.push({x,y});if(!points.length)throw Error('No exposed target '+id);return points[Math.floor(points.length/2)];},id);await page.locator('#game').click({position:point});};
    const settled=()=>wait(()=>{const g=window.__comradeCandidateTest.game;return !g.player.pendingInteraction&&!g.player.actionSequence&&!g.sceneTransitionPending&&!g.sceneAction.active;},'interaction settles');
    const go=async(id,scene)=>{await click(id);await wait(()=>!window.__comradeCandidateTest.game.sceneTransitionPending&&window.__comradeCandidateTest.game.currentScene.id===window.__expectedScene,'scene '+scene);};
    // Set only the expected assertion value, never game state.
    const exit=async(id,scene)=>{await page.evaluate(scene=>window.__expectedScene=scene,scene);await go(id,scene);};
    const talk=async id=>{await verb('talk');await click(id);await wait(()=>!!window.__comradeCandidateTest.game.dialogue.current,'dialogue');};
-   const itemAction=async(id,key)=>{if(await page.evaluate(()=>Boolean(window.__comradeCandidateTest.game.inventoryUseItemId)))await page.locator('#game').click({button:'right',position:{x:680,y:530}});await page.locator('[data-item-id="'+id+'"]').click();const label=await page.evaluate(key=>window.__comradeCandidateTest.game.t(key),key);await page.locator('.inventory-item-actions').getByRole('button',{name:label,exact:true}).click();};
+   const itemAction=async(id,key)=>{if(await page.evaluate(()=>Boolean(window.__comradeCandidateTest.game.inventoryUseItemId)))await page.locator('#game').click({button:'right',position:{x:680,y:530}});await (await inventoryItem(page,id)).click();const label=await page.evaluate(key=>window.__comradeCandidateTest.game.t(key),key);await page.locator('.inventory-item-actions').getByRole('button',{name:label,exact:true}).click();};
    const use=async(id,target)=>{await itemAction(id,'ui.inventory.use');await click(target);await settled();};
    const shot=async(name,durationMs=1500)=>{phase=name;await advance(0);const path=`${root}/${language}-${String(frames.length).padStart(3,'0')}-${name}.png`;await page.screenshot({path});frames.push({path,durationMs,name});};
    const snapshot=()=>page.evaluate(()=>{const g=window.__comradeCandidateTest.game;return structuredClone(g.state);});
