@@ -1,4 +1,4 @@
-import { chooseHudVerb, chooseHudLanguage, inventoryItem, collapseInventory, expandInventory } from './helpers/hud-ui.js';
+import { chooseHudVerb, chooseHudLanguage, inventoryItem, collapseInventory, expandInventory, useSelectedItemOnSelf } from './helpers/hud-ui.js';
 import test from "node:test";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
@@ -617,8 +617,9 @@ test("fountain repair supports real clicks, safe oil self-use and mid-puzzle rel
     };
     const oilAction = async key => {
       await (await inventoryItem(page,"item.sunflower_oil")).click();
-      const label = await page.evaluate(key => window.__comradeCandidateTest.game.t(key), key);
+      const label = await page.evaluate(key => window.__comradeCandidateTest.game.t(key), key === 'ui.inventory.use_on_self' ? 'ui.inventory.use' : key);
       await page.locator(".inventory-item-actions").getByRole("button", { name: label, exact: true }).click();
+      if (key === 'ui.inventory.use_on_self') await useSelectedItemOnSelf(page);
     };
     await click("exit.apartment.to_square");
     await waitFor(() => window.__comradeCandidateTest.game.currentScene.id === "scene.chapter1.village_square");
@@ -643,6 +644,7 @@ test("fountain repair supports real clicks, safe oil self-use and mid-puzzle rel
     await page.locator(".received-item-screen > button:last-child").click();
     await oilAction("ui.inventory.use_on_self");
     assert.equal(await page.evaluate(() => window.__comradeCandidateTest.game.inventory.has("item.sunflower_oil")), true);
+    await page.locator('#game').click({ button: 'right', position: { x: 600, y: 300 } });
     await click("exit.mehana.to_square");
     await waitFor(() => window.__comradeCandidateTest.game.currentScene.id === "scene.chapter1.village_square");
     await oilAction("ui.inventory.use");

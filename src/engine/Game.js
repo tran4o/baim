@@ -10,6 +10,7 @@ import { DialogueSystem } from "./DialogueSystem.js";
 import { applyEffects, firstMatchingRule, requirementsMet } from "./EffectSystem.js";
 import { resolveEnding } from "./EndingSystem.js";
 import { InventorySystem } from "./InventorySystem.js";
+import { mountInventoryItemActions } from './InventoryItemActions.js';
 import { isCharacterInteraction, planCharacterApproach, characterInteractionBounds } from "./InteractionApproach.js";
 import { Localization } from "./Localization.js";
 import { eastWestFallbackFacing, facingFromDelta, motionMultiplierAtFrame, MovementSystem, walkFacing, walkMotionMultiplierForFrame, requestWalkStop, walkCommandHasDistance } from "./MovementSystem.js";
@@ -328,6 +329,12 @@ export class Game {
       }
     };
     document.addEventListener('contextmenu',event=>{if(!this.inventoryUseItemId)return;event.preventDefault();event.stopImmediatePropagation();this.clearInventoryInteraction();this.renderUi();this.actionCursor?.update(this);},true);
+    document.addEventListener('pointerdown', event => {
+      if (event.button !== 0 || !this.selectedInventoryItemId) return;
+      const item = event.target.closest?.('button.inventory-item');
+      if (item?.dataset.itemId === this.selectedInventoryItemId || this.inventoryItemActions?.root.contains(event.target)) return;
+      this.dismissInventoryItemActions();
+    }, true);
     window.addEventListener("pointerdown", resumeAudio);
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) this.audio.setEnabled(false);
@@ -1251,8 +1258,7 @@ export class Game {
     if (this.objectCloseup) return;
     if (this.sceneAction?.active || this.sceneTransitionPending || this.player?.actionSequence || this.player?.animation === "action") return;
     if (this.selectedInventoryItemId && !this.inventoryUseItemId) {
-      this.selectedInventoryItemId = null;
-      this.renderUi();
+      this.dismissInventoryItemActions();
     }
     const target = this.sceneTargetAt(point);
     if (target) {
@@ -1291,6 +1297,16 @@ export class Game {
   }
 
   sceneTargetAt(point) {
+    if (this.inventoryUseItemId && this.currentScene.playerMode !== 'closeup') {
+      const definition = this.characterDefinitions?.[this.player.id] || characterDefinitions['npc.bai_mitko'];
+      const height = characterHeight(definition, this.currentScene, this.player.position);
+      if (Math.abs(point.x - this.player.position.x) <= height * .19
+        && point.y >= this.player.position.y - height * .92 && point.y <= this.player.position.y - height * .15) {
+        const worldTarget = findTargetAt(this.currentScene, point, candidate => this.targetAvailable(candidate));
+        if (worldTarget && cursorTargetSupportsAction(this, worldTarget)) return worldTarget;
+        return { id: this.player.id, kind: 'npc', inventorySelfUse: true, nameKey: definition.nameKey || 'npc.bai_mitko.name' };
+      }
+    }
     // The approved square painting moved Baba independently of the old hotspot.
     // Admit clicks on her visible body, keeping original targets/quest IDs intact.
     if (this.currentScene.id === "scene.chapter1.village_square") {
@@ -1311,6 +1327,7 @@ export class Game {
 
   handleTarget(target, clickPoint = null) {
     if (this.objectCloseup || this.puzzleOpen || this.inspectedItemId || this.sceneAction?.active) return;
+    if (target.inventorySelfUse && this.inventoryUseItemId) { this.useInventoryItemOnSelf(this.inventoryUseItemId); return; }
     if (target.kind !== "exit") this.rememberInteractionTarget(target, clickPoint);
     else { this.player.interactionFacingPoint = null; this.player.interactionFacingTargetId = null; }
     if(this.inventoryUseItemId&&!cursorTargetSupportsAction(this,target)){this.useInventoryItemOnTarget(this.inventoryUseItemId,target);return;}
@@ -1907,6 +1924,7 @@ export class Game {
   }
 
   clearInventoryInteraction() {
+    this.inventoryItemActions?.dispose(); this.inventoryItemActions = null;
     if (this.player?.pendingInteraction?.inventoryUseItemId) this.player.pendingInteraction = null;
     this.selectedInventoryItemId = null;
     this.inventoryUseItemId = null;
@@ -2374,6 +2392,9 @@ export class Game {
   }
 
   renderUi() {
+    const previousInventorySelection = this.inventoryItemActions?.itemId;
+    this.inventoryItemActions?.dispose(); this.inventoryItemActions = null;
+    this.animateInventoryEars = Boolean(this.selectedInventoryItemId && this.selectedInventoryItemId !== previousInventorySelection);
     const previousDock = this.uiRoot?.querySelector?.(".inventory-dock");
     if (previousDock && this.inventoryExpanded) this.inventoryScrollTop = previousDock.scrollTop;
     if(this.selectedInventoryItemId&&!this.content.items[this.selectedInventoryItemId])this.selectedInventoryItemId=null;
@@ -2619,7 +2640,8 @@ export class Game {
           this.useInventoryItemOnItem(this.inventoryUseItemId, item.id);
           return;
         }
-        this.selectedInventoryItemId = this.selectedInventoryItemId === item.id ? null : item.id;
+        if (this.selectedInventoryItemId === item.id) { this.dismissInventoryItemActions(); return; }
+        this.selectedInventoryItemId = item.id;
         this.renderUi();
       });
       dock.appendChild(itemButton);
@@ -2637,16 +2659,12 @@ export class Game {
     panel.appendChild(dock);
     const selectedItem = items.find((item) => item.id === this.selectedInventoryItemId);
     if (selectedItem) {
-      const actions = element("div", "inventory-item-actions");
-      const name = element("span", "inventory-item-actions-name");
-      name.textContent = this.t(selectedItem.nameKey);
-      actions.append(
-        name,
-        button(this.t("ui.inventory.use"), () => this.beginInventoryItemUse(selectedItem.id)),
-        ...(selectedItem.selfUseRules?.length
-          ? [button(this.t("ui.inventory.use_on_self"), () => this.useInventoryItemOnSelf(selectedItem.id))]
-          : []),
-        button(this.t("ui.inventory.inspect"), () => {
+      const selectedButton = [...dock.querySelectorAll('button.inventory-item')].find(button => button.dataset.itemId === selectedItem.id);
+      if (selectedButton) this.inventoryItemActions = mountInventoryItemActions(panel, dock, selectedButton, {
+        animate: this.animateInventoryEars,
+        text: { group: this.t('ui.inventory'), inspect: this.t('ui.inventory.inspect'), use: this.t('ui.inventory.use') },
+        use: () => this.beginInventoryItemUse(selectedItem.id),
+        inspect: () => {
           this.clearInventoryInteraction();
           {
             this.inspectedItemId = selectedItem.id;
@@ -2654,16 +2672,18 @@ export class Game {
             this.player.pendingInteraction = null; this.player.pendingFacingPoint = null;
             this.renderUi();
           }
-        }),
-        button(this.t("ui.inventory.drop"), () => this.dropInventoryItem(selectedItem)),
-        button(this.t("ui.inventory.close"), () => {
-          this.clearInventoryInteraction();
-          this.renderUi();
-        })
-      );
-      panel.appendChild(actions);
+        }
+      });
     }
     return panel;
+  }
+
+  dismissInventoryItemActions() {
+    this.inventoryItemActions?.close(); this.inventoryItemActions = null;
+    this.selectedInventoryItemId = null;
+    this.uiRoot?.querySelectorAll?.('.inventory-item.selected')?.forEach(item => {
+      item.classList.remove('selected'); item.setAttribute('aria-pressed', String(item.classList.contains('using')));
+    });
   }
 
   createInventoryUseIndicator() {
