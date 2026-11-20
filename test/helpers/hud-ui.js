@@ -36,3 +36,16 @@ export async function useSelectedItemOnSelf(page) {
   const point = await page.evaluate(() => window.__comradeCandidateTest.game.playerReachOriginPoint());
   await page.locator('#game').click({ position: point });
 }
+
+export async function dismissItemView(page) {
+  const panel = page.locator('.received-item-screen');
+  const box = await panel.boundingBox();
+  assert.ok(box, 'item view is visible before outside dismissal');
+  await page.mouse.click(box.x + 5, box.y + 5);
+  await panel.waitFor({ state: 'detached' });
+}
+
+export async function clickScenePoint(page, point) {
+  const box = await page.locator('#game').boundingBox();
+  await page.mouse.click(box.x + point.x * box.width / 1280, box.y + point.y * box.height / 720);
+}

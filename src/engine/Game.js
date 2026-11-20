@@ -11,6 +11,8 @@ import { applyEffects, firstMatchingRule, requirementsMet } from "./EffectSystem
 import { resolveEnding } from "./EndingSystem.js";
 import { InventorySystem } from "./InventorySystem.js";
 import { mountInventoryItemActions } from './InventoryItemActions.js';
+import { actionIconUrl } from './ActionIcons.js';
+import { mountItemViewDismiss } from './ItemViewDismiss.js';
 import { isCharacterInteraction, planCharacterApproach, characterInteractionBounds } from "./InteractionApproach.js";
 import { Localization } from "./Localization.js";
 import { eastWestFallbackFacing, facingFromDelta, motionMultiplierAtFrame, MovementSystem, walkFacing, walkMotionMultiplierForFrame, requestWalkStop, walkCommandHasDistance } from "./MovementSystem.js";
@@ -375,13 +377,13 @@ export class Game {
     });
     window.addEventListener("keydown", (event) => {
       if (this.objectCloseup || this.puzzleOpen) return; // The modal owns Escape, arrows and focus trapping.
-      if (this.inspectedItemId) {
-        if (event.key === "Escape") { event.preventDefault(); this.closeItemInspection(); }
+      if (this.inspectedItemId || this.sceneAction?.state?.phase === 'received') {
+        if (event.key === "Escape") { event.preventDefault(); if (this.inspectedItemId) this.closeItemInspection(); else this.closeReceivedItem(); }
         if (event.key === "Tab") {
           const panel = this.uiRoot.querySelector('.received-item-screen');
           const controls = [...panel.querySelectorAll('canvas,button')];
           const index = controls.indexOf(document.activeElement);
-          controls[(index + (event.shiftKey ? -1 : 1) + controls.length) % controls.length]?.focus();
+          (controls[(index + (event.shiftKey ? -1 : 1) + controls.length) % controls.length] || panel)?.focus();
           event.preventDefault();
         }
         return;
@@ -2161,27 +2163,24 @@ export class Game {
       for (const key of ['loading','unavailable','controls']) text[key] = this.t('photoquest.diploma_' + key);
     }
     text.name = this.t(item.nameKey);
-    let propControls = null;
     if (!asset.model) this.receivedItemViewer = mountUnavailableItemInspection(viewer, text, asset.inspectionFailure);
     else if (asset.inspection === 'prop') {
       for (const key of ['loading','unavailable','controls']) text[key] = this.t('wardrobe.prop_' + key);
       this.receivedItemViewer = mountObjectProp(viewer, { modelUrl: asset.model, text, interactive: true, cameraDirection: asset.cameraDirection, inspectionFitScale: asset.inspectionFitScale, inspectionDefaultZoom: asset.inspectionDefaultZoom });
-      propControls = document.createElement('p'); propControls.textContent = text.controls;
     } else this.receivedItemViewer = mountItemModelViewer(viewer, { modelUrl: asset.model, fallbackUrl: asset.icon, text, liquidColor: asset.liquidColor, inspection: asset.inspection });
     const description = document.createElement('p'); description.textContent = this.t(item.descriptionKey);
-    panel.append(title, viewer, description, button(this.t('ui.received_oil.close'), () => {
-      this.closeItemInspection();
-    }));
-    if (propControls) panel.insertBefore(propControls, panel.lastElementChild);
+    panel.append(title, viewer, description);
+    mountItemViewDismiss(panel, viewer, () => this.closeItemInspection());
     return panel;
   }
 
   createReceivedItem() {
     const panel = element('section', 'received-item-screen');
+    panel.tabIndex = -1;
+    queueMicrotask(() => { if (panel.isConnected) panel.focus(); });
     panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-modal', 'true');
     panel.setAttribute('aria-label', this.t('ui.received_oil.title'));
-    const title = document.createElement('h2'); title.textContent = this.t('ui.received_oil.title');
-    const itemTitle = document.createElement('h3'); itemTitle.textContent = this.t('ui.received_oil.itemTitle');
+    const title = document.createElement('h2'); title.textContent = this.t('item.sunflower_oil.name');
     const viewer = element('div', 'item-model-viewer');
     const modelText = Object.fromEntries(['loading','unavailable','controls'].map(key => [key,this.t('ui.received_oil.'+key)]));
     modelText.name = this.t('item.sunflower_oil.name');
@@ -2190,7 +2189,8 @@ export class Game {
       fallbackUrl: 'assets/chapter1/items/kiro-bottle/oil-200ml-r07.png', text: modelText
     });
     const description = document.createElement('p'); description.textContent = this.t('ui.received_oil.description');
-    panel.append(title, itemTitle, viewer, description, button(this.t('ui.received_oil.close'), () => this.closeReceivedItem()));
+    panel.append(title, viewer, description);
+    mountItemViewDismiss(panel, viewer, () => this.closeReceivedItem());
     return panel;
   }
 
@@ -2503,7 +2503,7 @@ export class Game {
     const verbIcon = element("span", "hud-verb-icon");
     verbIcon.setAttribute("aria-hidden", "true");
     verbIcon.dataset.cursorArt = CURSOR_ART[this.selectedVerb].id;
-    verbIcon.style.backgroundImage = 'url("' + new URL('../../assets/ui/action-cursors/' + this.selectedVerb + '.png', import.meta.url).href + '")';
+    verbIcon.style.backgroundImage = 'url("' + actionIconUrl(this.selectedVerb) + '")';
     const verbText = element("span", "hud-verb-text");
     verbText.textContent = this.t(`verb.${this.selectedVerb}`);
     verb.append(verbIcon, verbText);

@@ -1,3 +1,4 @@
+import { actionIconUrl } from './ActionIcons.js';
 // The panel owns selection; this view only positions and animates its two ears.
 export function mountInventoryItemActions(panel, dock, item, { text, inspect, use, animate = true }) {
   const root = document.createElement('div');
@@ -12,7 +13,7 @@ export function mountInventoryItemActions(panel, dock, item, { text, inspect, us
     const icon = document.createElement('span');
     icon.className = 'inventory-ear-icon';
     icon.setAttribute('aria-hidden', 'true');
-    icon.style.backgroundImage = 'url("' + new URL('../../assets/ui/action-cursors/' + verb + '.png', import.meta.url).href + '")';
+    icon.style.backgroundImage = 'url("' + actionIconUrl(verb) + '")';
     button.appendChild(icon);
     button.addEventListener('click', event => { event.stopPropagation(); action(); });
     root.appendChild(button);
