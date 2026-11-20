@@ -10,8 +10,8 @@ import { drawSceneEffect } from "./SceneEffects.js";
 import {findSceneSpeaker} from './SceneGeometry.js';
 import { drawTelevisionScreen } from './TelevisionScreen.js';
 import { TelevisionClip } from './TelevisionClip.js';
-
-const PLAYER_SHADOW_FULL_SIZE_Y_OFFSET = -4;
+import { drawChalkFlourish, SQUARE_SCENE_ID, SquareVisuals } from './SquareVisuals.js';
+import { ActorShadows } from './ActorShadows.js';
 
 // Fixed, source-measured clip registration is scene-local. It must never fit
 // individual frames: raising an arm must not shrink the character's body.
@@ -268,6 +268,7 @@ export class Renderer {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.game = game;
+    this.actorShadows = new ActorShadows(canvas.ownerDocument);
     this.lastArtLogByScene = new Map();
     this.stripValidationLog = new Map();
   }
@@ -381,10 +382,10 @@ export class Renderer {
         const renderOffsetY = stopRenderOffsetY(frame, frameIndex) + renderOffset.y;
         const drawX = state.x + renderOffsetX - width * (frame.anchorX ?? frame.anchor?.x ?? 0.5);
         const drawY = state.baselineY + renderOffsetY - (frame.baselineY || frame.frameHeight) * scale;
-        const shadowWidth = (frame.contentBounds?.w || bounds.w) * scale;
-        this.drawSimpleShadow(state.x, state.baselineY, shadowWidth);
-        this.drawFrameImage(image, frameIndex, frame, bounds, drawX, drawY, width, height, frameMirrored);
         const sourceRect = this.frameSourceRect(frame, frameIndex, bounds);
+        this.actorShadows.draw(ctx, image, sourceRect, { x: drawX, y: drawY, w: width, h: height },
+          state.baselineY, frameMirrored, this.game.currentScene?.id);
+        this.drawFrameImage(image, frameIndex, frame, bounds, drawX, drawY, width, height, frameMirrored);
         drawInfo = {
           drawX,
           drawY,
@@ -402,7 +403,8 @@ export class Renderer {
         const width = height * (image.naturalWidth / image.naturalHeight);
         const drawX = state.x - width * 0.5;
         const drawY = state.baselineY - height;
-        this.drawSimpleShadow(state.x, state.baselineY, width * 0.55);
+        this.actorShadows.draw(ctx, image, { x: 0, y: 0, w: image.naturalWidth, h: image.naturalHeight },
+          { x: drawX, y: drawY, w: width, h: height }, state.baselineY, mirrored, this.game.currentScene?.id);
         if (mirrored) {
           ctx.save();
           ctx.translate(drawX + width, 0);
@@ -454,14 +456,6 @@ export class Renderer {
       movementSpeedMultipliers: [0],
       stopRenderOffsetXStart: 0
     };
-  }
-
-  drawSimpleShadow(x, y, width) {
-    const { ctx } = this;
-    ctx.fillStyle = "rgba(0,0,0,0.22)";
-    ctx.beginPath();
-    ctx.ellipse(x, y + 4, Math.max(40, width * 0.3), 12, 0, 0, Math.PI * 2);
-    ctx.fill();
   }
 
   drawSimpleOverlays(drawX, drawY, width, height, baselineY, sourceRect) {
@@ -533,6 +527,13 @@ export class Renderer {
     if (this.game.assets.isLoaded(background)) {
       this.logArtStatus(scene.id, path, "loaded", false);
       ctx.drawImage(background, 0, 0);
+      if (scene.id === SQUARE_SCENE_ID) {
+        this.squareVisuals ||= new SquareVisuals(this.canvas.ownerDocument);
+        this.squareVisuals.drawSky(ctx, this.game.assets, this.game.lastTime || 0,
+          this.game.paused || this.game.menuOpen || this.game.editMode || this.canvas.ownerDocument?.hidden);
+      } else {
+        this.squareVisuals?.resetSkyClock();
+      }
       return true;
     }
 
@@ -959,6 +960,7 @@ export class Renderer {
     if (!this.game.assets.isLoaded(fallbackImage)) return;
     const rect = this.sceneLayerRect(layer, fallbackImage);
     this.ctx.drawImage(fallbackImage, rect.x, rect.y, rect.w, rect.h);
+    if (scene.id === SQUARE_SCENE_ID && layer.asset === 'mehanaChalkSignR67') drawChalkFlourish(this.ctx, rect);
   }
 
   sceneAnimationDrawRect(layer, animation, source) {
@@ -1301,14 +1303,14 @@ export class Renderer {
       }
     }
     const drawY = placement ? p.position.y + placement.y : p.position.y + renderOffsetY + sway.y - baselineOffset * scale + verticalOffset;
+    const bounds = spriteInfo.frame && (preserveFrameLayout
+      ? { x: 0, y: 0, w: spriteInfo.frame.frameWidth, h: spriteInfo.frame.frameHeight }
+      : this.frameContentBounds(spriteInfo.frame, frameIndex));
     ctx.save();
-    ctx.fillStyle = "rgba(0, 0, 0, 0.26)";
-    ctx.beginPath();
-    const shadowWidth = (stableBounds?.w || boundsForSize?.w || sourceWidth) * scale;
-    const fullSizeHeight = definition.render.sceneHeights?.[this.game.currentScene.id]?.near || definition.gameHeight || height;
-    const shadowOffsetY = PLAYER_SHADOW_FULL_SIZE_Y_OFFSET * (height / Math.max(1, fullSizeHeight));
-    ctx.ellipse(p.position.x, p.position.y + 2 + shadowOffsetY, shadowWidth * 0.3, Math.max(6, height * 0.035), 0, 0, Math.PI * 2);
-    ctx.fill();
+    this.actorShadows.draw(ctx, sprite,
+      spriteInfo.frame ? this.frameSourceRect(spriteInfo.frame, frameIndex, bounds)
+        : { x: 0, y: 0, w: sprite.naturalWidth, h: sprite.naturalHeight },
+      { x: drawX, y: drawY, w: width, h: drawHeight }, p.position.y, mirrored, this.game.currentScene.id);
     if (spriteInfo.frame) {
       if (p.animation === "walk") {
         p.lastWalkFrame = {
@@ -1319,9 +1321,6 @@ export class Renderer {
           mirrored: Boolean(spriteInfo.mirrored)
         };
       }
-      const bounds = preserveFrameLayout
-        ? { x: 0, y: 0, w: spriteInfo.frame.frameWidth, h: spriteInfo.frame.frameHeight }
-        : this.frameContentBounds(spriteInfo.frame, frameIndex);
       this.drawFrameImage(sprite, frameIndex, spriteInfo.frame, bounds, drawX, drawY, width, drawHeight, mirrored);
       const handOcclusion = p.actionSequence?.sequence?.handOcclusion;
       const handPolygon = actionHandOcclusionPolygon(p.actionSequence?.sequence, spriteInfo.frame, frameIndex);
