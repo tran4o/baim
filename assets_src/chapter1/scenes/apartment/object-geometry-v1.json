@@ -145,6 +145,87 @@
           "y": 315
         }
       ]
+    },
+    {
+      "id": "hotspot.apartment.icon",
+      "rect": {
+        "x": 12,
+        "y": 52,
+        "w": 70,
+        "h": 70
+      }
+    },
+    {
+      "id": "hotspot.apartment.lamp",
+      "rect": {
+        "x": 550,
+        "y": 0,
+        "w": 145,
+        "h": 58
+      }
+    },
+    {
+      "id": "hotspot.apartment.suitcase",
+      "rect": {
+        "x": 771,
+        "y": 38,
+        "w": 110,
+        "h": 46
+      }
+    },
+    {
+      "id": "hotspot.apartment.bag",
+      "rect": {
+        "x": 881,
+        "y": 35,
+        "w": 84,
+        "h": 50
+      }
+    },
+    {
+      "id": "hotspot.apartment.plant",
+      "rect": {
+        "x": 128,
+        "y": 230,
+        "w": 61,
+        "h": 74
+      }
+    },
+    {
+      "id": "hotspot.apartment.radiator",
+      "rect": {
+        "x": 185,
+        "y": 305,
+        "w": 116,
+        "h": 52
+      }
+    },
+    {
+      "id": "hotspot.apartment.empty_frame",
+      "rect": {
+        "x": 435,
+        "y": 108,
+        "w": 105,
+        "h": 120
+      }
+    },
+    {
+      "id": "hotspot.apartment.wall_rug",
+      "rect": {
+        "x": 1152,
+        "y": 58,
+        "w": 116,
+        "h": 220
+      }
+    },
+    {
+      "id": "hotspot.apartment.patriot_photos",
+      "rect": {
+        "x": 1090,
+        "y": 280,
+        "w": 185,
+        "h": 92
+      }
     }
   ]
 }

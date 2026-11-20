@@ -20,6 +20,7 @@ import { adultPhotoReward, pepaItemRules, diplomaTakeRule } from './photoQuest.j
 import { stageToniTable } from './toniTable.js';
 import { wireEntrances } from './entrances.js';
 import { wardrobeCloseup } from './wardrobe.js';
+import { apartmentCommentaryTargets } from './apartmentCommentary.js';
 
 const rawScenes = [
   archiveScene,
@@ -164,7 +165,11 @@ const rawScenes = [
         kind: "hotspot",
         nameKey: "hotspot.tv.name",
         rect: { x: 0, y: 285, w: 125, h: 160 },
-        television: { flag: 'apartmentTvOn', screen: { x: 53, y: 268, w: 45, h: 59 } },
+        television: {
+          flag: 'apartmentTvOn',
+          screen: { x: 53, y: 268, w: 45, h: 59 },
+          clip: 'assets/chapter1/scenes/apartment/baim_chap01_tv_01.mp4'
+        },
         interactionApproach: { x: 262.5, y: 507.5 }, interactionApproachExact: true,
         lookKey: "look.apartment.tv",
         lookRules: openingLookRules,
@@ -186,8 +191,9 @@ const rawScenes = [
         rect: { x: 225, y: 385, w: 280, h: 175 },
         lookKey: "look.apartment.table"
       },
-      { id:'hotspot.apartment.patriot_photos',kind:'hotspot',nameKey:'hotspot.apartment.wardrobe.name',
-        rect:{x:1060,y:280,w:220,h:90},lookKey:'look.apartment.wardrobe' }
+      ...apartmentCommentaryTargets,
+      { id:'hotspot.apartment.patriot_photos',kind:'hotspot',nameKey:'apartment.scenery.patriot_photos.name',
+        rect:{x:1090,y:280,w:185,h:92},lookKey:'apartment.scenery.patriot_photos.look',hitPriority:5,plainUseAvailable:false }
     ],
     npcs: []
   },

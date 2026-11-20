@@ -317,11 +317,12 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
       }
       await waitFor(()=>window.__comradeCandidateTest.game.inventory.has('item.mitko_child_photo'));
       await mark('childhood-BW-photo-earned-by-original-puzzle');
-      await page.locator('.object-closeup-screen [data-action=close]').click();
+      await page.keyboard.press('Escape');
       await verb('use');
       await clickTarget("hotspot.apartment.wardrobe");
+      await verb('take');
       await page.locator('.object-closeup-screen [data-item-id="item.accordion"]').click();
-      await page.locator('.object-closeup-screen [data-action="close"]').click();
+      await page.keyboard.press('Escape');
       await waitFor(() => window.__comradeCandidateTest.game.inventory.has("item.accordion"));
       await waitFor(() => !window.__comradeCandidateTest.game.player.actionSequence);
       await clickTarget("exit.apartment.to_square");

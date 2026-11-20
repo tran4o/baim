@@ -276,6 +276,9 @@ export class Game {
       this.updateNpcSpeechBubble(dt);
     }
     this.updateSceneAction(dt);
+    if (this.objectCloseup?.definition.compartments && !this.puzzleOpen && !this.menuOpen && !this.paused) {
+      this.updateSpeechBubble(dt);
+    }
     this.updateNpcDialogueSpeech(dt);
     this.updateSceneNpcSpeech(dt);
     this.updateSceneIdleVariations(dt);
@@ -1065,6 +1068,7 @@ export class Game {
   }
 
   startSpeechAnimationForMessage(message, options = {}) {
+    if (this.objectCloseup?.definition.compartments) return;
     if (!this.usesExternalCharacterAnimation() || !message || this.player.target || this.player.animation === "walk" || this.player.animation === "action") return;
     if (this.player.position && !this.player.actionSequence && !this.sceneAction?.active) {
       this.player.interactionFacingPoint ||= { ...this.player.position };
@@ -1906,6 +1910,7 @@ export class Game {
 
   closeObjectCloseup() {
     const focus = this.objectCloseup?.returnFocus;
+    if (this.objectCloseup?.definition.compartments) this.hideSpeechBubble(true);
     this.objectCloseup = null; this.objectCloseupView?.dispose(); this.objectCloseupView = null;
     this.renderUi(); focus?.focus?.();
   }
@@ -2434,8 +2439,8 @@ export class Game {
       const reaction = this.createNpcReactionBubble();
       if (reaction) this.uiRoot.appendChild(reaction);
     }
-    if (this.speechBubble && !this.menuOpen && !this.paused && !dialogueNode) this.uiRoot.appendChild(this.createSpeechBubble());
-    if (!this.editMode && !this.devHome && !this.menuOpen && !this.paused && !dialogueNode && !this.sceneAction?.active) this.uiRoot.appendChild(this.createHud());
+    if (this.speechBubble && !this.menuOpen && !this.paused && !dialogueNode && !this.objectCloseup?.definition.compartments) this.uiRoot.appendChild(this.createSpeechBubble());
+    if (!this.editMode && !this.devHome && !this.menuOpen && !this.paused && !dialogueNode && !this.sceneAction?.active && !this.objectCloseup?.definition.compartments) this.uiRoot.appendChild(this.createHud());
     if (this.droppedItemsOpen && !this.menuOpen && !this.paused && !dialogueNode) {
       this.uiRoot.appendChild(this.createDroppedItemsPanel());
     }
@@ -2443,6 +2448,10 @@ export class Game {
     if (this.objectCloseup && !this.puzzleOpen && !this.menuOpen && !this.paused) {
       const definition = this.objectCloseup.definition;
       this.objectCloseupView = createObjectCloseup({ definition, text: key => this.t(key),
+        verbControl: definition.compartments ? this.createVerbControl() : null,
+        action: this.selectedVerb,
+        onCycleAction: definition.compartments ? () => this.cycleVerb() : null,
+        onLook: key => this.setStatusMessage(this.t(key)),
         statusKey: this.objectCloseup.rewardStatusKey || (definition.solvedFlag && this.state.flags[definition.solvedFlag] ? definition.solvedStatusKey : null),
         scrollTop: this.objectCloseup.scrollTop || 0, onScroll: top => { if (this.objectCloseup) this.objectCloseup.scrollTop = top; },
         backgroundSrc: definition.backgroundAsset ? this.assets.getSceneImage(this.currentScene.id, definition.backgroundAsset)?.src : null,
@@ -2457,6 +2466,7 @@ export class Game {
         onTake: itemId => this.takeObjectCloseupItem(itemId), onClose: () => this.closeObjectCloseup()
       });
       this.uiRoot.appendChild(this.objectCloseupView.element);
+      if (definition.compartments && this.speechBubble) this.objectCloseupView.element.append(this.createSpeechBubble());
     }
     if (this.sceneAction?.state?.phase === 'received') this.uiRoot.appendChild(this.createReceivedItem());
     if (this.inspectedItemId && !this.menuOpen && !this.paused) this.uiRoot.appendChild(this.createItemInspection());
@@ -2498,6 +2508,14 @@ export class Game {
       this.createHudMeter("ui.meter.public_mood", this.state.publicMood, "public-mood")
     );
 
+    hud.append(meters, this.createVerbControl());
+    const items = this.inventory.list();
+    hud.appendChild(this.createInventoryDock(items));
+    if (this.inventoryUseItemId) hud.appendChild(this.createInventoryUseIndicator());
+    return hud;
+  }
+
+  createVerbControl() {
     const verb = element("button", "hud-verb");
     verb.type = "button";
     const verbIcon = element("span", "hud-verb-icon");
@@ -2519,11 +2537,7 @@ export class Game {
       this.cycleVerb();
     });
 
-    hud.append(meters, verb);
-    const items = this.inventory.list();
-    hud.appendChild(this.createInventoryDock(items));
-    if (this.inventoryUseItemId) hud.appendChild(this.createInventoryUseIndicator());
-    return hud;
+    return verb;
   }
 
   createHudMeter(labelKey, value, tone) {
@@ -2579,10 +2593,6 @@ export class Game {
     toggle.setAttribute("aria-expanded", String(Boolean(this.inventoryExpanded)));
     toggle.setAttribute("aria-controls", "inventory-grid");
     panel.appendChild(toggle);
-    const hoverLabel = element("span", "inventory-hover-label");
-    hoverLabel.setAttribute("role", "tooltip");
-    hoverLabel.hidden = true;
-    panel.appendChild(hoverLabel);
     panel.addEventListener("pointerdown", (event) => event.stopPropagation());
     panel.addEventListener("pointerup", (event) => event.stopPropagation());
     panel.addEventListener("click", (event) => event.stopPropagation());
@@ -2598,20 +2608,11 @@ export class Game {
     const shownItems = this.inventoryExpanded ? items : items.slice(0, 3);
     shownItems.forEach((item, index) => {
       const itemName = this.t(item.nameKey);
-      const tooltipId = `inventory-tooltip-${item.id.replaceAll(".", "-")}`;
       const itemButton = element("button", "inventory-item");
       itemButton.type = "button";
       itemButton.tabIndex = index === 0 ? 0 : -1;
       itemButton.setAttribute("aria-label", itemName);
-      itemButton.setAttribute("aria-describedby", tooltipId);
       itemButton.dataset.itemId = item.id;
-      itemButton.title = itemName;
-      const showLabel = () => { if (!this.selectedInventoryItemId) { hoverLabel.textContent = itemName; hoverLabel.hidden = false; } };
-      const hideLabel = () => { hoverLabel.hidden = true; };
-      itemButton.addEventListener("mouseenter", showLabel);
-      itemButton.addEventListener("focus", showLabel);
-      itemButton.addEventListener("mouseleave", hideLabel);
-      itemButton.addEventListener("blur", hideLabel);
       const iconRule = firstMatchingRule(item.iconRules, this.effectContext());
       const iconPath = this.assets.getItemAssetPath(item.id, iconRule?.slot || "icon");
       if (iconPath) {
@@ -2625,11 +2626,6 @@ export class Game {
         label.textContent = itemName;
         itemButton.appendChild(label);
       }
-      const tooltip = element("span", "inventory-tooltip");
-      tooltip.id = tooltipId;
-      tooltip.setAttribute("role", "tooltip");
-      tooltip.textContent = itemName;
-      itemButton.appendChild(tooltip);
       const selected = this.selectedInventoryItemId === item.id;
       const using = this.inventoryUseItemId === item.id;
       itemButton.classList.toggle("selected", selected);

@@ -72,11 +72,12 @@ button.active {
   display: flex;
   justify-content: space-between;
   gap: 6px;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 .top-bar-left,
 .top-bar-right {
+  pointer-events: auto;
   display: flex;
   gap: 6px;
 }
@@ -1320,6 +1321,23 @@ button.active {
 .inventory-toggle:focus-visible { outline:2px solid #f3d6a3; outline-offset:2px; }
 .inventory-dock { display:grid; grid-template-columns:repeat(3,var(--inventory-slot)); grid-auto-rows:var(--inventory-slot); align-content:start; justify-content:start; gap:var(--inventory-gap); height:var(--inventory-slot); max-width:none; overflow:hidden; scrollbar-gutter:stable; overscroll-behavior:contain; }
 .inventory-dock-panel.expanded .inventory-dock { height:calc(3 * var(--inventory-slot) + 2 * var(--inventory-gap)); overflow-y:auto; overflow-x:hidden; scrollbar-width:thin; scrollbar-color:#a78b5c #241d15; }
+.inventory-dock-panel { --inventory-frame-clearance:2px; }
+.inventory-dock-panel .inventory-dock {
+  padding-block:var(--inventory-frame-clearance);
+  margin-block:calc(-1 * var(--inventory-frame-clearance));
+  height:calc(var(--inventory-slot) + 2 * var(--inventory-frame-clearance));
+}
+.inventory-dock-panel.expanded .inventory-dock {
+  height:calc(3 * var(--inventory-slot) + 2 * var(--inventory-gap) + 2 * var(--inventory-frame-clearance));
+}
+.object-closeup-compartment,
+.object-closeup-compartment:hover {
+  position:absolute;
+  padding:0;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+}
 .inventory-dock .inventory-item { width:var(--inventory-slot); height:var(--inventory-slot); min-height:var(--inventory-slot); flex:none; }
 .inventory-dock .inventory-item img { box-sizing:border-box; padding:6px; }
 .inventory-dock .inventory-item:hover,.inventory-dock .inventory-item:focus-visible,.inventory-dock .inventory-item.selected,.inventory-dock .inventory-item.using,.inventory-dock .inventory-item:has(+ .inventory-item:hover),.inventory-dock .inventory-item:has(+ .inventory-item:focus-visible),.inventory-dock .inventory-item:hover + .inventory-item,.inventory-dock .inventory-item:focus-visible + .inventory-item { transform:none; }

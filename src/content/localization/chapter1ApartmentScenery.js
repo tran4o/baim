@@ -1,0 +1,41 @@
+export const apartmentSceneryBg = {
+  'apartment.scenery.icon.name':'Иконата',
+  'apartment.scenery.icon.look':'Пред нея обещавам да не пия. После сядам с гръб.',
+  'apartment.scenery.lamp.name':'Лампата',
+  'apartment.scenery.lamp.look':'Слабо свети, ама поне не обещава повече.',
+  'apartment.scenery.suitcase.name':'Куфарът',
+  'apartment.scenery.suitcase.look':'Стягах го за чужбина. После разбрах, че и там се работи.',
+  'apartment.scenery.bag.name':'Торбата',
+  'apartment.scenery.bag.look':'Вътре са дрехите за работа. Пазя ги от износване.',
+  'apartment.scenery.plant.name':'Саксията',
+  'apartment.scenery.plant.look':'Поливам го с вода. Един от нас трябва да остане трезвен.',
+  'apartment.scenery.radiator.name':'Радиаторът',
+  'apartment.scenery.radiator.look':'Изключен е. Сметката обаче работи на пълна мощност.',
+  'apartment.scenery.empty_frame.name':'Празната рамка',
+  'apartment.scenery.empty_frame.look':'Най-после портретът прилича на банковата ми сметка.',
+  'apartment.scenery.wall_rug.name':'Стенният килим',
+  'apartment.scenery.wall_rug.look':'Вдигнахме го на стената. Под него вече нямаше място за повече проблеми.',
+  'apartment.scenery.patriot_photos.name':'Старите снимки',
+  'apartment.scenery.patriot_photos.look':'Всички ме гледат строго. Даже на снимка не ми дават назаем.'
+};
+
+export const apartmentSceneryEn = {
+  'apartment.scenery.icon.name':'Icon',
+  'apartment.scenery.icon.look':"I promise her I'll stop drinking. Then I turn my chair around.",
+  'apartment.scenery.lamp.name':'Lamp',
+  'apartment.scenery.lamp.look':"Not very bright. At least it doesn't promise more.",
+  'apartment.scenery.suitcase.name':'Suitcase',
+  'apartment.scenery.suitcase.look':"I packed for a new life abroad. Then I heard they work there too.",
+  'apartment.scenery.bag.name':'Bag',
+  'apartment.scenery.bag.look':"My work clothes. I take great care not to wear them out.",
+  'apartment.scenery.plant.name':'Potted plant',
+  'apartment.scenery.plant.look':"I water it. One of us has to stay sober.",
+  'apartment.scenery.radiator.name':'Radiator',
+  'apartment.scenery.radiator.look':"It's switched off. The bill is running at full power.",
+  'apartment.scenery.empty_frame.name':'Empty frame',
+  'apartment.scenery.empty_frame.look':"Finally, a portrait that matches my bank balance.",
+  'apartment.scenery.wall_rug.name':'Wall rug',
+  'apartment.scenery.wall_rug.look':"Had to hang the rug up. No room left underneath for more problems.",
+  'apartment.scenery.patriot_photos.name':'Old photographs',
+  'apartment.scenery.patriot_photos.look':"They all look so stern. Won't lend me money even in a photograph."
+};

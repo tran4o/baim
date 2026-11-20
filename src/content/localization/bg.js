@@ -1,3 +1,4 @@
+import { apartmentSceneryBg } from './chapter1ApartmentScenery.js';
 import { posterContestR40Bg } from './chapter1PosterContestR40.js';
 import { posterContestR39Bg } from './chapter1PosterContestR39.js';
 import { electionBg } from "./chapter1Election.js";
@@ -8,12 +9,27 @@ import { fountainBg } from "./chapter1Fountain.js";
 import { photoQuestBg } from './chapter1PhotoQuest.js';
 
 export const bg = {
+  ...apartmentSceneryBg,
   "tv.on": "Телевизорът светва. Пак местни новини.",
   "tv.off": "Екранът угасва.",
   "tv.news.title": "НОВИНИ",
   "tv.news.line1": "РАБОТИМ ПО ПЛАН.",
   "tv.news.line2": "ЧАКАМЕ ПЛАНА.",
   'wardrobe.inside': 'Стари дрехи, невероятни спомени, акордеон вляво и дървена кутия с пъзел вдясно.',
+  'wardrobe.compartment.blankets.name': 'Зимните одеяла',
+  'wardrobe.compartment.blankets.look': 'Тези одеяла са ми резервният план за парното. Всяка зима планът влиза в сила.',
+  'wardrobe.compartment.tracksuit.name': 'Анцугът',
+  'wardrobe.compartment.tracksuit.look': 'Парадният ми анцуг. Същият като всекидневния, ама на закачалка.',
+  'wardrobe.compartment.trophy.name': 'Купата и перуката',
+  'wardrobe.compartment.trophy.look': 'На купата сложих перука. Да не си личи, че е печелена толкова отдавна.',
+  'wardrobe.compartment.photos.name': 'Кутията със снимки',
+  'wardrobe.compartment.photos.look': 'Тук пазя снимките, дето роднините още си говорят.',
+  'wardrobe.compartment.puzzle.name': 'Рафтът с пъзела',
+  'wardrobe.compartment.puzzle.look': 'При тоя пъзел поне е ясно кой ми мести парчетата.',
+  'wardrobe.compartment.bottles.name': 'Празните бутилки',
+  'wardrobe.compartment.bottles.look': 'Наредил съм ги по години. Съдържанието го помня по-трудно.',
+  'wardrobe.compartment.shoes.name': 'Обувките и плавниците',
+  'wardrobe.compartment.shoes.look': 'Обувки за сухо, плавници за след ремонта на улицата.',
   'wardrobe.objects_hint': 'Натисни акордеона, за да го вземеш, или дървената кутия, за да отвориш пъзела. Старата кутия със снимки по-горе е само спомен.',
   'wardrobe.art_pending': 'Временен тестов изглед. Интериорът и отделният 3D акордеон очакват одобрение.',
   'wardrobe.prop_pending': 'Тестов изглед: отделният 3D акордеон се подготвя. Иконата е временна.',

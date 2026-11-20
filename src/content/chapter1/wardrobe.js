@@ -20,6 +20,15 @@ export const wardrobeCloseup = {
   contentAspect: { width: 1027, height: 1531 },
   presentation: 'room', roomHintKey: 'wardrobe.room_hint',
   exitZones: [{ side: 'left', x: 0, w: 12 }, { side: 'right', x: 88, w: 12 }],
+  compartments: [
+    { id: 'blankets', rect: { x: 6, y: 3, w: 80, h: 16 } },
+    { id: 'tracksuit', rect: { x: 6, y: 20, w: 50, h: 39 } },
+    { id: 'trophy', rect: { x: 56, y: 20, w: 30, h: 20 } },
+    { id: 'photos', rect: { x: 56, y: 41, w: 30, h: 18 } },
+    { id: 'puzzle', rect: { x: 6, y: 60, w: 54, h: 15 } },
+    { id: 'bottles', rect: { x: 61, y: 60, w: 25, h: 15 } },
+    { id: 'shoes', rect: { x: 6, y: 76, w: 80, h: 19 } }
+  ],
   propMode: 'wardrobe-puzzle-and-accordion-r08-context',
   // Reuse the original painting above the models at the physical shelf lip/divider.
   foregroundRegions: [

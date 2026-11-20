@@ -2,6 +2,10 @@
 
 The normal top-right HUD has one current-language button that toggles BG/EN. Four actions remain available through the existing bottom-center cycling control, which displays the matching accepted action-cursor vector icon beside its localized label.
 
+Inventory item hover and keyboard focus show no name labels, custom tooltips or native browser title tooltips. Keep localized `aria-label` names for assistive technology. Item details remain available through View.
+
+The transparent gap in the top bar passes pointer events through to scenery, including the apartment lamp. Menu and language button groups retain pointer input.
+
 The bottom-right inventory always shows three slots collapsed, including empty slots. Its labeled toggle expands upward to a three-column, three-row viewport. Further items scroll vertically; empty cells pad the final row. Selection, language changes and item actions retain expanded scroll position. Existing View/Use, bounded Blender inspection, item cursor, menu, meters, quest and save behavior remain independent.
 
 Reuse exact accepted frame-zero artwork as assets/ui/action-cursors/icons/{look,talk,use,take}.svg (LOOK-A, SPEAK-A, USE-I, TAKE-A). No new artwork or collectible models. Local layout review does not authorize publication.
