@@ -12,6 +12,11 @@ export const wardrobePhotoPuzzle = {
   puzzleId: 'photo_cupboard'
 };
 
+export const wardrobePropCommentary = {
+  [wardrobeAccordion.takeItemId]: 'wardrobe.prop.accordion',
+  [wardrobePhotoPuzzle.id]: 'wardrobe.prop.puzzle'
+};
+
 export const wardrobeCloseup = {
   id: 'closeup.apartment.wardrobe', titleKey: 'hotspot.wardrobe.name',
   descriptionKey: 'wardrobe.inside', placeholderKey: 'wardrobe.art_pending',

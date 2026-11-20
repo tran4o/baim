@@ -1,6 +1,6 @@
 import {mountObjectProp} from './ObjectPropView.js';
 // Reusable modal for a content-defined interior and collectible item layers.
-export function createObjectCloseup({ definition, text, backgroundSrc, items, onTake, onClose, scrollTop = 0, onScroll = () => {}, statusKey = null, verbControl = null, action, onCycleAction, onLook }) {
+export function createObjectCloseup({ definition, text, backgroundSrc, items, onTake, onClose, scrollTop = 0, onScroll = () => {}, statusKey = null, verbControl = null, action, onCycleAction, onComment }) {
   const overlay = document.createElement('section');
   const propViews=[];
   const room=definition.presentation==='room';
@@ -28,33 +28,42 @@ export function createObjectCloseup({ definition, text, backgroundSrc, items, on
   viewport.addEventListener('scroll',()=>onScroll(viewport.scrollTop));
   if(backgroundSrc){const image=document.createElement('img');image.src=backgroundSrc;image.alt='';image.style.cssText='width:100%;height:100%;object-fit:contain;display:block;';stage.append(image);}
   else {const label=document.createElement('p');label.textContent=text(definition.placeholderKey);label.style.cssText='margin:0;padding:18px;color:#e2cc91;';stage.append(label);stage.dataset.placeholder='true';}
-  if(room)for(const zone of definition.exitZones||[]){const exit=document.createElement('button');exit.type='button';exit.className='object-closeup-exit';exit.dataset.exit=zone.side;exit.setAttribute('aria-label',text('wardrobe.back'));exit.title=text('wardrobe.back');exit.style.cssText=`position:absolute;left:${zone.x}%;top:0;width:${zone.w}%;height:100%;background:transparent;border:0;padding:0;cursor:default;`;exit.addEventListener('click',onClose);stage.append(exit);}
+  if(room)for(const zone of definition.exitZones||[]){const exit=document.createElement('button');exit.type='button';exit.className='object-closeup-exit';exit.dataset.exit=zone.side;exit.setAttribute('aria-label',text('wardrobe.back'));exit.title=text('wardrobe.back');exit.style.cssText=`position:absolute;z-index:1;left:${zone.x}%;top:0;width:${zone.w}%;height:100%;background:transparent;border:0;padding:0;cursor:default;`;exit.addEventListener('click',onClose);stage.append(exit);}
   if (onCycleAction) overlay.addEventListener('contextmenu', event => {
     event.preventDefault();
     onScroll(viewport.scrollTop);
     onCycleAction();
   });
-  for (const { id, rect } of action === 'look' ? definition.compartments || [] : []) {
+  const comment = key => {
+    onScroll(viewport.scrollTop);
+    onComment(key + '.' + action);
+  };
+  for (const { id, rect } of definition.compartments || []) {
     const hotspot = document.createElement('button');
     hotspot.type = 'button';
     hotspot.className = 'object-closeup-compartment';
     hotspot.dataset.compartment = id;
+    hotspot.dataset.closeupAction = 'look';
     hotspot.setAttribute('aria-label', text('wardrobe.compartment.' + id + '.name'));
     Object.assign(hotspot.style, {
       left: rect.x + '%', top: rect.y + '%', width: rect.w + '%', height: rect.h + '%'
     });
-    hotspot.addEventListener('click', () => {
-      onScroll(viewport.scrollTop);
-      onLook('wardrobe.compartment.' + id + '.look');
-    });
+    hotspot.addEventListener('click', () => comment('wardrobe.compartment.' + id));
     stage.append(hotspot);
   }
   for(const item of items){const button=document.createElement('button');button.type='button';button.dataset.itemId=item.id;button.title=text(item.actionKey || 'verb.take')+' '+text(item.nameKey);button.setAttribute('aria-label',button.title);button.dataset.propMode=definition.propMode || 'image';
-    button.className='object-closeup-item';button.dataset.closeupAction=item.actionKey==='verb.use'?'use':'take';
+    const itemAction = item.actionKey === 'verb.use' ? 'use' : 'take';
+    const isComment = item.commentaryKey && action !== itemAction;
+    button.className='object-closeup-item';
+    button.dataset.closeupAction = isComment ? (action === 'look' ? 'look' : '') : itemAction;
     const r=item.rect;button.style.cssText=`position:absolute;left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%;padding:0;border:0;background:transparent;cursor:pointer;`;
-    if(item.modelUrl){button.disabled=true;const host=document.createElement('span');host.className='object-prop-view';host.style.cssText='display:block;width:100%;height:100%;';button.append(host);propViews.push(mountObjectProp(host,{modelUrl:item.modelUrl,hiddenNodes:item.hiddenNodes,cameraDirection:item.cameraDirection,fitBounds:item.fitBounds,verticalAlign:item.verticalAlign,shelfPose:item.shelfPose,text:{name:text(item.nameKey),loading:text('wardrobe.prop_loading'),unavailable:text('wardrobe.prop_unavailable')},onReady:()=>{button.disabled=false;},onError:()=>{button.disabled=true;}}));}
+    if(item.modelUrl){button.disabled=!isComment;const host=document.createElement('span');host.className='object-prop-view';host.style.cssText='display:block;width:100%;height:100%;';button.append(host);propViews.push(mountObjectProp(host,{modelUrl:item.modelUrl,hiddenNodes:item.hiddenNodes,cameraDirection:item.cameraDirection,fitBounds:item.fitBounds,verticalAlign:item.verticalAlign,shelfPose:item.shelfPose,text:{name:text(item.nameKey),loading:text('wardrobe.prop_loading'),unavailable:text('wardrobe.prop_unavailable')},onReady:()=>{button.disabled=false;},onError:()=>{button.disabled=!isComment;}}));}
     else{const image=document.createElement('img');image.src=item.imageSrc;image.alt=text(item.nameKey);image.style.cssText='width:100%;height:100%;object-fit:contain;';button.append(image);}
-    if (definition.compartments && item.actionKey !== 'verb.' + action) {
+    if (isComment) {
+      button.setAttribute('aria-label', text(item.nameKey));
+      button.removeAttribute('title');
+      button.addEventListener('click', () => comment(item.commentaryKey));
+    } else if (definition.compartments && itemAction !== action) {
       button.style.pointerEvents = 'none';
       button.tabIndex = -1;
       button.setAttribute('aria-hidden', 'true');
