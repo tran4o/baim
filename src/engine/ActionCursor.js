@@ -146,16 +146,22 @@ export class ActionCursor {
     this.itemOverlay.style.display='none';
     const point = game.renderer.screenToWorld(pointer.x, pointer.y);
     const target = !cursorInteractionBlocked(game) && underPointer === this.canvas ? game.sceneTargetAt(point) : null;
-    const closeupButton=game.objectCloseup&&!game.puzzleOpen ? underPointer.closest?.('.object-closeup-item[data-closeup-action]') : null;
-    const closeupVerb=closeupButton?.dataset.closeupAction;
-    const verb = closeupButton&&['take','use'].includes(closeupVerb) ? closeupVerb : target && target.kind !== 'exit' ? effectiveTargetVerb(game,target) : 'neutral';
+    const closeupTarget = game.objectCloseup && !game.puzzleOpen
+      ? underPointer.closest?.('.object-closeup-screen :is([data-compartment], [data-closeup-action])')
+      : null;
+    const closeupAction = closeupTarget?.dataset.closeupAction;
+    const verb = closeupTarget
+      ? closeupTarget.dataset.compartment || !closeupAction ? game.selectedVerb : closeupAction
+      : target && target.kind !== 'exit' ? effectiveTargetVerb(game, target) : 'neutral';
     const art = verb === 'neutral' ? NEUTRAL_CURSOR_ART : CURSOR_ART[verb], image = this.images[verb];
     if (!art || !image?.complete || !image.naturalWidth) {
       this.overlay.style.display = 'none';
       return;
     }
-    const active = closeupButton ? !closeupButton.disabled : verb !== 'neutral' && cursorTargetSupportsAction(game, target,verb);
-    const targetId=closeupButton?.dataset.itemId || target?.id || '';
+    const active = closeupTarget
+      ? closeupAction === verb && !closeupTarget.disabled
+      : verb !== 'neutral' && cursorTargetSupportsAction(game, target, verb);
+    const targetId = closeupTarget?.dataset.compartment || closeupTarget?.dataset.itemId || target?.id || '';
     const key = `${verb}:${targetId || 'ground'}:${active}:${game.inventoryUseItemId || ''}`;
     if (key !== this.key) { this.key = key; this.startedAt = now; }
     const frame = cursorFrameAt(active, now - this.startedAt);

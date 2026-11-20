@@ -7,7 +7,7 @@ import { chromium } from 'playwright';
 import { mousePuzzleSlide } from './helpers/puzzle-mouse.js';
 import { chooseHudVerb } from './helpers/hud-ui.js';
 
-test('3D cupboard puzzle, persisted progress and Pepa transactions work in BG/EN without duplicate rewards', {timeout:180000}, async()=>{
+test('3D cupboard puzzle, persisted progress and Pepa transactions work in BG/EN without duplicate rewards', {timeout:300000}, async()=>{
   const probe=createServer(); await new Promise(r=>probe.listen(0,'127.0.0.1',r)); const port=probe.address().port; await new Promise(r=>probe.close(r));
   const server=spawn(process.execPath,['tools/dev-server.mjs'],{env:{...process.env,PORT:String(port)},stdio:'ignore'});
   let browser;
@@ -17,36 +17,68 @@ test('3D cupboard puzzle, persisted progress and Pepa transactions work in BG/EN
     browser=await chromium.launch({headless:true});
     for(const lang of ['bg','en']) {
       const context=await browser.newContext({viewport:{width:1280,height:720},serviceWorkers:'block'}),page=await context.newPage(),errors=[];
+      page.setDefaultTimeout(12000);
       page.on('pageerror',e=>errors.push(String(e)));
       await page.goto(`http://127.0.0.1:${port}/?play=1&testHarness=1`);await page.evaluate(()=>window.__comradeCandidateTest.ready);
       await page.evaluate(lang=>{const g=window.__comradeCandidateTest.game;g.setLanguage(lang);g.selectVerb('use');g.useTarget(g.currentScene.interactables.find(t=>t.objectCloseup));},lang);
       const wardrobe = page.locator('.object-closeup-screen');
       assert.equal(await wardrobe.locator('[data-action]').count(), 0);
-      assert.equal(await wardrobe.locator('[data-compartment]').count(), 0);
       await chooseHudVerb(page, 'look');
-      const compartments = wardrobe.locator('[data-compartment]');
-      assert.equal(await compartments.count(), 7);
-      const lines = new Set();
-      for (const compartment of await compartments.all()) {
-        await compartment.click();
-        const line = wardrobe.locator('.speech-bubble .speech-text');
-        assert.ok(await line.isVisible());
-        lines.add(await line.textContent());
-      }
-      assert.equal(lines.size, 7);
-      await wardrobe.locator('.speech-bubble').waitFor({ state: 'detached', timeout: 10000 });
+      const compartments = await wardrobe.locator('[data-compartment]').all();
+      assert.equal(compartments.length, 7);
       const viewport = wardrobe.locator('.object-closeup-viewport');
-      const scrollBefore = await viewport.evaluate(node => node.scrollTop);
-      await viewport.click({ button: 'right', position: { x: 440, y: 220 } });
-      assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.selectedVerb), 'talk');
-      assert.equal(await viewport.evaluate(node => node.scrollTop), scrollBefore);
-      await viewport.click({ button: 'right', position: { x: 440, y: 220 } });
-      assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.selectedVerb), 'use');
-      assert.equal(await page.locator('.photo-puzzle-screen').count(), 0);
+      const bottles = wardrobe.locator('[data-compartment="bottles"]');
+      const line = wardrobe.locator('.speech-bubble .speech-text');
+      const inventory = () => page.evaluate(() => [...window.__comradeCandidateTest.game.state.inventory]);
+      const initialInventory = await inventory();
+      const puzzleId = 'hotspot.apartment.wardrobe_photo_puzzle';
+      const props = [
+        { id: 'item.accordion', key: 'wardrobe.prop.accordion', action: 'take' },
+        { id: puzzleId, key: 'wardrobe.prop.puzzle', action: 'use' }
+      ];
+      const lines = new Set();
+      const checkComment = async (target, id, key, verb, options) => {
+        await target.hover(options);
+        const activity = verb === 'look' ? '[data-active="true"]' : '[data-active="false"][data-frame="0"]';
+        await page.locator(`.action-cursor[data-verb="${verb}"][data-target="${id}"]${activity}`).waitFor();
+        await target.click(options);
+        const expected = await page.evaluate(key => window.__comradeCandidateTest.game.t(key), key);
+        assert.notEqual(expected, key);
+        assert.equal(await line.textContent(), expected);
+        lines.add(expected);
+      };
+      for (const verb of ['look', 'talk', 'use', 'take']) {
+        for (const compartment of compartments) {
+          const id = await compartment.getAttribute('data-compartment');
+          const { width, height } = await compartment.boundingBox();
+          // The box and accordion have their own hotspots on this shelf.
+          const options = id === 'puzzle' ? { position: { x: width * 0.75, y: height * 0.35 } } : undefined;
+          await checkComment(compartment, id, `wardrobe.compartment.${id}.${verb}`, verb, options);
+        }
+        for (const prop of props.filter(prop => prop.action !== verb)) {
+          await checkComment(wardrobe.locator(`[data-item-id="${prop.id}"]`), prop.id, `${prop.key}.${verb}`, verb);
+        }
+        assert.equal(await page.locator('.photo-puzzle-screen').count(), 0);
+        await bottles.hover();
+        const scrollBefore = await viewport.evaluate(node => node.scrollTop);
+        if (verb !== 'take') await bottles.click({ button: 'right' });
+        assert.equal(await viewport.evaluate(node => node.scrollTop), scrollBefore);
+      }
+      assert.equal(lines.size, 34);
+      assert.deepEqual(await inventory(), initialInventory);
+      await wardrobe.locator('.speech-bubble').waitFor({ state: 'detached', timeout: 10000 });
+      const accordion = wardrobe.locator('[data-item-id="item.accordion"]:enabled');
+      await accordion.hover();
+      await page.locator('.action-cursor[data-verb="take"][data-target="item.accordion"][data-active="true"]').waitFor();
+      await bottles.click({ button: 'right' });
+      await page.locator('.action-cursor[data-verb="look"][data-target="bottles"][data-active="true"]').waitFor();
       await wardrobe.locator('[data-exit=left]').click({position:{x:12,y:12}});
       await wardrobe.waitFor({state:'detached'});
       await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;g.selectVerb('use');g.useTarget(g.currentScene.interactables.find(t=>t.objectCloseup));});
-      await page.locator('.object-closeup-screen [data-item-id="hotspot.apartment.wardrobe_photo_puzzle"]:enabled').click();
+      const puzzle = wardrobe.locator('[data-item-id="hotspot.apartment.wardrobe_photo_puzzle"]:enabled');
+      await puzzle.hover();
+      await page.locator('.action-cursor[data-verb="use"][data-target="hotspot.apartment.wardrobe_photo_puzzle"][data-active="true"]').waitFor();
+      await puzzle.click();
       await page.locator('.photo-puzzle-view[data-model-state=ready]').waitFor();
       assert.ok(Number(await page.locator('.photo-puzzle-view').getAttribute('data-triangles'))>100);
       await page.screenshot({path:`${evidence}/puzzle-${lang}.png`});

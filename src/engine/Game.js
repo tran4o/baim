@@ -22,6 +22,7 @@ import { SceneIdleVariations, sceneIdleVariationsBlocked } from "./SceneIdleVari
 import { mountItemModelViewer } from "./ItemModelViewer.js";
 import { createSlidingPuzzle } from './SlidingPuzzleView.js';
 import { photoReward, childPhotoRecovery } from '../content/chapter1/photoQuest.js';
+import { wardrobePropCommentary } from '../content/chapter1/wardrobe.js';
 import { FIRST_PHOTO_PUZZLE_VIEW, normalizeFirstPhotoPuzzleSave } from '../content/chapter1/photoPuzzleBeginner.js';
 import { SceneActionSequence } from "./SceneActionSequence.js";
 import { kiroOilSequence } from "../content/art/kiroOilHandover.generated.js";
@@ -2451,13 +2452,14 @@ export class Game {
         verbControl: definition.compartments ? this.createVerbControl() : null,
         action: this.selectedVerb,
         onCycleAction: definition.compartments ? () => this.cycleVerb() : null,
-        onLook: key => this.setStatusMessage(this.t(key)),
+        onComment: key => this.setStatusMessage(this.t(key)),
         statusKey: this.objectCloseup.rewardStatusKey || (definition.solvedFlag && this.state.flags[definition.solvedFlag] ? definition.solvedStatusKey : null),
         scrollTop: this.objectCloseup.scrollTop || 0, onScroll: top => { if (this.objectCloseup) this.objectCloseup.scrollTop = top; },
         backgroundSrc: definition.backgroundAsset ? this.assets.getSceneImage(this.currentScene.id, definition.backgroundAsset)?.src : null,
         items: definition.items.filter(item => this.objectCloseupItemAvailable(item.target)).map(item => ({
           id: item.target.takeItemId || item.target.id, nameKey: item.target.nameKey, rect: item.rect,
           actionKey: item.target.puzzleId ? 'verb.use' : 'verb.take',
+          commentaryKey: wardrobePropCommentary[item.target.takeItemId || item.target.id],
           imageSrc: this.assets.getItemImage(item.target.takeItemId)?.src,
           modelUrl: item.modelUrl || (item.modelAsset ? this.assets.manifest.items[item.target.takeItemId]?.[item.modelAsset] : null),
           hiddenNodes: item.collectedPhotoFlag && this.state.flags[item.collectedPhotoFlag] ? item.hiddenPhotoNodes : [],
