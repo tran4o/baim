@@ -33,6 +33,7 @@ export const assetManifest = {
       windowOpenBack: "assets/chapter1/scenes/apartment/window-open-0.png"
     },
     "scene.chapter1.village_square": {
+      mehanaChalkSignR67: "assets/chapter1/scenes/village_square/chalk-sign-r67.png",
       campaignPoster: "assets/chapter1/scenes/village_square/campaign-poster-c05.png",
       mitkoPosterR45: "assets/chapter1/scenes/village_square/poster-r54/mitko.png",
       incumbentPosterR40: "assets/chapter1/scenes/village_square/poster-r53/incumbent.png",

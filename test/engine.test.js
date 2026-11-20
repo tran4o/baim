@@ -479,13 +479,14 @@ test("village square uses the shared raster, object, and layer scene pipeline", 
   }
 });
 
-test("village square mehana menu uses the authored editor geometry and bilingual menu copy", () => {
-  const scene = chapter1.scenes.find((candidate) => candidate.id === "scene.chapter1.village_square");
+test("village square painted sign keeps authored geometry and bilingual Look commentary", () => {
+  const scene = currentChapter1.scenes.find((candidate) => candidate.id === "scene.chapter1.village_square");
   const menu = scene.interactables.find((target) => target.id === "hotspot.square.mehana_menu");
 
   assert.ok(menu);
   assert.equal(menu.lookKey, "look.square.mehana_menu");
-  assert.equal(menu.useDialogueId, "dialogue.square.mehana_menu");
+  assert.equal(menu.useDialogueId, undefined);
+  assert.equal(menu.plainUseAvailable, false);
   assert.deepEqual(menu.polygon, [
     { x: 166, y: 324 },
     { x: 220, y: 325 },
@@ -494,8 +495,7 @@ test("village square mehana menu uses the authored editor geometry and bilingual
   ]);
   assert.equal(typeof strings.bg[menu.lookKey], "string");
   assert.equal(typeof strings.en[menu.lookKey], "string");
-  const menuDialogue = chapter1.dialogues.find((dialogue) => dialogue.id === menu.useDialogueId);
-  assert.equal(menuDialogue.nodes.start.entries.length, 9);
+
 });
 
 test("using a content-authored reading target opens its menu dialogue", () => {
@@ -508,9 +508,9 @@ test("using a content-authored reading target opens its menu dialogue", () => {
   game.clearStatusMessage = () => { clearedMessages += 1; };
   game.renderUi = () => { renders += 1; };
 
-  game.useTarget({ useDialogueId: "dialogue.square.mehana_menu" });
+  game.useTarget({ useDialogueId: "dialogue.test.reading" });
 
-  assert.equal(openedDialogue, "dialogue.square.mehana_menu");
+  assert.equal(openedDialogue, "dialogue.test.reading");
   assert.equal(game.player.speaking, false);
   assert.equal(clearedMessages, 1);
   assert.equal(renders, 1);

@@ -1,3 +1,4 @@
+import { dismissItemView } from './helpers/hud-ui.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
@@ -47,7 +48,7 @@ test('received 3D item rotates, rests without rendering, disposes and reports mo
       t.diagnostic(`${language}: verify pointer, zoom and idle behavior`);
       const canvas=viewer.locator('canvas');await canvas.focus();
       assert.equal(await page.locator('.item-model-toolbar').count(),0);
-      assert.equal(await page.locator('.received-item-screen button').count(),1,'only Put away remains');
+      assert.equal(await page.locator('.received-item-screen button').count(),0,'read-only view has no action buttons');
       const angle=await viewer.getAttribute('data-orientation');
       const box=await canvas.boundingBox();
       assert.ok(Math.abs(box.height-453.6)<2,'bottle viewing area is50percent taller at720px');
@@ -87,7 +88,7 @@ test('received 3D item rotates, rests without rendering, disposes and reports mo
       await page.locator('.item-model-viewer canvas').evaluate(c=>c.dispatchEvent(new Event('webglcontextlost',{cancelable:true})));
       await page.locator('.item-model-viewer[data-model-state=error]').waitFor();
       assert.equal(await page.locator('.item-model-viewer img').count(), 0, 'context loss does not replace the3D object with a flat image');
-      await page.locator('.received-item-screen > button:last-child').click();
+      await dismissItemView(page);
       assert.equal(await page.locator('.item-model-viewer').count(),0);
       assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.state.inventory.filter(id=>id==='item.sunflower_oil').length),1);
     }
@@ -96,7 +97,7 @@ test('received 3D item rotates, rests without rendering, disposes and reports mo
     let release;const hold=new Promise(resolve=>release=resolve);
     await page.route('**/oil-200ml-r08.glb',async route=>{await hold;await route.continue();});
     await receive('en');await page.locator('.item-model-viewer[data-model-state=loading]').waitFor();
-    await page.locator('.received-item-screen > button:last-child').click();release();
+    await dismissItemView(page);release();
     await page.waitForTimeout(300);assert.equal(await page.locator('.item-model-viewer').count(),0);
     await page.close();
     // Isolate a failed request from Three's per-page in-flight request coalescing.
@@ -108,7 +109,7 @@ test('received 3D item rotates, rests without rendering, disposes and reports mo
     await page.route('**/oil-200ml-r08.glb',route=>route.abort());
     await receive('en');await page.locator('.item-model-viewer[data-model-state=error]').waitFor();
     assert.equal(await page.locator('.item-model-viewer img').count(), 0, 'no silent static substitute for a failed3D model');
-    await page.locator('.received-item-screen > button:last-child').click();
+    await dismissItemView(page);
     assert.deepEqual(errors,[]);
   } finally { await browser?.close();server.kill(); }
 });

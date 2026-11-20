@@ -1,3 +1,4 @@
+import { dismissItemView } from './helpers/hud-ui.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
@@ -96,7 +97,7 @@ test('HUD keeps all actions, one language switch and accessible upward three-by-
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.down(); await page.mouse.move(box.x + box.width, box.y + box.height, { steps: 4 }); await page.mouse.up();
     assert.ok(Math.abs(Number(await viewer.getAttribute('data-pitch'))) <= Math.PI / 12 + .0001);
     await canvas.hover(); await page.mouse.wheel(0, -2000); await page.waitForTimeout(50); assert.ok(Number(await viewer.getAttribute('data-zoom')) <= 1.5);
-    await page.locator('.received-item-screen > button:last-child').click();
+    await dismissItemView(page);
     assert.ok(Math.abs(await page.locator('.inventory-dock').evaluate(e => e.scrollTop) - scrollBefore) < 1);
     await (await inventoryItem(page, ids.at(-1))).click();
     const use = await page.evaluate(() => window.__comradeCandidateTest.game.t('ui.inventory.use'));

@@ -1,3 +1,4 @@
+import { dismissItemView } from './helpers/hud-ui.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
@@ -57,7 +58,7 @@ test('icon ears slide behind stable slots, dismiss outside, stay visible at edge
     const inspect = await page.evaluate(() => window.__comradeCandidateTest.game.t('ui.inventory.inspect'));
     await page.locator('.inventory-item-actions').getByRole('button', { name: inspect, exact: true }).click();
     await page.locator('.item-model-viewer[data-model-state=ready]').waitFor();
-    await page.locator('.received-item-screen > button:last-child').click();
+    await dismissItemView(page);
     await (await inventoryItem(page, 'item.sunflower_oil')).click();
     const use = await page.evaluate(() => window.__comradeCandidateTest.game.t('ui.inventory.use'));
     await page.locator('.inventory-item-actions').getByRole('button', { name: use, exact: true }).click();

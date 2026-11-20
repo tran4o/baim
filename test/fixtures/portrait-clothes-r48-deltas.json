@@ -2,8 +2,13 @@
   "records": {
     "src/content/art/assetManifest.js": {
       "beforeSHA256": "b8a8501563e7d35731dfb1dbe3a7fbe3dd39e108e5a4c5a7bf785787a60a9fe8",
-      "afterSHA256": "650d9e898374f456eefbcfde1c5ce7521ce2d8ab862f30fa87a9987d3658ff45",
+      "afterSHA256": "aa753f569aaeb0a92ca64a76b44688e51c9c45547c1cf0f9d00a4817c0c59d53",
       "splices": [
+        {
+          "start": 2239,
+          "before": "",
+          "afterLength": 86
+        },
         {
           "start": 18055,
           "before": "      icon: \"assets/chapter1/items/kiro-bottle/fountain-water-olive-r02.png\",\n      model: \"assets/chapter1/items/kiro-bottle/fountain-water-olive-r01.glb\",\n      liquidColor: null\n    },\n    \"item.glass_of_water\": {\n      icon: \"assets/chapter1/items/glass-of-water-v1.png\"\n",
@@ -70,7 +75,7 @@
           "before": "      adultWallPhoto: \"assets/chapter1/items/adult-portrait-selected3-r36/wall-full.png\",\n"
         }
       ],
-      "scope": "Exact approved R55 cursor and R56 native-item inspection changes before immutable historical comparisons; no baseline hash replacement or unknown-byte exclusion."
+      "scope": "Approved R65 clean item views, exact accepted vector icons, seamless ears and real UI route checks."
     },
     "test/helpers/poster-contest-r45-preservation.js": {
       "before": "import assert from 'node:assert/strict';\nimport {readFileSync} from 'node:fs';\nimport {createHash} from 'node:crypto';\nconst f=JSON.parse(readFileSync(new URL('../fixtures/poster-contest-r45-deltas.json',import.meta.url))),sha=x=>createHash('sha256').update(x).digest('hex');\nexport function stripPosterContestR45(path,source){const r=f.records[path];if(!r)return source;const s=String(source).replaceAll('\\r\\n','\\n');if(sha(s)!==r.afterSHA256)return source;assert.equal(sha(r.before),r.beforeSHA256);return r.before;}\nexport function restorePosterContestR45Snapshot(kind,value){const r=f.snapshots[kind];if(!r||sha(JSON.stringify(value))!==r.afterSHA256)return value;const v=structuredClone(value);for(const p of r.patches){let parent=v;for(const k of p.path.slice(0,-1))parent=parent[k];if(p.exists)parent[p.path.at(-1)]=structuredClone(p.before);else delete parent[p.path.at(-1)];}assert.equal(sha(JSON.stringify(v)),r.beforeSHA256,'Exact R45 inverse');return v;}\n",
@@ -89,8 +94,58 @@
     },
     "src/engine/Game.js": {
       "beforeSHA256": "5286000ab1d2d9a05cb534e983f6677eea59f59fb59b50fd4d56c648312dc2f1",
-      "afterSHA256": "ff1c4d9f5822f981fa7948abb6d96d16a840dbb3eb7537ae3050d30c0c8d7b14",
+      "afterSHA256": "e37cecf30b2fa75d6cc6c98f72816df7f04b653b3bb75017d50b3a21c64e9773",
       "splices": [
+        {
+          "start": 120393,
+          "before": "    verbIcon.style.backgroundImage = 'url(\"' + new URL('../../assets/ui/action-cursors/' + this.selectedVerb + '.png', import.meta.url).href + '\")';\n",
+          "afterLength": 88
+        },
+        {
+          "start": 105322,
+          "before": "    panel.append(title, itemTitle, viewer, description, button(this.t('ui.received_oil.close'), () => this.closeReceivedItem()));\n",
+          "afterLength": 119
+        },
+        {
+          "start": 104630,
+          "before": "    const title = document.createElement('h2'); title.textContent = this.t('ui.received_oil.title');\n    const itemTitle = document.createElement('h3'); itemTitle.textContent = this.t('ui.received_oil.itemTitle');\n",
+          "afterLength": 103
+        },
+        {
+          "start": 104381,
+          "before": "",
+          "afterLength": 94
+        },
+        {
+          "start": 104150,
+          "before": "    panel.append(title, viewer, description, button(this.t('ui.received_oil.close'), () => {\n      this.closeItemInspection();\n    }));\n    if (propControls) panel.insertBefore(propControls, panel.lastElementChild);\n",
+          "afterLength": 121
+        },
+        {
+          "start": 103855,
+          "before": "      propControls = document.createElement('p'); propControls.textContent = text.controls;\n",
+          "afterLength": 0
+        },
+        {
+          "start": 103339,
+          "before": "    let propControls = null;\n",
+          "afterLength": 0
+        },
+        {
+          "start": 20509,
+          "before": "          controls[(index + (event.shiftKey ? -1 : 1) + controls.length) % controls.length]?.focus();\n",
+          "afterLength": 113
+        },
+        {
+          "start": 20027,
+          "before": "      if (this.inspectedItemId) {\n        if (event.key === \"Escape\") { event.preventDefault(); this.closeItemInspection(); }\n",
+          "afterLength": 232
+        },
+        {
+          "start": 945,
+          "before": "",
+          "afterLength": 111
+        },
         {
           "start": 129117,
           "before": "",
@@ -372,7 +427,7 @@
           "before": ""
         }
       ],
-      "scope": "Exact local R58 HUD controls/grid and real UI test migration, restoring immutable accepted historical bytes; unknown edits still reject."
+      "scope": "Approved R65 clean item views, exact accepted vector icons, seamless ears and real UI route checks."
     },
     "src/engine/ObjectPropView.js": {
       "beforeSHA256": "f2e09fb49c825eea32e62e35846aaf5fbc7082944aae59651bc5e4f328cadc6e",
@@ -464,8 +519,38 @@
     },
     "test/browser-smoke.test.js": {
       "beforeSHA256": "d1ff5e92d0ddb7b786588f9fe98231e99ac8009bdc21cd2b951c1322edde34a7",
-      "afterSHA256": "f5c68725a606783b34d89159de245213072c4b2050ad30d981fece4062ddcd0b",
+      "afterSHA256": "d6300d744541b3c314d41faf76321e5a3bbf53572784ba95eb3bec95c7985311",
       "splices": [
+        {
+          "start": 38793,
+          "before": "    await page.locator(\".received-item-screen > button:last-child\").click();\n",
+          "afterLength": 33
+        },
+        {
+          "start": 21825,
+          "before": "      await page.locator('.received-item-screen > button:last-child').click();\n",
+          "afterLength": 35
+        },
+        {
+          "start": 3599,
+          "before": "      await page.setViewportSize({ width: 1280, height: 720 });\n      await page.evaluate(async () => {\n        await window.__comradeCandidateTest.game.changeScene(\"scene.chapter1.apartment\");\n      });\n",
+          "afterLength": 166
+        },
+        {
+          "start": 2679,
+          "before": "        for (const language of [\"bg\", \"en\"]) {\n          await page.evaluate(async (language) => {\n            const { game } = window.__comradeCandidateTest;\n            await game.changeScene(\"scene.chapter1.village_square\");\n            game.localization.setLanguage(language);\n            game.useTarget(game.currentScene.interactables.find((entry) => entry.id === \"hotspot.square.mehana_menu\"));\n            game.renderUi();\n          }, language);\n          const close = page.locator(\".dialogue-choice-list button\");\n          const panelBounds = await page.locator(\".dialogue-panel\").boundingBox();\n          const closeBounds = await close.boundingBox();\n          assert.ok(closeBounds.y >= panelBounds.y);\n          assert.ok(closeBounds.y + closeBounds.height <= panelBounds.y + panelBounds.height);\n          await page.locator(\".dialogue-menu-entries p\").last().scrollIntoViewIfNeeded();\n          await close.click({ timeout: 2000 });\n          assert.equal(await page.locator(\".dialogue-panel\").count(), 0);\n          assert.equal(await page.evaluate(() => window.__comradeCandidateTest.game.dialogue.current), null);\n          assert.equal(await page.locator(\".game-hud\").count(), 1);\n",
+          "afterLength": 902
+        },
+        {
+          "start": 2411,
+          "before": "    await t.test(\"square menu stays readable and can be closed in both languages at different viewport sizes\", async () => {\n      for (const viewport of [{ width: 1280, height: 720 }, { width: 640, height: 360 }, { width: 390, height: 844 }]) {\n",
+          "afterLength": 222
+        },
+        {
+          "start": 0,
+          "before": "",
+          "afterLength": 72
+        },
         {
           "start": 39376,
           "before": "",
@@ -587,12 +672,32 @@
           "before": "      choose(\"dialogue.journalist\", \"registration.ask_evidence\");\n      await game.changeScene(\"scene.chapter1.mehana\");\n      choose(\"dialogue.mehana_waiter\", \"registration.kiro_receipt\");\n      await game.changeScene(\"scene.chapter1.village_square\");\n      game.useInventoryItemOnTarget(\"item.suspicious_receipt\", find(game.currentScene.npcs, \"npc.journalist\"));\n"
         }
       ],
-      "scope": "Exact local R58 HUD controls/grid and real UI test migration, restoring immutable accepted historical bytes; unknown edits still reject."
+      "scope": "Approved R65 clean item views, exact accepted vector icons, seamless ears and real UI route checks."
     },
     "test/mehana-bottle-browser.test.js": {
       "beforeSHA256": "d49a1e66bc503deb7b7ea066592a7618e97162c2fd7f73194edd5261a1c36a11",
-      "afterSHA256": "8c19eb622a8366bf52f9341e2865e91181cbca9057807a3ca0b612e31531dafe",
+      "afterSHA256": "d277322bdd4d603daac3c344e971495c666192a2502efe23308513c3d182a566",
       "splices": [
+        {
+          "start": 10629,
+          "before": "   const waterInspectInventory=(await snapshot()).inventory;await canvas.evaluate(c=>c.dispatchEvent(new Event('webglcontextlost',{cancelable:true})));await page.locator('.item-model-viewer[data-model-state=error]').waitFor();assert.equal(await page.locator('.item-model-viewer img').count(),0,'no static substitute for failed native inspection');assert.equal(await page.locator('.item-model-viewer canvas').count(),0,'failed WebGL canvas is released');await page.locator('.item-model-status').waitFor();await shot('water-model-unavailable');await page.locator('.received-item-screen > button:last-child').click();assert.deepEqual((await snapshot()).inventory,waterInspectInventory);\n",
+          "afterLength": 640
+        },
+        {
+          "start": 8791,
+          "before": "   const inspectInventory=(await snapshot()).inventory;await page.locator('.item-model-viewer canvas').evaluate(c=>c.dispatchEvent(new Event('webglcontextlost',{cancelable:true})));await page.locator('.item-model-viewer[data-model-state=error]').waitFor();assert.equal(await page.locator('.item-model-viewer img').count(),0,'no static substitute for failed native inspection');assert.equal(await page.locator('.item-model-viewer canvas').count(),0,'failed WebGL canvas is released');await page.locator('.item-model-status').waitFor();await shot('empty-model-unavailable');await page.locator('.received-item-screen > button:last-child').click();assert.deepEqual((await snapshot()).inventory,inspectInventory);\n",
+          "afterLength": 665
+        },
+        {
+          "start": 7721,
+          "before": "   await page.locator('.received-item-screen > button:last-child').click();await reload();\n",
+          "afterLength": 47
+        },
+        {
+          "start": 0,
+          "before": "",
+          "afterLength": 55
+        },
         {
           "start": 7757,
           "before": "   await itemAction('item.sunflower_oil','ui.inventory.use_on_self');assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.inventory.has('item.sunflower_oil')),true);\n",
@@ -649,7 +754,7 @@
           "before": "   const itemAction=async(id,key)=>{await page.locator('[data-item-id=\"'+id+'\"]').click();const label=await page.evaluate(key=>window.__comradeCandidateTest.game.t(key),key);await page.locator('.inventory-item-actions').getByRole('button',{name:label,exact:true}).click();};\n"
         }
       ],
-      "scope": "Exact local R58 HUD controls/grid and real UI test migration, restoring immutable accepted historical bytes; unknown edits still reject."
+      "scope": "Approved R65 clean item views, exact accepted vector icons, seamless ears and real UI route checks."
     },
     "test/mehana-bottle.test.js": {
       "beforeSHA256": "2cf9750b7ead97fceee1342ef49919f675c82fa6ed7dab2e672be5a33fabce9d",
@@ -1293,8 +1398,33 @@
     },
     "test/engine.test.js": {
       "beforeSHA256": "41e7557af1552035f9812738f98acebe0cfcd3cf9960bedbaaf541a8add95602",
-      "afterSHA256": "a0ae888d4890272f351a184a81ace159813752b64f6bcb96e677ead59a086bb9",
+      "afterSHA256": "968c543b4124b179a3df39fb17a3db097c6362a500438f7da2dc78f8fd1aa4ec",
       "splices": [
+        {
+          "start": 24387,
+          "before": "  assert.equal(openedDialogue, \"dialogue.square.mehana_menu\");\n",
+          "afterLength": 57
+        },
+        {
+          "start": 24324,
+          "before": "  game.useTarget({ useDialogueId: \"dialogue.square.mehana_menu\" });\n",
+          "afterLength": 62
+        },
+        {
+          "start": 23897,
+          "before": "  const menuDialogue = chapter1.dialogues.find((dialogue) => dialogue.id === menu.useDialogueId);\n  assert.equal(menuDialogue.nodes.start.entries.length, 9);\n",
+          "afterLength": 1
+        },
+        {
+          "start": 23549,
+          "before": "  assert.equal(menu.useDialogueId, \"dialogue.square.mehana_menu\");\n",
+          "afterLength": 94
+        },
+        {
+          "start": 23167,
+          "before": "test(\"village square mehana menu uses the authored editor geometry and bilingual menu copy\", () => {\n  const scene = chapter1.scenes.find((candidate) => candidate.id === \"scene.chapter1.village_square\");\n",
+          "afterLength": 208
+        },
         {
           "start": 4400,
           "before": "",
@@ -1316,7 +1446,7 @@
           "before": "  assert.equal(game.inventoryUseItemId, null);\n"
         }
       ],
-      "scope": "Exact approved R55 cursor and R56 native-item inspection changes before immutable historical comparisons; no baseline hash replacement or unknown-byte exclusion."
+      "scope": "Approved R65 clean item views, exact accepted vector icons, seamless ears and real UI route checks."
     },
     "test/poster-paper-p3.test.js": {
       "beforeSHA256": "9f37dfbe9c91a44b7f6ba75e7226a13315d3c618259dd11f8d256a915a1da5f6",
@@ -1407,9 +1537,34 @@
       "scope": "Exact approved R55 cursor and R56 native-item inspection changes before immutable historical comparisons; no baseline hash replacement or unknown-byte exclusion."
     },
     "test/received-item-model.test.js": {
-      "afterSHA256": "175f9486819a53fed14397efc50854656d904e3da7d581882b48999c6fa9fb5c",
+      "afterSHA256": "d4d24a3b0c02a22d50a679c78a82f899c152cc3f0e8b8cc9f0c5f5f4efcdff7f",
       "beforeSHA256": "9bf6ee53417bc131624822a615bb75d1f1fb529fdc3b236e7bd5a7d1c4a361ec",
       "splices": [
+        {
+          "start": 8456,
+          "before": "    await page.locator('.received-item-screen > button:last-child').click();\n",
+          "afterLength": 33
+        },
+        {
+          "start": 7560,
+          "before": "    await page.locator('.received-item-screen > button:last-child').click();release();\n",
+          "afterLength": 43
+        },
+        {
+          "start": 6865,
+          "before": "      await page.locator('.received-item-screen > button:last-child').click();\n",
+          "afterLength": 35
+        },
+        {
+          "start": 3313,
+          "before": "      assert.equal(await page.locator('.received-item-screen button').count(),1,'only Put away remains');\n",
+          "afterLength": 121
+        },
+        {
+          "start": 0,
+          "before": "",
+          "afterLength": 55
+        },
         {
           "start": 8247,
           "before": "    await receive('en');await page.locator('.item-model-viewer[data-model-state=fallback]').waitFor();\n",
@@ -1436,12 +1591,22 @@
           "afterLength": 138
         }
       ],
-      "scope": "Exact approved R55 cursor and R56 native-item inspection changes before immutable historical comparisons; no baseline hash replacement or unknown-byte exclusion."
+      "scope": "Approved R65 clean item views, exact accepted vector icons, seamless ears and real UI route checks."
     },
     "src/content/chapter1/scenes.js": {
-      "afterSHA256": "aa83427cfb18aed6503f300d7a3892371a68e238b1a6166ffe751280fdac1170",
+      "afterSHA256": "8b41cc7a043bc09922e1a85a9cef5751428d251f14966a2df56c6d22df700e1f",
       "beforeSHA256": "61848e829c70d4733e68a65e4493a6cbaa0feea2fbc69b4e9ebef451c3e686b4",
       "splices": [
+        {
+          "start": 14596,
+          "before": "        useDialogueId: \"dialogue.square.mehana_menu\"\n",
+          "afterLength": 33
+        },
+        {
+          "start": 9711,
+          "before": "    foregroundLayers: sceneLayerGeometry[\"scene.chapter1.village_square\"]?.foregroundLayers || [],\n",
+          "afterLength": 246
+        },
         {
           "start": 22387,
           "before": "          ),\n          {\n            itemId: \"item.glass_of_water\",\n            requirements: {\n              flags: [\"tonyChallengeStarted\"],\n              state: { tonyVote: false }\n            },\n            effects: [],\n            messageKey: \"msg.water_tony_wrong_glass\",\n            reject: true\n          }\n",
@@ -1458,7 +1623,7 @@
           "afterLength": 0
         }
       ],
-      "scope": "Exact approved R55 cursor and R56 native-item inspection changes before immutable historical comparisons; no baseline hash replacement or unknown-byte exclusion."
+      "scope": "Approved R65 clean item views, exact accepted vector icons, seamless ears and real UI route checks."
     },
     "src/content/chapter1/dialogues.js": {
       "afterSHA256": "fcc86adfffdea495930cd0ec3257ce5aafae1e8d65dde8d4496e22f7c02f9314",
@@ -1585,9 +1750,24 @@
       "scope": "Exact local R58 HUD controls/grid and real UI test migration, restoring immutable accepted historical bytes; unknown edits still reject."
     },
     "src/styles.css": {
-      "afterSHA256": "434ff375988fd48fb6a5de57d4cd36a1e32570e20cf5a9b842696ff4f84fd62e",
+      "afterSHA256": "ae75408528eabff7c2dfa6d987d91d1dfa4ba541ce528c1e16e56b97db84860b",
       "beforeSHA256": "dbd3ff1a6b27b830de9ed7ce7db9fee340e2050fbed3461f52a2d3d936a337d5",
       "splices": [
+        {
+          "start": 32847,
+          "before": ".inventory-ear-icon { display:block; width:22px; height:22px; background-repeat:no-repeat; background-size:176px auto; filter:drop-shadow(0 1px 1px #0009); pointer-events:none; }\n",
+          "afterLength": 167
+        },
+        {
+          "start": 32331,
+          "before": ".inventory-ear-left { left:0; border-radius:65% 0 0 65%; transform:translateX(6px); }\n.inventory-ear-actions .inventory-ear-right { right:0; border-radius:0 65% 65% 0; transform:translateX(-6px); background:radial-gradient(ellipse at 30% 45%,#58452d,#30261b); }\n",
+          "afterLength": 348
+        },
+        {
+          "start": 28251,
+          "before": ".hud-verb-icon { display:block; flex:0 0 28px; width:28px; height:28px; background-repeat:no-repeat; background-size:224px auto; }\n",
+          "afterLength": 156
+        },
         {
           "start": 31393,
           "before": "",
@@ -1599,12 +1779,22 @@
           "afterLength": 3293
         }
       ],
-      "scope": "Exact local R58 HUD controls/grid and real UI test migration, restoring immutable accepted historical bytes; unknown edits still reject."
+      "scope": "Approved R65 clean item views, exact accepted vector icons, seamless ears and real UI route checks."
     },
     "test/square-redesign-browser.test.js": {
-      "afterSHA256": "b6057ec948bd7f8bfc580ff72d3755561f115cb30771942154c3036a0210a3c0",
+      "afterSHA256": "f222ad7b4530d67d4a59eddd511e393e5d62812e59d01f3c42027cbdf7ccce42",
       "beforeSHA256": "ff4154a8bb148f1fc7ea1f495932f391f2fd419d816c823a4e3f543a68053680",
       "splices": [
+        {
+          "start": 4966,
+          "before": "   await click('exit.square.to_mehana');await wait(()=>window.__comradeCandidateTest.game.currentScene.id==='scene.chapter1.mehana');await verb('talk');await click('npc.mehana_waiter');await wait(()=>!!window.__comradeCandidateTest.game.dialogue.current);await choice('fountain.kiro.choice.refill');await advance(8000);await wait(()=>window.__comradeCandidateTest.game.sceneAction.state.phase==='received');await page.locator('.received-item-screen > button:last-child').click();\n",
+          "afterLength": 436
+        },
+        {
+          "start": 0,
+          "before": "",
+          "afterLength": 55
+        },
         {
           "start": 5533,
           "before": "   const use=async item=>{await page.locator(`[data-item-id=\"${item}\"]`).click();const label=await page.evaluate(()=>window.__comradeCandidateTest.game.t('ui.inventory.use'));await page.locator('.inventory-item-actions').getByRole('button',{name:label,exact:true}).click();await click(item==='item.sunflower_oil'?'hotspot.square.statue':'hotspot.square.fountain');await settled();};\n",
@@ -1626,14 +1816,22 @@
           "afterLength": 123
         }
       ],
-      "scope": "Exact local R58 HUD controls/grid and real UI test migration, restoring immutable accepted historical bytes; unknown edits still reject."
+      "scope": "Approved R65 clean item views, exact accepted vector icons, seamless ears and real UI route checks."
     }
   },
   "snapshots": {
     "manifest": {
       "beforeSHA256": "dccd032d264f64fe454a2aba99073d8ca89c8cec632499a209441a93ca55dc6b",
-      "afterSHA256": "78947a71e0a7a79297645e003fa84ac6415eef8aebd7becbd0f524776cc1cda9",
+      "afterSHA256": "136c653de12c231b4f6425b7fa5c43987de442efd66b501999c7e972e9bca5c5",
       "patches": [
+        {
+          "path": [
+            "scenes",
+            "scene.chapter1.village_square",
+            "mehanaChalkSignR67"
+          ],
+          "exists": false
+        },
         {
           "path": [
             "items"
@@ -1875,8 +2073,283 @@
     },
     "scenes": {
       "beforeSHA256": "6a0b93cf17d02dd3a8be68acf53015fe6c4f26f54cc0eef2482ae7cf91427d49",
-      "afterSHA256": "b564a24262108b63955f60af3c4376a139ec809740e1ec2f5e4875e74b5d1ae1",
+      "afterSHA256": "36be54647e6123a09b19abeeec75c656a2684b2c812e2876fc0a368c588e6a5a",
       "patches": [
+        {
+          "path": [
+            3,
+            "interactables",
+            6
+          ],
+          "exists": true,
+          "before": {
+            "id": "hotspot.square.mehana_menu",
+            "kind": "hotspot",
+            "nameKey": "hotspot.square.mehana_menu.name",
+            "rect": {
+              "x": 168,
+              "y": 332,
+              "w": 51,
+              "h": 102
+            },
+            "lookKey": "look.square.mehana_menu",
+            "useDialogueId": "dialogue.square.mehana_menu",
+            "polygon": [
+              {
+                "x": 166,
+                "y": 324
+              },
+              {
+                "x": 220,
+                "y": 325
+              },
+              {
+                "x": 226,
+                "y": 437
+              },
+              {
+                "x": 163,
+                "y": 438
+              }
+            ]
+          }
+        },
+        {
+          "path": [
+            3,
+            "foregroundLayers"
+          ],
+          "exists": true,
+          "before": [
+            {
+              "id": "layer.square.fountain_foreground",
+              "asset": "fountainForeground",
+              "zIndex": 42,
+              "top": 0,
+              "left": 0
+            },
+            {
+              "id": "layer.square.baba_stoyanka_seated",
+              "asset": "babaStoyankaSeated",
+              "zIndex": 90,
+              "top": 330,
+              "left": 325,
+              "height": 122,
+              "animation": {
+                "asset": "babaStoyankaIdleSeated",
+                "frameWidth": 384,
+                "frameHeight": 384,
+                "frameCount": 25,
+                "columns": 5,
+                "frameDurationMs": 198,
+                "loop": true,
+                "contentBounds": {
+                  "x": 132,
+                  "y": 95,
+                  "w": 119,
+                  "h": 193
+                }
+              },
+              "stationaryLowerBody": {
+                "frameIndex": 0,
+                "fromY": 60,
+                "featherHeight": 6,
+                "animatedCutouts": [
+                  [
+                    [
+                      43.5,
+                      56
+                    ],
+                    [
+                      47.5,
+                      56
+                    ],
+                    [
+                      55.5,
+                      119
+                    ],
+                    [
+                      51.5,
+                      119
+                    ]
+                  ]
+                ]
+              },
+              "talkAnimation": {
+                "registrationBounds": {
+                  "x": 132,
+                  "y": 95,
+                  "w": 119,
+                  "h": 193
+                },
+                "asset": "babaStoyankaTalkSeated",
+                "frameWidth": 384,
+                "frameHeight": 384,
+                "frameCount": 25,
+                "columns": 5,
+                "frameDurationMs": 190,
+                "loop": true,
+                "contentBounds": {
+                  "x": 132,
+                  "y": 94,
+                  "w": 119,
+                  "h": 194
+                },
+                "npcId": "npc.baba_stoyanka"
+              },
+              "reactionAnimations": {
+                "skeptical_disapproval": {
+                  "interpolateFrames": true,
+                  "transitionDurationMs": 148,
+                  "registrationBounds": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 389,
+                    "h": 636
+                  },
+                  "asset": "babaStoyankaSkepticalSeated",
+                  "frameWidth": 389,
+                  "frameHeight": 636,
+                  "frameCount": 36,
+                  "columns": 6,
+                  "frameDurationMs": 78.70370370370371,
+                  "loop": false,
+                  "contentBounds": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 389,
+                    "h": 636
+                  },
+                  "npcId": "npc.baba_stoyanka"
+                },
+                "delighted_approval": {
+                  "interpolateFrames": true,
+                  "transitionDurationMs": 148,
+                  "registrationBounds": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 389,
+                    "h": 636
+                  },
+                  "asset": "babaStoyankaDelightedSeated",
+                  "frameWidth": 389,
+                  "frameHeight": 636,
+                  "frameCount": 36,
+                  "columns": 6,
+                  "frameDurationMs": 74.07407407407408,
+                  "loop": false,
+                  "contentBounds": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 389,
+                    "h": 636
+                  },
+                  "npcId": "npc.baba_stoyanka"
+                }
+              }
+            },
+            {
+              "id": "layer.square.journalist",
+              "asset": "journalistStanding",
+              "zIndex": 46,
+              "top": 305,
+              "left": 930,
+              "height": 220,
+              "visibleWhenTargetId": "npc.journalist",
+              "hiddenWhenState": "chapter1Completed"
+            },
+            {
+              "id": "layer.square.election_sign",
+              "asset": "electionSign",
+              "zIndex": 30,
+              "top": 448,
+              "left": 205,
+              "width": 190,
+              "visibleWhenTargetId": "exit.square.to_election_booth"
+            },
+            {
+              "id": "layer.square.shallow_water",
+              "asset": "fountainShallowWater",
+              "zIndex": 41,
+              "top": 0,
+              "left": 0,
+              "visibleWhenFlag": "fountainRepaired"
+            },
+            {
+              "id": "layer.square.kiosk_counter",
+              "asset": "kioskCounterC05",
+              "zIndex": 1,
+              "top": 0,
+              "left": 0
+            },
+            {
+              "id": "layer.square.pepa_idle",
+              "asset": "squarePepaStill",
+              "zIndex": 89,
+              "top": 315,
+              "left": 1120,
+              "width": 140,
+              "height": 140,
+              "animation": {
+                "freezeWhenPaused": true,
+                "asset": "squarePepaIdle",
+                "frameWidth": 140,
+                "frameHeight": 140,
+                "frameCount": 36,
+                "columns": 6,
+                "frameDurationMs": 122,
+                "loop": true,
+                "contentBounds": {
+                  "x": 0,
+                  "y": 0,
+                  "w": 140,
+                  "h": 140
+                }
+              }
+            },
+            {
+              "id": "layer.square.flag_wind",
+              "asset": "squareFlagWind",
+              "zIndex": 99,
+              "top": 35,
+              "left": 850,
+              "width": 80,
+              "height": 90,
+              "animation": {
+                "freezeWhenPaused": true,
+                "asset": "squareFlagWind",
+                "frameWidth": 80,
+                "frameHeight": 90,
+                "frameCount": 64,
+                "columns": 8,
+                "frameDurationMs": 57,
+                "loop": true,
+                "contentBounds": {
+                  "x": 0,
+                  "y": 0,
+                  "w": 80,
+                  "h": 90
+                }
+              }
+            },
+            {
+              "id": "layer.square.incumbent_poster",
+              "asset": "incumbentPosterR40",
+              "left": 0,
+              "top": 0,
+              "zIndex": 0.9,
+              "hiddenWhenFlag": "campaignPosted"
+            },
+            {
+              "id": "layer.square.campaign_poster",
+              "asset": "mitkoPosterR45",
+              "left": 0,
+              "top": 0,
+              "zIndex": 0.9,
+              "visibleWhenFlag": "campaignPosted"
+            }
+          ]
+        },
         {
           "path": [
             3
@@ -11337,5 +11810,5 @@
       ]
     }
   },
-  "currentScope": "R58 exact local HUD layout and real UI test bridge over published PR82; historical before hashes and rejection remain unchanged."
+  "currentScope": "R65 clean views, vector UI icons and joined ears; historical before hashes unchanged."
 }

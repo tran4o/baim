@@ -1,0 +1,41 @@
+{
+  "scope": "Exact accepted frame-zero vectors for static UI icons; original animated PNGs and48-frame motion remain unchanged.",
+  "records": [
+    {
+      "verb": "look",
+      "id": "LOOK-A",
+      "frame": 0,
+      "source": "assets_src/ui/action-cursors/look-frames.json",
+      "sourceSHA256": "ac703aa9468c1637d2fc81f839a96031701862f4f25efefcaa17ccb88e650555",
+      "runtime": "assets/ui/action-cursors/icons/look.svg",
+      "runtimeSHA256": "dad67e67d9a820b6a34992048122e898e967815bfb91f611c934c2797154a941"
+    },
+    {
+      "verb": "talk",
+      "id": "SPEAK-A",
+      "frame": 0,
+      "source": "assets_src/ui/action-cursors/talk-frames.json",
+      "sourceSHA256": "fc64687c70b5b3193f58a4e8da73f47db7a414ea46c0ad080a8ad8ca3ec105fb",
+      "runtime": "assets/ui/action-cursors/icons/talk.svg",
+      "runtimeSHA256": "0f7521d5c49e798cad848975ce4ba49e7a25c78d46722c3b59e53671e1b33bd4"
+    },
+    {
+      "verb": "use",
+      "id": "USE-I",
+      "frame": 0,
+      "source": "assets_src/ui/action-cursors/use-frames.json",
+      "sourceSHA256": "aa36851845c11af8f12b91ff29ab95e713146c3a48be2a11b3ac8f583565a73e",
+      "runtime": "assets/ui/action-cursors/icons/use.svg",
+      "runtimeSHA256": "58377108712a874b9020a98b0739ba47b1e1ef466f556bfec6caab7e1bac1a6c"
+    },
+    {
+      "verb": "take",
+      "id": "TAKE-A",
+      "frame": 0,
+      "source": "assets_src/ui/action-cursors/take-frames.json",
+      "sourceSHA256": "a4773c0d67ed1e6903f35c88a8deb294406c6b68400ca5ab3979fd1a4b09510e",
+      "runtime": "assets/ui/action-cursors/icons/take.svg",
+      "runtimeSHA256": "5b8d64c1a31560b11bbaa8c4ce5e2767dbd9b5bd6b69947cb961045c5157b96e"
+    }
+  ]
+}

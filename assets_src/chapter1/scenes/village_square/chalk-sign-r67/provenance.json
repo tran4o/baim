@@ -1,0 +1,38 @@
+{
+  "tool": "built-in image_gen",
+  "source": "assets_src/chapter1/scenes/village_square/chalk-sign-r67/face-source.png",
+  "sourceSHA256": "50029d6373d88b026c3bb6081025439e1288c0aa8d1f8104ac71f513c7b4fd95",
+  "runtime": "assets/chapter1/scenes/village_square/chalk-sign-r67.png",
+  "runtimeSHA256": "4764e38517a8da80e0b5e5bb9fd495402697f2a2fccaff2f839baf0ece1dcc7e",
+  "words": [
+    "ракия",
+    "олио",
+    "пирони",
+    "патрони"
+  ],
+  "boardFaceQuad": [
+    [
+      169,
+      327
+    ],
+    [
+      220,
+      330
+    ],
+    [
+      227,
+      439
+    ],
+    [
+      170,
+      444
+    ]
+  ],
+  "left": 167,
+  "top": 326,
+  "width": 64,
+  "height": 124,
+  "scale": 4,
+  "method": "Mechanical perspective projection of generated face texture only; existing background and wooden frame unmodified",
+  "prompt": "Existing four Bulgarian words, hand-written white chalk with uneven slender strokes, dusty edges, pressure variation and subtle erased smudges, on a dark charcoal board face; use owner reference only for texture/lettering style, no new wording or frame."
+}

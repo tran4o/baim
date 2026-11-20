@@ -221,7 +221,8 @@ const rawScenes = [
       mehanaDoor: { x: 120, y: 465 },
       municipalityDoor: { x: 965, y: 475 }
     },
-    foregroundLayers: sceneLayerGeometry["scene.chapter1.village_square"]?.foregroundLayers || [],
+    foregroundLayers: [...(sceneLayerGeometry["scene.chapter1.village_square"]?.foregroundLayers || []),
+      { id: "layer.square.mehana_chalk_sign_r67", asset: "mehanaChalkSignR67", left: 167, top: 326, width: 64, height: 124, zIndex: 1000 }],
     exits: [
       {
         id: "exit.square.to_apartment",
@@ -354,7 +355,7 @@ const rawScenes = [
         nameKey: "hotspot.square.mehana_menu.name",
         rect: { x: 168, y: 332, w: 51, h: 102 },
         lookKey: "look.square.mehana_menu",
-        useDialogueId: "dialogue.square.mehana_menu"
+        plainUseAvailable: false
       }
     ],
     npcs: [
