@@ -9,6 +9,7 @@ import { sceneZDepthT } from "./DepthMath.js";
 import { drawSceneEffect } from "./SceneEffects.js";
 import {findSceneSpeaker} from './SceneGeometry.js';
 import { drawTelevisionScreen } from './TelevisionScreen.js';
+import { TelevisionClip } from './TelevisionClip.js';
 
 const PLAYER_SHADOW_FULL_SIZE_Y_OFFSET = -4;
 
@@ -293,8 +294,7 @@ export class Renderer {
     if (this.ambientSceneId !== scene.id) { this.ambientSceneId = scene.id; this.ambientClocks = new Map(); }
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     const hasRealBackground = this.drawBackground(scene);
-    const television=scene.interactables?.find(target=>target.television)?.television;
-    if(television){const key='television:'+television.flag;if(this.game.state.flags[television.flag]){const clock=ambientLayerClock(this.ambientClocks.get(key),this.game.lastTime||0,Boolean(this.game.paused||this.game.menuOpen||this.game.objectCloseup||this.game.puzzleOpen),true);this.ambientClocks.set(key,clock);drawTelevisionScreen(ctx,television.screen,clock.elapsed,k=>this.game.t(k));}else this.ambientClocks.delete(key);}
+    this.drawTelevision(scene);
     const actors = scene.playerMode !== "closeup" && (!this.game.editMode || this.game.sceneEditor?.shouldRenderPlayer())
       ? [this.game.player]
       : [];
@@ -554,6 +554,24 @@ export class Renderer {
     ctx.font = "18px Arial";
     ctx.fillText("Painted background placeholder: replace with 1280x720 runtime art", 36, 84);
     return false;
+  }
+
+  drawTelevision(scene) {
+    const television = scene.interactables?.find(target => target.television)?.television;
+    const powered = Boolean(television && this.game.state.flags[television.flag]);
+    const paused = Boolean(this.game.paused || this.game.menuOpen || this.game.objectCloseup || this.game.puzzleOpen);
+    if (powered && television.clip && !this.televisionClip) this.televisionClip = new TelevisionClip(this.canvas.ownerDocument);
+    this.televisionClip?.sync(television?.clip, powered, paused);
+    if (!television) return;
+    const key = 'television:' + television.flag;
+    if (!powered) {
+      this.ambientClocks.delete(key);
+      return;
+    }
+    if (television.clip && this.televisionClip?.draw(this.ctx, television.screen, this.game.assets.getSceneImage(scene.id, 'background'))) return;
+    const clock = ambientLayerClock(this.ambientClocks.get(key), this.game.lastTime || 0, paused, true);
+    this.ambientClocks.set(key, clock);
+    drawTelevisionScreen(this.ctx, television.screen, clock.elapsed, key => this.game.t(key));
   }
 
   drawSceneZLayers(scene, actors) {

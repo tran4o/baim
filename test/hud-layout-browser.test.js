@@ -71,7 +71,9 @@ test('HUD keeps all actions, one language switch and accessible upward three-by-
           assert.equal(overlap(meters, expanded), false); assert.equal(overlap(action, expanded), false); assert.equal(overlap(action, meters), false);
           if (count) {
             const last = await inventoryItem(page, ids[count - 1]); await last.hover();
-            assert.equal(await page.locator('.inventory-hover-label').isVisible(), true);
+            assert.equal(await page.locator('.inventory-hover-label,.inventory-tooltip').count(), 0);
+            assert.equal(await last.getAttribute('title'), null);
+            assert.ok(await last.getAttribute('aria-label'));
             await last.click();
             assert.equal(await page.locator('.inventory-item-actions').isVisible(), true);
             const before = await page.locator('.inventory-dock').evaluate(e => e.scrollTop);

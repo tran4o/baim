@@ -21,7 +21,7 @@ test('AD current geometry preserves reachable entry, photo, cupboard and window 
  const exit=a.exits.find(t=>t.id==='exit.apartment.to_square');assert.deepEqual(exit.entryApproach,{x:990,y:510});
  const points=[exit.entryApproach,a.interactables.find(t=>t.id==='window').actions.use.approach,...a.interactables.filter(t=>['hotspot.apartment.adult_photo','hotspot.apartment.wardrobe'].includes(t.id)).map(t=>t.interactionApproach)];
  for(const p of points){assert.ok(isWalkable(a,p),JSON.stringify(p));assert.ok(findWalkPath(a,a.playerStart,p).length,JSON.stringify(p));}
- assert.equal(findTargetAt(a,{x:480,y:170})?.id,'hotspot.apartment.adult_photo');
+ assert.equal(findTargetAt(a,{x:480,y:170},target=>!target.requirements||requirementsMet(target.requirements,ctx()))?.id,'hotspot.apartment.adult_photo');
  assert.notEqual(findTargetAt(a,{x:1200,y:500})?.id,'hotspot.apartment.photo_cupboard');
  assert.equal(findTargetAt(a,{x:850,y:250})?.id,'hotspot.apartment.wardrobe');
  const paths=imageAssetPaths(assetManifest.items['item.mitko_child_photo']);assert.ok(paths.includes(assetManifest.items['item.mitko_child_photo'].icon));

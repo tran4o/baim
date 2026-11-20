@@ -672,23 +672,212 @@ export const apartmentObjectGeometry = {
     "window.open": {
       "id": "window.open",
       "polygon": [
-  {
-    "x": 300,
-    "y": 80
-  },
-  {
-    "x": 390,
-    "y": 80
-  },
-  {
-    "x": 390,
-    "y": 315
-  },
-  {
-    "x": 300,
-    "y": 315
-  }
-]
+        {
+          "x": 300,
+          "y": 80
+        },
+        {
+          "x": 390,
+          "y": 80
+        },
+        {
+          "x": 390,
+          "y": 315
+        },
+        {
+          "x": 300,
+          "y": 315
+        }
+      ]
+    },
+    "hotspot.apartment.icon": {
+      "id": "hotspot.apartment.icon",
+      "polygon": [
+        {
+          "x": 12,
+          "y": 52
+        },
+        {
+          "x": 82,
+          "y": 52
+        },
+        {
+          "x": 82,
+          "y": 122
+        },
+        {
+          "x": 12,
+          "y": 122
+        }
+      ]
+    },
+    "hotspot.apartment.lamp": {
+      "id": "hotspot.apartment.lamp",
+      "polygon": [
+        {
+          "x": 550,
+          "y": 0
+        },
+        {
+          "x": 695,
+          "y": 0
+        },
+        {
+          "x": 695,
+          "y": 58
+        },
+        {
+          "x": 550,
+          "y": 58
+        }
+      ]
+    },
+    "hotspot.apartment.suitcase": {
+      "id": "hotspot.apartment.suitcase",
+      "polygon": [
+        {
+          "x": 771,
+          "y": 38
+        },
+        {
+          "x": 881,
+          "y": 38
+        },
+        {
+          "x": 881,
+          "y": 84
+        },
+        {
+          "x": 771,
+          "y": 84
+        }
+      ]
+    },
+    "hotspot.apartment.bag": {
+      "id": "hotspot.apartment.bag",
+      "polygon": [
+        {
+          "x": 881,
+          "y": 35
+        },
+        {
+          "x": 965,
+          "y": 35
+        },
+        {
+          "x": 965,
+          "y": 85
+        },
+        {
+          "x": 881,
+          "y": 85
+        }
+      ]
+    },
+    "hotspot.apartment.plant": {
+      "id": "hotspot.apartment.plant",
+      "polygon": [
+        {
+          "x": 128,
+          "y": 230
+        },
+        {
+          "x": 189,
+          "y": 230
+        },
+        {
+          "x": 189,
+          "y": 304
+        },
+        {
+          "x": 128,
+          "y": 304
+        }
+      ]
+    },
+    "hotspot.apartment.radiator": {
+      "id": "hotspot.apartment.radiator",
+      "polygon": [
+        {
+          "x": 185,
+          "y": 305
+        },
+        {
+          "x": 301,
+          "y": 305
+        },
+        {
+          "x": 301,
+          "y": 357
+        },
+        {
+          "x": 185,
+          "y": 357
+        }
+      ]
+    },
+    "hotspot.apartment.empty_frame": {
+      "id": "hotspot.apartment.empty_frame",
+      "polygon": [
+        {
+          "x": 435,
+          "y": 108
+        },
+        {
+          "x": 540,
+          "y": 108
+        },
+        {
+          "x": 540,
+          "y": 228
+        },
+        {
+          "x": 435,
+          "y": 228
+        }
+      ]
+    },
+    "hotspot.apartment.wall_rug": {
+      "id": "hotspot.apartment.wall_rug",
+      "polygon": [
+        {
+          "x": 1152,
+          "y": 58
+        },
+        {
+          "x": 1268,
+          "y": 58
+        },
+        {
+          "x": 1268,
+          "y": 278
+        },
+        {
+          "x": 1152,
+          "y": 278
+        }
+      ]
+    },
+    "hotspot.apartment.patriot_photos": {
+      "id": "hotspot.apartment.patriot_photos",
+      "polygon": [
+        {
+          "x": 1090,
+          "y": 280
+        },
+        {
+          "x": 1275,
+          "y": 280
+        },
+        {
+          "x": 1275,
+          "y": 372
+        },
+        {
+          "x": 1090,
+          "y": 372
+        }
+      ]
     }
   }
 };

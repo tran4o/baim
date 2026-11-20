@@ -5,6 +5,7 @@ import { createServer } from 'node:net';
 import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
 import { mousePuzzleSlide } from './helpers/puzzle-mouse.js';
+import { chooseHudVerb } from './helpers/hud-ui.js';
 
 test('3D cupboard puzzle, persisted progress and Pepa transactions work in BG/EN without duplicate rewards', {timeout:180000}, async()=>{
   const probe=createServer(); await new Promise(r=>probe.listen(0,'127.0.0.1',r)); const port=probe.address().port; await new Promise(r=>probe.close(r));
@@ -18,7 +19,33 @@ test('3D cupboard puzzle, persisted progress and Pepa transactions work in BG/EN
       const context=await browser.newContext({viewport:{width:1280,height:720},serviceWorkers:'block'}),page=await context.newPage(),errors=[];
       page.on('pageerror',e=>errors.push(String(e)));
       await page.goto(`http://127.0.0.1:${port}/?play=1&testHarness=1`);await page.evaluate(()=>window.__comradeCandidateTest.ready);
-      await page.evaluate(lang=>{const g=window.__comradeCandidateTest.game;g.setLanguage(lang);g.useTarget(g.currentScene.interactables.find(t=>t.objectCloseup));},lang);
+      await page.evaluate(lang=>{const g=window.__comradeCandidateTest.game;g.setLanguage(lang);g.selectVerb('use');g.useTarget(g.currentScene.interactables.find(t=>t.objectCloseup));},lang);
+      const wardrobe = page.locator('.object-closeup-screen');
+      assert.equal(await wardrobe.locator('[data-action]').count(), 0);
+      assert.equal(await wardrobe.locator('[data-compartment]').count(), 0);
+      await chooseHudVerb(page, 'look');
+      const compartments = wardrobe.locator('[data-compartment]');
+      assert.equal(await compartments.count(), 7);
+      const lines = new Set();
+      for (const compartment of await compartments.all()) {
+        await compartment.click();
+        const line = wardrobe.locator('.speech-bubble .speech-text');
+        assert.ok(await line.isVisible());
+        lines.add(await line.textContent());
+      }
+      assert.equal(lines.size, 7);
+      await wardrobe.locator('.speech-bubble').waitFor({ state: 'detached', timeout: 10000 });
+      const viewport = wardrobe.locator('.object-closeup-viewport');
+      const scrollBefore = await viewport.evaluate(node => node.scrollTop);
+      await viewport.click({ button: 'right', position: { x: 440, y: 220 } });
+      assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.selectedVerb), 'talk');
+      assert.equal(await viewport.evaluate(node => node.scrollTop), scrollBefore);
+      await viewport.click({ button: 'right', position: { x: 440, y: 220 } });
+      assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.selectedVerb), 'use');
+      assert.equal(await page.locator('.photo-puzzle-screen').count(), 0);
+      await wardrobe.locator('[data-exit=left]').click({position:{x:12,y:12}});
+      await wardrobe.waitFor({state:'detached'});
+      await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;g.selectVerb('use');g.useTarget(g.currentScene.interactables.find(t=>t.objectCloseup));});
       await page.locator('.object-closeup-screen [data-item-id="hotspot.apartment.wardrobe_photo_puzzle"]:enabled').click();
       await page.locator('.photo-puzzle-view[data-model-state=ready]').waitFor();
       assert.ok(Number(await page.locator('.photo-puzzle-view').getAttribute('data-triangles'))>100);
@@ -28,7 +55,7 @@ test('3D cupboard puzzle, persisted progress and Pepa transactions work in BG/EN
       await page.keyboard.press('Escape');assert.equal(await page.locator('.photo-puzzle-screen').count(),0);
       await page.reload();await page.evaluate(()=>window.__comradeCandidateTest.ready);
       assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.state.photoPuzzle.moves),1);
-      await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;g.useTarget(g.currentScene.interactables.find(t=>t.objectCloseup));});
+      await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;g.selectVerb('use');g.useTarget(g.currentScene.interactables.find(t=>t.objectCloseup));});
       await page.locator('.object-closeup-screen [data-item-id="hotspot.apartment.wardrobe_photo_puzzle"]:enabled').click();
       await page.locator('.photo-puzzle-view[data-model-state=ready]').waitFor();
       for(const [piece,dx,dy] of [['red3',-1,0],['yellow4',0,-1],['red4',1,0],['blue',0,1]]) {
@@ -36,7 +63,7 @@ test('3D cupboard puzzle, persisted progress and Pepa transactions work in BG/EN
       }
       assert.equal(await page.locator('.photo-puzzle-screen').count(),0);
       assert.equal(await page.evaluate(()=>window.__comradeCandidateTest.game.state.inventory.filter(i=>i==='item.mitko_child_photo').length),1);
-      await page.locator('.object-closeup-screen [data-action=close]').click();
+      await page.keyboard.press('Escape');
       await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;g.takeTarget(g.currentScene.interactables.find(t=>t.id==='hotspot.apartment.adult_photo'));});
       await page.evaluate(async()=>{
         const g=window.__comradeCandidateTest.game;g.inventory.add('item.accordion');await g.changeScene('scene.chapter1.village_square');

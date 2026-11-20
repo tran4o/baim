@@ -1,6 +1,6 @@
 import {mountObjectProp} from './ObjectPropView.js';
 // Reusable modal for a content-defined interior and collectible item layers.
-export function createObjectCloseup({ definition, text, backgroundSrc, items, onTake, onClose, scrollTop = 0, onScroll = () => {}, statusKey = null }) {
+export function createObjectCloseup({ definition, text, backgroundSrc, items, onTake, onClose, scrollTop = 0, onScroll = () => {}, statusKey = null, verbControl = null, action, onCycleAction, onLook }) {
   const overlay = document.createElement('section');
   const propViews=[];
   const room=definition.presentation==='room';
@@ -29,20 +29,57 @@ export function createObjectCloseup({ definition, text, backgroundSrc, items, on
   if(backgroundSrc){const image=document.createElement('img');image.src=backgroundSrc;image.alt='';image.style.cssText='width:100%;height:100%;object-fit:contain;display:block;';stage.append(image);}
   else {const label=document.createElement('p');label.textContent=text(definition.placeholderKey);label.style.cssText='margin:0;padding:18px;color:#e2cc91;';stage.append(label);stage.dataset.placeholder='true';}
   if(room)for(const zone of definition.exitZones||[]){const exit=document.createElement('button');exit.type='button';exit.className='object-closeup-exit';exit.dataset.exit=zone.side;exit.setAttribute('aria-label',text('wardrobe.back'));exit.title=text('wardrobe.back');exit.style.cssText=`position:absolute;left:${zone.x}%;top:0;width:${zone.w}%;height:100%;background:transparent;border:0;padding:0;cursor:default;`;exit.addEventListener('click',onClose);stage.append(exit);}
+  if (onCycleAction) overlay.addEventListener('contextmenu', event => {
+    event.preventDefault();
+    onScroll(viewport.scrollTop);
+    onCycleAction();
+  });
+  for (const { id, rect } of action === 'look' ? definition.compartments || [] : []) {
+    const hotspot = document.createElement('button');
+    hotspot.type = 'button';
+    hotspot.className = 'object-closeup-compartment';
+    hotspot.dataset.compartment = id;
+    hotspot.setAttribute('aria-label', text('wardrobe.compartment.' + id + '.name'));
+    Object.assign(hotspot.style, {
+      left: rect.x + '%', top: rect.y + '%', width: rect.w + '%', height: rect.h + '%'
+    });
+    hotspot.addEventListener('click', () => {
+      onScroll(viewport.scrollTop);
+      onLook('wardrobe.compartment.' + id + '.look');
+    });
+    stage.append(hotspot);
+  }
   for(const item of items){const button=document.createElement('button');button.type='button';button.dataset.itemId=item.id;button.title=text(item.actionKey || 'verb.take')+' '+text(item.nameKey);button.setAttribute('aria-label',button.title);button.dataset.propMode=definition.propMode || 'image';
     button.className='object-closeup-item';button.dataset.closeupAction=item.actionKey==='verb.use'?'use':'take';
     const r=item.rect;button.style.cssText=`position:absolute;left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%;padding:0;border:0;background:transparent;cursor:pointer;`;
     if(item.modelUrl){button.disabled=true;const host=document.createElement('span');host.className='object-prop-view';host.style.cssText='display:block;width:100%;height:100%;';button.append(host);propViews.push(mountObjectProp(host,{modelUrl:item.modelUrl,hiddenNodes:item.hiddenNodes,cameraDirection:item.cameraDirection,fitBounds:item.fitBounds,verticalAlign:item.verticalAlign,shelfPose:item.shelfPose,text:{name:text(item.nameKey),loading:text('wardrobe.prop_loading'),unavailable:text('wardrobe.prop_unavailable')},onReady:()=>{button.disabled=false;},onError:()=>{button.disabled=true;}}));}
-    else{const image=document.createElement('img');image.src=item.imageSrc;image.alt=text(item.nameKey);image.style.cssText='width:100%;height:100%;object-fit:contain;';button.append(image);}button.addEventListener('click',()=>onTake(item.id));stage.append(button);
+    else{const image=document.createElement('img');image.src=item.imageSrc;image.alt=text(item.nameKey);image.style.cssText='width:100%;height:100%;object-fit:contain;';button.append(image);}
+    if (definition.compartments && item.actionKey !== 'verb.' + action) {
+      button.style.pointerEvents = 'none';
+      button.tabIndex = -1;
+      button.setAttribute('aria-hidden', 'true');
+      button.removeAttribute('title');
+    } else {
+      button.addEventListener('click', () => {
+        onScroll(viewport.scrollTop);
+        onTake(item.id);
+      });
+    }
+    stage.append(button);
   }
   for(const decoration of definition.decorations||[]){const image=document.createElement('img'),r=decoration.rect;image.className='object-closeup-decoration';image.src=decoration.imageUrl;image.alt='';image.draggable=false;image.style.cssText=`position:absolute;left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%;object-fit:fill;pointer-events:none;`;stage.append(image);}
   if(backgroundSrc)for(const region of definition.foregroundRegions||[]){const mask=document.createElement('img');mask.className='object-closeup-foreground';mask.src=backgroundSrc;mask.alt='';mask.style.cssText=`position:absolute;inset:0;width:100%;height:100%;pointer-events:none;clip-path:${region};`;stage.append(mask);}
   const status=document.createElement('p');status.className='object-closeup-status';status.setAttribute('role','status');status.textContent=text(statusKey || (room?definition.roomHintKey:null) || definition.hintKey || (items.length?'wardrobe.take_hint':'wardrobe.no_accordion'));panel.append(status);
   const navigation=room?document.createElement('nav'):panel;if(room){navigation.setAttribute('aria-label',text(definition.titleKey));navigation.style.cssText='position:absolute;right:14px;bottom:12px;display:flex;gap:6px;z-index:2;';panel.append(navigation);status.style.cssText='position:absolute;left:14px;bottom:12px;margin:0;padding:8px 10px;max-width:62%;background:#201912df;font-size:14px;pointer-events:none;z-index:2;';}
   if(room)status.style.cssText='position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;';
+  if (definition.compartments) {
+    navigation.remove();
+    if (verbControl) panel.append(verbControl);
+  } else {
   for(const [direction,delta]of [['up',-220],['down',220]]){const button=document.createElement('button');button.type='button';button.dataset.action=direction;button.textContent=text('wardrobe.'+direction);button.addEventListener('click',()=>viewport.scrollBy({top:delta,behavior:'auto'}));navigation.append(button);}
   const close=document.createElement('button');close.type='button';close.dataset.action='close';close.textContent=text(room?'wardrobe.back':'ui.inventory.close');close.addEventListener('click',onClose);navigation.append(close);
-  const keydown=event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();onClose();}else if(event.key==='Tab'){const controls=[...panel.querySelectorAll('button,.object-closeup-viewport')].filter(c=>!c.disabled),i=controls.indexOf(document.activeElement);controls[(i+(event.shiftKey?-1:1)+controls.length)%controls.length]?.focus();event.preventDefault();}else if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End'].includes(event.key)){event.preventDefault();viewport.scrollTop=event.key==='Home'?0:event.key==='End'?viewport.scrollHeight:viewport.scrollTop+(['ArrowUp','PageUp'].includes(event.key)?-220:220);}};
+  }
+  const keydown=event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();onClose();}else if(event.key==='Tab'){const controls=[...panel.querySelectorAll('button,.object-closeup-viewport')].filter(c=>!c.disabled&&c.tabIndex>=0),i=controls.indexOf(document.activeElement);controls[(i+(event.shiftKey?-1:1)+controls.length)%controls.length]?.focus();event.preventDefault();}else if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End'].includes(event.key)){event.preventDefault();viewport.scrollTop=event.key==='Home'?0:event.key==='End'?viewport.scrollHeight:viewport.scrollTop+(['ArrowUp','PageUp'].includes(event.key)?-220:220);}};
   panel.addEventListener('keydown',keydown);
   queueMicrotask(()=>{if(panel.isConnected){viewport.scrollTop=scrollTop;viewport.focus({preventScroll:true});}});
   return {element:overlay,dispose(){panel.removeEventListener('keydown',keydown);for(const view of propViews)view.dispose();}};

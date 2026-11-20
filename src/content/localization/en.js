@@ -1,3 +1,4 @@
+import { apartmentSceneryEn } from './chapter1ApartmentScenery.js';
 import { posterContestR40En } from './chapter1PosterContestR40.js';
 import { posterContestR39En } from './chapter1PosterContestR39.js';
 import { electionEn } from "./chapter1Election.js";
@@ -8,12 +9,27 @@ import { fountainEn } from "./chapter1Fountain.js";
 import { photoQuestEn } from './chapter1PhotoQuest.js';
 
 export const en = {
+  ...apartmentSceneryEn,
   "tv.on": "The television comes on. Local news again.",
   "tv.off": "The screen goes dark.",
   "tv.news.title": "LOCAL NEWS",
   "tv.news.line1": "WORK ON SCHEDULE.",
   "tv.news.line2": "SCHEDULE PENDING.",
   'wardrobe.inside': 'Old clothes, improbable keepsakes, an accordion on the left, and a wooden puzzle box on the right.',
+  'wardrobe.compartment.blankets.name': 'Winter blankets',
+  'wardrobe.compartment.blankets.look': 'These are my backup plan for the heating. Every winter, the plan goes into effect.',
+  'wardrobe.compartment.tracksuit.name': 'Tracksuit',
+  'wardrobe.compartment.tracksuit.look': 'My formal tracksuit. Same as my everyday one, but on a hanger.',
+  'wardrobe.compartment.trophy.name': 'Trophy and wig',
+  'wardrobe.compartment.trophy.look': 'I put a wig on the trophy. Takes a few years off it.',
+  'wardrobe.compartment.photos.name': 'Box of photographs',
+  'wardrobe.compartment.photos.look': 'I keep the photos from when my relatives were still on speaking terms.',
+  'wardrobe.compartment.puzzle.name': 'Puzzle shelf',
+  'wardrobe.compartment.puzzle.look': 'At least with this puzzle I know who’s moving my pieces.',
+  'wardrobe.compartment.bottles.name': 'Empty bottles',
+  'wardrobe.compartment.bottles.look': 'I’ve sorted them by year. The contents are harder to remember.',
+  'wardrobe.compartment.shoes.name': 'Shoes and flippers',
+  'wardrobe.compartment.shoes.look': 'Shoes for dry weather. Flippers for after they fix the road.',
   'wardrobe.objects_hint': 'Click the accordion to take it, or the wooden puzzle box to open it. The old photo box higher up is just a keepsake.',
   'wardrobe.art_pending': 'Temporary test layout. Interior artwork and the separate 3D accordion are pending approval.',
   'wardrobe.prop_pending': 'Test view: the separate 3D accordion is being prepared. This icon is temporary.',
