@@ -2,8 +2,13 @@
   "records": {
     "src/content/art/assetManifest.js": {
       "beforeSHA256": "b8a8501563e7d35731dfb1dbe3a7fbe3dd39e108e5a4c5a7bf785787a60a9fe8",
-      "afterSHA256": "3b95793515ad06692e2fc9be092a4d4e8e434eeb1a604275a15a1460cde01069",
+      "afterSHA256": "01f7976b14891085d520f3d5fa200907943d10ef97e93c496e8f72ac7220b11c",
       "splices": [
+        {
+          "start": 1332,
+          "before": "",
+          "afterLength": 280
+        },
         {
           "start": 1253,
           "before": "      diningTableAD: \"assets/chapter1/scenes/apartment/occlusion-r35/dining.png\",\n",
@@ -2623,8 +2628,18 @@
     },
     "src/content/chapter1/walkMasks.generated.js": {
       "beforeSHA256": "778a2bd260da0c86ed6101aef19dcb46dc125d0a6b8ac0848a9eb90c2bb00241",
-      "afterSHA256": "d3c9007fdb0ac36aa1f2af500f858181edf6a5024264f445e01b3ddf4f3f5788",
+      "afterSHA256": "7ab007ff81f6c43fa584999255121d6e04b340c371ae37ecfa4cf03d898116e1",
       "splices": [
+        {
+          "start": 66167,
+          "before": "      \"............................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................\",\n      \".....................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................\",\n      \"...................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................\",\n      \"..................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc................\",\n",
+          "afterLength": 266
+        },
+        {
+          "start": 60049,
+          "before": "      \"..........................ccccccccccccccccccccccccccccccccccccc.............................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...............................................\",\n      \"..........................ccccccccccccccccccccccccccccccccccccc..............................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...............................................\",\n      \"..........................ccccccccccccccccccccccccccccccccccccc...............................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..............................................\",\n      \"..........................cccccccccccccccccccccccccccccccccccc.................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..............................................\",\n      \"..........................cccccccccccccccccccccccccccccccccccc.................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.............................................\",\n      \"..........................cccccccccccccccccccccccccccccccccccc.................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.............................................\",\n      \"..........................cccccccccccccccccccccccccccccccccccc.................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc............................................\",\n      \"..........................ccccccccccccccccccccccccccccccccccccc.................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........................................\",\n      \"..........................ccccccccccccccccccccccccccccccccccccc.................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.........................................\",\n      \"...........................cccccccccccccccccccccccccccccccccccc.................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc......................................\",\n      \"..............................ccccccccccccccccccccccccccccccccc.................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....................................\",\n      \"...................................ccccccccccccccccccccccccccccc................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................................\",\n      \"........................................cccccccccccccccccccccccc................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..............................\",\n      \"............................................cccccccccccccccccccc................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........................\",\n      \"................................................cccccccccccccccc................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.........................\",\n      \"...................................................ccccccccccccc................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc......................\",\n      \"......................................................ccccccccccc..............................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.....................\",\n      \".........................................................cccccccc..............................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....................\",\n      \"...............................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..................\",\n",
+          "afterLength": 5852
+        },
         {
           "start": 56591,
           "before": "      \"............................................................................................................................................................cccccccccccccccccccccccccccccccccccccccc............................................................\",\n      \"....................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........................................................\",\n      \"...................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.........................................................\",\n      \"...................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................\",\n      \"...................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.......................................................\",\n      \"...................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc......................................................\",\n      \"...................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.....................................................\",\n      \"...................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....................................................\",\n      \"...................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...................................................\",\n      \"...................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..................................................\",\n      \"...................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................................................\",\n      \"...................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc................................................\",\n      \"...................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc................................................\",\n      \"...................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...............................................\",\n      \"....................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...............................................\",\n      \".....................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..............................................\",\n      \".....................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..............................................\",\n      \".....................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.............................................\",\n      \"....................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.............................................\",\n      \"....................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc............................................\",\n      \"....................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........................................\",\n      \"....................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.........................................\",\n      \"....................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc......................................\",\n      \"....................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....................................\",\n      \"....................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................................\",\n      \"....................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..............................\",\n      \"....................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........................\",\n      \"....................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.........................\",\n      \"....................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc......................\",\n      \"....................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.....................\",\n      \"....................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....................\",\n      \"....................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..................\",\n      \"....................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................\",\n      \"....................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................\",\n      \"...................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................\",\n",
@@ -2644,8 +2659,23 @@
     },
     "assets_src/chapter1/scenes/apartment/walk-geometry-v1.json": {
       "beforeSHA256": "426d643fe290247eacb0857b00a60f1e46e49d320bec201df78a021edba31201",
-      "afterSHA256": "5499116e64aa2cdecd13d9a17bff83c4f0dffdf06ea0c07531203c5e6ea5d438",
+      "afterSHA256": "d3cc3e0842538a36660980a08467f7ffcae26862741782910a787744712f57ac",
       "splices": [
+        {
+          "start": 40752,
+          "before": "",
+          "afterLength": 577
+        },
+        {
+          "start": 33620,
+          "before": "      \"............................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................\",\n      \".....................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................\",\n      \"...................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................\",\n      \"..................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc................\",\n",
+          "afterLength": 266
+        },
+        {
+          "start": 27502,
+          "before": "      \"..........................ccccccccccccccccccccccccccccccccccccc.............................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...............................................\",\n      \"..........................ccccccccccccccccccccccccccccccccccccc..............................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...............................................\",\n      \"..........................ccccccccccccccccccccccccccccccccccccc...............................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..............................................\",\n      \"..........................cccccccccccccccccccccccccccccccccccc.................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..............................................\",\n      \"..........................cccccccccccccccccccccccccccccccccccc.................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.............................................\",\n      \"..........................cccccccccccccccccccccccccccccccccccc.................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.............................................\",\n      \"..........................cccccccccccccccccccccccccccccccccccc.................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc............................................\",\n      \"..........................ccccccccccccccccccccccccccccccccccccc.................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........................................\",\n      \"..........................ccccccccccccccccccccccccccccccccccccc.................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.........................................\",\n      \"...........................cccccccccccccccccccccccccccccccccccc.................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc......................................\",\n      \"..............................ccccccccccccccccccccccccccccccccc.................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....................................\",\n      \"...................................ccccccccccccccccccccccccccccc................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................................\",\n      \"........................................cccccccccccccccccccccccc................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..............................\",\n      \"............................................cccccccccccccccccccc................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........................\",\n      \"................................................cccccccccccccccc................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.........................\",\n      \"...................................................ccccccccccccc................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc......................\",\n      \"......................................................ccccccccccc..............................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.....................\",\n      \".........................................................cccccccc..............................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....................\",\n      \"...............................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..................\",\n",
+          "afterLength": 5852
+        },
         {
           "start": 39527,
           "before": "    \"reason\": \"Owner red floor corridor with a furniture-clear window interaction spur\"\n",
@@ -2755,8 +2785,13 @@
     },
     "assets_src/chapter1/scenes/apartment/layers.json": {
       "beforeSHA256": "16114500fca6bd054238e627c511919bc321ea605092f5f5dfac0304f3e882c6",
-      "afterSHA256": "0a5685f7d626b16370ecdc00eb69fbbca437519ede8d70229ea03a9e042f2244",
+      "afterSHA256": "2f71214f8d735136e5e233fc2392b28be942622dce95dd173f3d423ab7ba35cb",
       "splices": [
+        {
+          "start": 1291,
+          "before": "      \"zIndex\": 31\n",
+          "afterLength": 793
+        },
         {
           "start": 1184,
           "before": "      \"output\": \"assets/chapter1/scenes/apartment/occlusion-r35/dining.png\",\n",
@@ -2768,13 +2803,48 @@
           "afterLength": 84
         }
       ]
+    },
+    "src/content/chapter1/sceneLayers.generated.js": {
+      "beforeSHA256": "3fb46a57d7761f5a477b8e812cbf9ebf90683808eebefd02ad5f65a0bd8d99d5",
+      "afterSHA256": "c8aa111057930d293d1a0da0d41c2c3044d980ae92b94cbd7ccfde6c40aed7ca",
+      "splices": [
+        {
+          "start": 4154,
+          "before": "        \"zIndex\": 31,\n",
+          "afterLength": 512
+        }
+      ]
     }
   },
   "snapshots": {
     "manifest": {
       "beforeSHA256": "dccd032d264f64fe454a2aba99073d8ca89c8cec632499a209441a93ca55dc6b",
-      "afterSHA256": "061ebf794e08cc00a5bfb85ccb46fd5bb92a78c61ff499dad0611c3fc0308fa1",
+      "afterSHA256": "1270e26586fe09d378fe5e1361047e7742b9f34b3dd7c8253d3a807f6bcdd025",
       "patches": [
+        {
+          "path": [
+            "scenes",
+            "scene.chapter1.apartment",
+            "diningBackChair"
+          ],
+          "exists": false
+        },
+        {
+          "path": [
+            "scenes",
+            "scene.chapter1.apartment",
+            "diningRightChair"
+          ],
+          "exists": false
+        },
+        {
+          "path": [
+            "scenes",
+            "scene.chapter1.apartment",
+            "diningFrontChair"
+          ],
+          "exists": false
+        },
         {
           "path": [
             "scenes",
@@ -3058,8 +3128,294 @@
     },
     "scenes": {
       "beforeSHA256": "6a0b93cf17d02dd3a8be68acf53015fe6c4f26f54cc0eef2482ae7cf91427d49",
-      "afterSHA256": "072e1a552efff82e2fce49c2e86d06fc55beadc736095d2738126c71ed23be13",
+      "afterSHA256": "0d1f46aa1ec53e133bc27dc5e2d911f667c83e56cf43b3d3f7f6d366e61903d6",
       "patches": [
+        {
+          "path": [
+            2,
+            "foregroundLayers"
+          ],
+          "before": [
+            {
+              "id": "layer.apartment.adult_wall_photo",
+              "asset": "adultWallPhoto",
+              "zIndex": 100,
+              "top": 0,
+              "left": 0,
+              "hiddenWhenFlag": "adultPhotoTaken"
+            },
+            {
+              "id": "layer.apartment.adult_wall_frame",
+              "asset": "adultWallFrameEmpty",
+              "zIndex": 100,
+              "top": 0,
+              "left": 0,
+              "visibleWhenFlag": "adultPhotoTaken"
+            },
+            {
+              "id": "layer.apartment.table_foreground",
+              "asset": "foregroundTable",
+              "zIndex": -1,
+              "top": 0,
+              "left": 0
+            },
+            {
+              "id": "layer.apartment.dining_ad",
+              "asset": "diningTableAD",
+              "zIndex": 31,
+              "top": 0,
+              "left": 0
+            },
+            {
+              "id": "layer.apartment.cupboard_ad",
+              "asset": "cupboardFrontAD",
+              "zIndex": 20,
+              "top": 0,
+              "left": 0
+            }
+          ],
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            102
+          ],
+          "before": "..........................ccccccccccccccccccccccccccccccccccccc.............................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...............................................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            103
+          ],
+          "before": "..........................ccccccccccccccccccccccccccccccccccccc..............................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...............................................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            104
+          ],
+          "before": "..........................ccccccccccccccccccccccccccccccccccccc...............................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..............................................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            105
+          ],
+          "before": "..........................cccccccccccccccccccccccccccccccccccc.................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..............................................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            106
+          ],
+          "before": "..........................cccccccccccccccccccccccccccccccccccc.................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.............................................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            107
+          ],
+          "before": "..........................cccccccccccccccccccccccccccccccccccc.................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.............................................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            108
+          ],
+          "before": "..........................cccccccccccccccccccccccccccccccccccc.................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc............................................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            109
+          ],
+          "before": "..........................ccccccccccccccccccccccccccccccccccccc.................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........................................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            110
+          ],
+          "before": "..........................ccccccccccccccccccccccccccccccccccccc.................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.........................................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            111
+          ],
+          "before": "...........................cccccccccccccccccccccccccccccccccccc.................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc......................................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            112
+          ],
+          "before": "..............................ccccccccccccccccccccccccccccccccc.................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....................................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            113
+          ],
+          "before": "...................................ccccccccccccccccccccccccccccc................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            114
+          ],
+          "before": "........................................cccccccccccccccccccccccc................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..............................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            115
+          ],
+          "before": "............................................cccccccccccccccccccc................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            116
+          ],
+          "before": "................................................cccccccccccccccc................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.........................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            117
+          ],
+          "before": "...................................................ccccccccccccc................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc......................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            118
+          ],
+          "before": "......................................................ccccccccccc..............................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.....................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            119
+          ],
+          "before": ".........................................................cccccccc..............................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            120
+          ],
+          "before": "...............................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            121
+          ],
+          "before": "..............................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            122
+          ],
+          "before": "............................................................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            123
+          ],
+          "before": ".....................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            124
+          ],
+          "before": "...................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................",
+          "exists": true
+        },
+        {
+          "path": [
+            2,
+            "walkMask",
+            "rows",
+            125
+          ],
+          "before": "..................................................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc................",
+          "exists": true
+        },
         {
           "path": [
             2,
@@ -16144,6 +16500,60 @@
           "exists": true,
           "before": "It says receipt. It smells like evidence.",
           "insertBefore": "item.pickle_jar.name"
+        }
+      ]
+    },
+    "runtime": {
+      "beforeSHA256": "ce617a4259592c581160ff1e99edf564b7268d0a9adf6fdb9012be50215b293e",
+      "afterSHA256": "465ad374697a45aeb55a22f8e98b25a18479e7ece9791c3e1956a2a83047740a",
+      "patches": [
+        {
+          "path": [
+            "scene.chapter1.apartment"
+          ],
+          "before": {
+            "sceneId": "scene.chapter1.apartment",
+            "foregroundLayers": [
+              {
+                "id": "layer.apartment.adult_wall_photo",
+                "asset": "adultWallPhoto",
+                "zIndex": 100,
+                "top": 0,
+                "left": 0,
+                "hiddenWhenFlag": "adultPhotoTaken"
+              },
+              {
+                "id": "layer.apartment.adult_wall_frame",
+                "asset": "adultWallFrameEmpty",
+                "zIndex": 100,
+                "top": 0,
+                "left": 0,
+                "visibleWhenFlag": "adultPhotoTaken"
+              },
+              {
+                "id": "layer.apartment.table_foreground",
+                "asset": "foregroundTable",
+                "zIndex": -1,
+                "top": 0,
+                "left": 0
+              },
+              {
+                "id": "layer.apartment.dining_ad",
+                "asset": "diningTableAD",
+                "zIndex": 31,
+                "top": 0,
+                "left": 0
+              },
+              {
+                "id": "layer.apartment.cupboard_ad",
+                "asset": "cupboardFrontAD",
+                "zIndex": 20,
+                "top": 0,
+                "left": 0
+              }
+            ]
+          },
+          "exists": true
         }
       ]
     }

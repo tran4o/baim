@@ -1,5 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { PNG } from 'pngjs';
+import { sceneZIndexForPoint } from '../src/engine/Renderer.js';
 import { chapter1 } from '../src/content/chapter1/index.js';
 import { findTargetAt, findWalkPath, isWalkable } from '../src/engine/SceneGeometry.js';
 
@@ -25,4 +28,19 @@ test('the window, television and front aisle remain reachable around the dining 
     assert.ok(isWalkable(apartment, destination), JSON.stringify(destination));
     assert.ok(findWalkPath(apartment, apartment.playerStart, destination).length, JSON.stringify(destination));
   }
+});
+
+test('chairs cover Mitko from behind and the rear chair mask leaves the gap above its rail clear', () => {
+  const layers = new Map(apartment.foregroundLayers.map(layer => [layer.id, layer]));
+  const front = layers.get('layer.apartment.dining_front_chair');
+  const rear = layers.get('layer.apartment.dining_back_chair');
+  assert.ok(front.zIndex < sceneZIndexForPoint(apartment, { x: 299, y: 605 }));
+  assert.ok(front.zIndex > sceneZIndexForPoint(apartment, { x: 460, y: 677 }));
+  assert.ok(rear.zIndex < sceneZIndexForPoint(apartment, { x: 367, y: 478 }));
+  assert.equal(isWalkable(apartment, { x: 315, y: 592 }), false);
+
+  const mask = PNG.sync.read(readFileSync('assets/chapter1/scenes/apartment/dining-r01/dining-back-chair.png'));
+  const opacity = (x, y) => mask.data[(y * mask.width + x) * 4 + 3];
+  assert.equal(opacity(355, 386), 0);
+  assert.equal(opacity(359, 395), 255);
 });

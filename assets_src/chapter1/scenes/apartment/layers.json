@@ -42,7 +42,34 @@
       "output": "assets/chapter1/scenes/apartment/dining-r01/dining.png",
       "left": 0,
       "top": 0,
-      "zIndex": 31
+      "zIndex": 23
+    },
+    {
+      "id": "layer.apartment.dining_back_chair",
+      "enabled": true,
+      "asset": "diningBackChair",
+      "output": "assets/chapter1/scenes/apartment/dining-r01/dining-back-chair.png",
+      "left": 0,
+      "top": 0,
+      "zIndex": 51
+    },
+    {
+      "id": "layer.apartment.dining_right_chair",
+      "enabled": true,
+      "asset": "diningRightChair",
+      "output": "assets/chapter1/scenes/apartment/dining-r01/dining-right-chair.png",
+      "left": 0,
+      "top": 0,
+      "zIndex": 25
+    },
+    {
+      "id": "layer.apartment.dining_front_chair",
+      "enabled": true,
+      "asset": "diningFrontChair",
+      "output": "assets/chapter1/scenes/apartment/dining-r01/dining-front-chair.png",
+      "left": 0,
+      "top": 0,
+      "zIndex": 15
     },
     {
       "id": "layer.apartment.cupboard_ad",
