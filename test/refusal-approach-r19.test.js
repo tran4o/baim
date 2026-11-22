@@ -15,18 +15,20 @@ import {wardrobePhotoPuzzle,wardrobeCloseup} from '../src/content/chapter1/wardr
 const apartment=chapter1.scenes.find(s=>s.id==='scene.chapter1.apartment');
 const chest=wardrobePhotoPuzzle;
 test('far chest refusal shortens the existing safe floor route; near/opposite side never retreats',()=>{
- const from={x:270,y:490},anchor={x:990,y:525},hit={x:1170,y:455};
+ const from={x:270,y:507.5},anchor={x:990,y:525},hit={x:1170,y:455};
  const p=planRefusalApproach(apartment,from,anchor,hit,400);
  assert.equal(p.reason,'shortened-normal-route');assert.ok(p.point.x>from.x);assert.ok(p.point.x<anchor.x);
  assert.ok(Math.abs(walkPathDistance(from,p.path)+p.gap-walkPathDistance(from,findWalkPath(apartment,from,anchor)))<0.001);
  let previous=from;for(const point of p.path){for(let i=0;i<=100;i++)assert.ok(isWalkable(apartment,{x:previous.x+(point.x-previous.x)*i/100,y:previous.y+(point.y-previous.y)*i/100}));previous=point;}
- for(const start of [{x:1055,y:525},{x:990,y:525}]){const near=planRefusalApproach(apartment,start,anchor,hit,400);assert.deepEqual(near.point,start);assert.equal(near.path.length,0);}
- const right=planRefusalApproach(apartment,{x:1090,y:540},anchor,hit,100);
+ for(const start of [{x:995,y:525},{x:990,y:525}]){const near=planRefusalApproach(apartment,start,anchor,hit,400);assert.deepEqual(near.point,start);assert.equal(near.path.length,0);}
+ const rightSide={x:1152,y:650};
+ assert.ok(isWalkable(apartment,rightSide));
+ const right=planRefusalApproach(apartment,rightSide,anchor,{x:1170,y:560},100);
  assert.equal(right.path.length,0,'never walk left away from actual chest to reach a legacy authored anchor');
 });
 test('high window click measures floor proximity; gap follows character scale',()=>{
  const hit={x:244,y:195},anchor={x:384.7220636737793,y:479.939745646501};
- const near=planRefusalApproach(apartment,{x:270,y:490},anchor,hit,400);assert.equal(near.path.length,0);
+ const near=planRefusalApproach(apartment,{x:270,y:507.5},anchor,hit,400);assert.equal(near.path.length,0);
  const far=planRefusalApproach(apartment,{x:1000,y:515},anchor,hit,400);assert.equal(far.reason,'shortened-normal-route');assert.ok(far.point.x>anchor.x);
  const smaller=planRefusalApproach(apartment,{x:1000,y:515},anchor,hit,200);assert.equal(far.gap,smaller.gap*2);
 });

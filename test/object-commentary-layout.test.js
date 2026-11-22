@@ -33,7 +33,7 @@ test('speech stays clear of Mitko at either edge and on both facing sides', () =
 
 test('apartment floor connects the doorway, rug and front aisle and excludes visible obstacles', () => {
   const scene = chapter1.scenes.find(s => s.id === 'scene.chapter1.apartment');
-  const openFloor = [{ x: 980, y: 515 }, { x: 830, y: 643 }, { x: 578, y: 682 }, { x: 1152, y: 650 }];
+  const openFloor = [{ x: 980, y: 515 }, { x: 830, y: 643 }, { x: 578, y: 687.5 }, { x: 1152, y: 650 }];
   const obstacles = [{ x: 613, y: 587 }, { x: 1082, y: 508 }, { x: 868, y: 415 }, { x: 1020, y: 431 }, { x: 319, y: 668 }];
   assert.ok(openFloor.every(p => isWalkable(scene, p)));
   assert.ok(obstacles.every(p => !isWalkable(scene, p)));

@@ -177,7 +177,7 @@ export const sceneLayerGeometry = {
       {
         "id": "layer.apartment.dining_back_chair",
         "asset": "diningBackChair",
-        "zIndex": 51,
+        "zIndex": 41.25,
         "top": 0,
         "left": 0
       },
@@ -191,14 +191,7 @@ export const sceneLayerGeometry = {
       {
         "id": "layer.apartment.dining_front_chair",
         "asset": "diningFrontChair",
-        "zIndex": 15,
-        "top": 0,
-        "left": 0
-      },
-      {
-        "id": "layer.apartment.cupboard_ad",
-        "asset": "cupboardFrontAD",
-        "zIndex": 20,
+        "zIndex": 8.75,
         "top": 0,
         "left": 0
       }

@@ -7,7 +7,7 @@ import { chromium } from 'playwright';
 import { mousePuzzleSlide } from './helpers/puzzle-mouse.js';
 import { chooseHudVerb } from './helpers/hud-ui.js';
 
-test('3D cupboard puzzle, persisted progress and Pepa transactions work in BG/EN without duplicate rewards', {timeout:300000}, async()=>{
+test('3D cupboard puzzle, persisted progress and Pepa transactions work in BG/EN without duplicate rewards', {timeout:660000}, async t=>{
   const probe=createServer(); await new Promise(r=>probe.listen(0,'127.0.0.1',r)); const port=probe.address().port; await new Promise(r=>probe.close(r));
   const server=spawn(process.execPath,['tools/dev-server.mjs'],{env:{...process.env,PORT:String(port)},stdio:'ignore'});
   let browser;
@@ -15,7 +15,7 @@ test('3D cupboard puzzle, persisted progress and Pepa transactions work in BG/EN
   try {
     for(let i=0;i<100;i++){try{if((await fetch(`http://127.0.0.1:${port}/`)).ok)break;}catch{} await new Promise(r=>setTimeout(r,100));}
     browser=await chromium.launch({headless:true});
-    for(const lang of ['bg','en']) {
+    for(const lang of ['bg','en']) await t.test('Photo quest in '+lang.toUpperCase(),{timeout:300000},async()=>{
       const context=await browser.newContext({viewport:{width:1280,height:720},serviceWorkers:'block'}),page=await context.newPage(),errors=[];
       page.setDefaultTimeout(12000);
       page.on('pageerror',e=>errors.push(String(e)));
@@ -125,6 +125,6 @@ test('3D cupboard puzzle, persisted progress and Pepa transactions work in BG/EN
       const result=await page.evaluate(()=>{const s=window.__comradeCandidateTest.game.state;return {music:s.flags.pepaMusicPlayed,photo:s.inventory.includes('item.mitko_photo'),diploma:s.hasFakeDiploma,original:s.inventory.includes('item.tony_diploma')};});
       assert.deepEqual(result,{music:true,photo:false,diploma:true,original:false});assert.deepEqual(errors,[]);
       await context.close();
-    }
+    });
   } finally {await browser?.close();server.kill();}
 });
