@@ -185,7 +185,7 @@
       "coordinateSpace": "1280x720"
     },
     {
-      "file": "dining-front-chair.png",
+      "file": "dining-front-chair-clear.png",
       "asset": "diningFrontChair",
       "id": "layer.apartment.dining_front_chair",
       "zIndex": 15,
@@ -251,12 +251,46 @@
   ],
   "counterEdge": {
     "source": "assets/chapter1/scenes/apartment/ad-r08/foreground.png",
-    "output": "counter.png",
-    "coordinateSpace": "1280x720",
-    "left": 308,
-    "right": 390,
-    "fullStart": 332,
-    "fullEnd": 362,
-    "lift": 7
+    "sourceFloor": "counter-free-floor-source.png",
+    "output": "assets/chapter1/scenes/apartment/ad-r08/foreground.png",
+    "background": "background-clear-floor.png",
+    "offsetY": 0,
+    "patchOutline": "M0 525 L30 521 L66 529 L132 545 L191 561 L249 577 L310 593 L353 607 L408 625 L451 639 L478 652 L482 720 L0 720 Z",
+    "featherPixels": 5,
+    "sourceFloorSHA256": "669767a28c4a3af3d4380c72e0192b6212e1274b96d97728a23772d62c35b8dd"
+  },
+  "refinedOcclusion": {
+    "coordinateSpace": "1280x720 world pixels",
+    "sources": {
+      "counter-refined.png": "assets_src/chapter1/scenes/apartment/ad-r08/approved.png",
+      "dining": "assets/chapter1/scenes/apartment/dining-r01/background-clear-floor.png"
+    },
+    "antialias": "4x rasterization, Lanczos downsample. Second near-chair path cuts the rail openings.",
+    "paths": {
+      "counter-refined.png": [
+        "M0 550 Q10 546 24 543 L43 547 62 552 83 556 100 561 122 567 145 573 162 578 183 583 205 589 241 598 290 612 330 623 370 634 410 646 454 657 Q461 659 462 664 L462 682 Q461 686 450 692 L449 720 H0 Z",
+        "M14 550 L21 544 Q25 541 25 529 L24 524 25 520 25 517 Q31 514 39 517 L41 519 41 525 40 529 42 544 Q43 552 48 557 L51 566 H14 Z",
+        "M53 560 Q54 551 59 545 Q63 540 64 526 L65 516 Q62 514 64 510 L65 504 Q67 500 75 501 Q83 501 84 505 L84 510 Q87 514 83 516 L83 530 Q83 542 88 548 Q93 555 94 563 Z",
+        "M98 578 Q99 567 105 562 Q109 558 109 547 L110 535 108 532 109 525 Q112 521 119 522 Q126 522 127 526 L127 531 126 535 127 550 Q127 556 131 560 Q138 567 139 580 Z",
+        "M162 589 Q162 583 170 581 Q180 578 190 581 Q198 582 199 588 L198 596 H162 Z"
+      ],
+      "dining-back-chair-refined.png": [
+        "M337.5 394 Q337.5 392 342 391.3 Q350 389.8 351 393.7 L351.5 395.5 Q367 387.7 387.2 384.3 L388 382 Q391 378.6 396.5 379.3 Q399 379.4 399.6 385 Q403.6 401.8 405 415.1 L398 417 L396.5 412.8 Q378 419 358 427.5 L354.5 428.3 Q350 430 347.4 441.8 L344.4 435.4 Z"
+      ],
+      "dining-refined.png": [
+        "M350 431 Q352 429 362 425 L476 386 Q492 383 518 384.5 L666 401 Q674 401.8 680 416 L683 427 Q681 435 681 447 L672 464 633 494 627 503 Q633 526 619 548 L610 563 599 552 580 535 562 532 500 521 450 514 422 509 350 494 349 456 343 450 Z",
+        "M439 404 Q439 399 445 398 Q454 394 460 398 Q464 400 463 409 L461 421 Q459 426 453 426 Q444 426 443 422 Z",
+        "M473 398 L473 389 Q474 383 478 381 Q480 379 480 372 L480 362 Q479 360 480 358 Q483 355 488 357 L490 360 489 363 490 375 Q490 379 495 382 Q498 385 498 399 Z",
+        "M500 399 L500 388 Q501 384 505 381 L505 367 Q504 365 505 362 Q508 358 512 360 Q516 360 516 364 L515 367 515 380 Q519 383 520 387 L521 398 Z",
+        "M570 393 L570 386 Q570 383 578 383 Q587 382 594 386 L595 390 Q601 388 604 393 Q608 402 600 406 L596 407 594 415 H570 Z",
+        "M472 514 L488 517 L489 539 L472 536 Z",
+        "M542 526 L557 529 L558 567 Q554 575 543 571 Z",
+        "M580 532 L599 539 L602 609 Q602 619 584 617 L580 615 Z"
+      ],
+      "dining-front-chair-refined.png": [
+        "M317 447 Q319 443 327 442 Q334 442 339 446 L347 446 Q377 447 408 453 L414 456 Q420 453 426 455 Q433 455 434 463 L442 525 Q472 531 494 535 Q499 538 499 552 L500 620 Q495 628 488 625 L484 623 482 585 445 610 443 647 Q439 655 433 655 L426 653 425 588 408 587 408 599 Q406 607 397 606 L393 603 392 588 356 604 354 626 Q350 633 342 633 L338 630 340 580 333 524 323 472 Z",
+        "M356 581 L376 586 356 596 Z M446 583 L481 566 482 574 446 599 Z"
+      ]
+    }
   }
 }

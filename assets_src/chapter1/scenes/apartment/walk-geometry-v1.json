@@ -2,7 +2,7 @@
   "id": "walkmask.chapter1.apartment.floor_v1",
   "sceneId": "scene.chapter1.apartment",
   "sourceBackground": {
-    "path": "assets/chapter1/scenes/apartment/dining-r01/background.png",
+    "path": "assets/chapter1/scenes/apartment/dining-r01/background-clear-floor.png",
     "width": 1280,
     "height": 720
   },
@@ -104,57 +104,57 @@
       "................................................................................................................................................................................................................................................................",
       "................................................................................................................................................................................................................................................................",
       "................................................................................................................................................................................................................................................................",
-      "..........................................................ccccc.............................................................................................cccccccccccccccccccccccccccccccccccccccc............................................................",
-      ".................................................cccccccccccccc.....................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........................................................",
-      "........................................ccccccccccccccccccccccc....................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.........................................................",
-      "...............................ccccccccccccccccccccccccccccccccc...................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "...........................ccccccccccccccccccccccccccccccccccccc...................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "...........................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "...........................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..........................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..........................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..........................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..........................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..........................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..........................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..........................ccccccccccccccccccccccccccccccccccccc...............................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..........................ccccccccccccccccccccccccccccccccccccc.................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..........................ccccccccccccccccccccccccccccccccccccc..................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..........................cccccccccccccccccccccccccccccccccccc....................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..........................cccccccccccccccccccccccccccccccccccc....................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..........................cccccccccccccccccccccccccccccccccccc....................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..........................cccccccccccccccccccccccccccccccccccc....................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..........................ccccccccccccccccccccccccccccccccccc.....................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..........................ccccccccccccccccccccccccccccccccccc......................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "...........................cccccccccccccccccccccccccccccccccc......................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "..............................ccccccccccccccccccccccccccccccc......................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
-      "...................................cccccccccccccccccccccccccc......................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................c.................................",
-      "........................................cccccccccccccccccccc.......................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.............cccc..............................",
-      "............................................cccccccccccccccc........................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..........ccccccc...........................",
-      "................................................cccccccccccc........................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.....ccccccccccc.........................",
-      "...................................................cccccccccc.......................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.cccccccccccccccc......................",
-      "......................................................ccccccc......................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.....................",
-      ".......................................................cccccc......................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....................",
-      ".......................................................cccccc.....................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..................",
-      ".......................................................cccccc....................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................",
-      "........................................................cccccc...................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................",
-      ".........................................................cccccc.................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................",
-      "..........................................................ccccc...............................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................",
-      "..........................................................cccccc.......................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc................",
-      "...........................................................ccccccc...............................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.............",
-      "............................................................cccccccc............................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..........",
-      ".............................................................ccccccccc..........................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.......",
-      "..............................................................ccccccccccc......................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.....",
-      "..............................................................cccccccccccccc...............................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.....",
-      "...............................................................cccccccccccccccc.......................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.....",
-      "................................................................cccccccccccccccccccccc.............cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.....",
-      "..................................................................cccccccccccccccccccccccccccc..ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.....",
-      "...................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.....",
-      ".....................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.....",
-      ".......................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....",
-      ".........................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....",
-      "..................................................................................cccccccccccc..cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....",
-      "................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....",
+      "................................................................................................................................................................................................................................................................",
+      "................................................................................................................................................................................................................................................................",
+      "................................................................................................................................................................................................................................................................",
+      "................................................................................................................................................................................................................................................................",
+      "................................................................................................................................................................................................................................................................",
+      "....................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...cccccccccccccccccccccccc.....................................................................................................",
+      "..................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..................................................................................................",
+      "...............................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
+      ".............................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
+      "..........................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
+      ".......................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
+      "....................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
+      "..........................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc........................................................",
+      ".........................................cccccccccccccccccc..................................................................................................ccccccccccccccccccccccccccccccccccccccccccc........................................................",
+      ".........................................cccccccccccccccccc...................................................................................................cccccccccccccccccccccccccccccccccccccccccc........................................................",
+      ".........................................cccccccccccccccccc...................................................................................................cccccccccccccccccccccccccccccccccccccccccc........................................................",
+      ".........................................ccccccccccccccccc....................................................................................................cccccccccccccccccccccccccccccccccccccccccc........................................................",
+      ".........................................ccccccccccccccccc....................................................................................................cccccccccccccccccccccccccccccccccccccccccc........................................................",
+      ".........................................ccccccccccccccccc....................................................................................................cccccccccccccccccccccccccccccccccccccccccc........................................................",
+      ".........................................ccccccccccccccccc....................................................................................................cccccccccccccccccccccccccccccccccccccccccc........................................................",
+      "........................................cccccccccccccccccc....................................................................................................cccccccccccccccccccccccccccccccccccccccccc........................................................",
+      "........................................cccccccccccccccccc....................................................................................................cccccccccccccccccccccccccccccccccccccccccc........................................................",
+      "........................................cccccccccccccccccc....................................................................................................cccccccccccccccccccccccccccccccccccccccccc........................................................",
+      ".......................................ccccccccccccccccccc....................................................................................................cccccccccccccccccccccccccccccccccccccccccc........................................................",
+      ".......................................ccccccccccccccccccc....................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccc...................................................",
+      "........................................cccccccccccccccccc....................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccc.................................................",
+      "............................................ccccccccccccc.....................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccc.................................................",
+      "................................................ccccccccc.....................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccc.................................................",
+      "..................................................ccccccc.....................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccc................................................",
+      "..................................................ccccccc.....................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccc..............................................",
+      "..................................................ccccccc.....................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccc.............................................",
+      "..................................................cccccc......................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccc............................................",
+      "...................................................ccccc......................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccc..........................................",
+      "...................................................cccc.......................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.......................................",
+      "...................................................cccc.......................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....................................",
+      "....................................................ccc.......................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc..................................",
+      "....................................................ccc......................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc................................",
+      ".....................................................ccc...................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.............................",
+      "......................................................cc.................................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........................",
+      "......................................................ccc..............................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.........................",
+      "......................................................ccc............................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc......................",
+      ".......................................................ccc........................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc....................",
+      "........................................................ccc......................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...................",
+      ".........................................................cccc..................................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.................",
+      "..........................................................ccccc..............................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...............",
+      "...........................................................cccccccc......................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.............",
+      ".............................................................cccccc..................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........",
+      "................................................................ccc.....................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........",
+      "..................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........",
+      ".........................................................................cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........",
+      "................................................................................................ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc...........",
       "................................................................................................................................................................................................................................................................",
       "................................................................................................................................................................................................................................................................",
       "................................................................................................................................................................................................................................................................",
@@ -373,64 +373,80 @@
     ],
     "frontAisle": [
       [
-        267,
-        583
+        251,
+        575
       ],
       [
-        297,
-        583
+        280,
+        575
       ],
       [
-        307,
-        607
+        287,
+        598
       ],
       [
-        320,
-        628
+        280,
+        620
       ],
       [
-        358,
-        646
+        292,
+        640
       ],
       [
-        402,
-        659
+        302,
+        653
       ],
       [
-        475,
-        668
+        319,
+        670
       ],
       [
-        545,
+        352,
+        676
+      ],
+      [
+        403,
+        677
+      ],
+      [
+        510,
+        675
+      ],
+      [
+        550,
         665
       ],
       [
-        542,
-        690
-      ],
-      [
-        426,
+        550,
         694
       ],
       [
-        370,
-        689
+        381,
+        695
       ],
       [
-        333,
-        672
+        336,
+        688
       ],
       [
-        313,
-        654
+        310,
+        680
       ],
       [
-        295,
-        632
+        289,
+        663
       ],
       [
-        279,
-        611
+        272,
+        643
+      ],
+      [
+        260,
+        624
+      ],
+      [
+        251,
+        603
       ]
     ],
     "doorKeepout": [
@@ -462,6 +478,270 @@
         1000,
         565
       ]
-    ]
+    ],
+    "dresserKeepout": [
+      [
+        1030,
+        450
+      ],
+      [
+        1280,
+        450
+      ],
+      [
+        1280,
+        680
+      ],
+      [
+        1210,
+        672
+      ],
+      [
+        1175,
+        650
+      ],
+      [
+        1140,
+        635
+      ],
+      [
+        1105,
+        620
+      ],
+      [
+        1065,
+        606
+      ],
+      [
+        1035,
+        582
+      ]
+    ],
+    "nearChairClearance": [
+      [
+        294,
+        510
+      ],
+      [
+        326,
+        510
+      ],
+      [
+        330,
+        565
+      ],
+      [
+        350,
+        612
+      ],
+      [
+        334,
+        647
+      ],
+      [
+        315,
+        666
+      ],
+      [
+        287,
+        653
+      ],
+      [
+        274,
+        619
+      ],
+      [
+        286,
+        591
+      ]
+    ],
+    "tvCabinetClearance": [
+      [
+        0,
+        440
+      ],
+      [
+        207,
+        440
+      ],
+      [
+        207,
+        535
+      ],
+      [
+        194,
+        570
+      ],
+      [
+        194,
+        593
+      ],
+      [
+        0,
+        593
+      ]
+    ],
+    "frontAisleTurnCells": {
+      "645": [
+        270,
+        275,
+        280
+      ],
+      "650": [
+        275,
+        280,
+        285
+      ],
+      "655": [
+        280,
+        285,
+        290
+      ],
+      "660": [
+        285,
+        290,
+        295,
+        300
+      ],
+      "665": [
+        290,
+        295,
+        300,
+        305
+      ],
+      "670": [
+        295,
+        300,
+        305,
+        310
+      ]
+    },
+    "wallAndFurnitureFrontClearance": [
+      [
+        0,
+        545
+      ],
+      [
+        190,
+        525
+      ],
+      [
+        200,
+        506
+      ],
+      [
+        260,
+        500
+      ],
+      [
+        315,
+        480
+      ],
+      [
+        340,
+        470
+      ],
+      [
+        650,
+        470
+      ],
+      [
+        775,
+        470
+      ],
+      [
+        800,
+        478
+      ],
+      [
+        1006,
+        478
+      ]
+    ],
+    "foregroundTableFloorKeepout": [
+      [
+        0,
+        604
+      ],
+      [
+        475,
+        732
+      ],
+      [
+        475,
+        740
+      ],
+      [
+        0,
+        740
+      ]
+    ],
+    "frontChairStrideClearance": [
+      {
+        "fromY": 615,
+        "left": 500,
+        "right": 545
+      },
+      {
+        "fromY": 650,
+        "left": 335,
+        "right": 545
+      },
+      {
+        "fromY": 675,
+        "left": 335,
+        "right": 535
+      },
+      {
+        "fromY": 685,
+        "left": 0,
+        "right": 0
+      }
+    ],
+    "frontChairAisleCorner": {
+      "x": 330,
+      "y": 685
+    },
+    "rightDiningSetClearance": {
+      "reason": "Clearance from the dining set for Mitko’s stance and stride. The southern edge curves around the chair rather than cutting across its legs.",
+      "boundary": [
+        {
+          "y": 510,
+          "x": 785
+        },
+        {
+          "y": 530,
+          "x": 790
+        },
+        {
+          "y": 620,
+          "x": 790
+        },
+        {
+          "y": 630,
+          "x": 775
+        },
+        {
+          "y": 640,
+          "x": 755
+        },
+        {
+          "y": 650,
+          "x": 730
+        },
+        {
+          "y": 665,
+          "x": 705
+        },
+        {
+          "y": 675,
+          "x": 665
+        },
+        {
+          "y": 685,
+          "x": 535
+        }
+      ]
+    }
   }
 }

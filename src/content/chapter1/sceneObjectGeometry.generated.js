@@ -408,9 +408,9 @@ export const apartmentObjectGeometry = {
   "id": "objectGeometry.chapter1.apartment.v1",
   "sceneId": "scene.chapter1.apartment",
   "sourceBackground": {
-    "path": "assets/chapter1/scenes/apartment/ad-r08/background.png",
-    "width": 1672,
-    "height": 941
+    "path": "assets/chapter1/scenes/apartment/dining-r01/background-clear-floor.png",
+    "width": 1280,
+    "height": 720
   },
   "world": {
     "width": 1280,

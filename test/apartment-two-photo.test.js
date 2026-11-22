@@ -29,7 +29,7 @@ test('AD current geometry preserves reachable entry, photo, cupboard and window 
 });
 test('apartment routes remain in the marked corridor with no floor under solid furniture',()=>{
  const a=chapter1.scenes.find(s=>s.id==='scene.chapter1.apartment');
- const points=[a.playerStart,{x:265,y:490},{x:290,y:480},{x:600,y:490},{x:740,y:520},{x:990,y:525},a.exits[0].entryApproach];
+ const points=[a.playerStart,{x:265,y:507.5},{x:290,y:497.5},{x:600,y:490},{x:805,y:520},{x:990,y:525},a.exits[0].entryApproach];
  for(const p of [{x:100,y:490},{x:400,y:650},{x:850,y:420},{x:1160,y:525},{x:500,y:400}])assert.equal(isWalkable(a,p),false,JSON.stringify(p));
  for(const from of points)for(const to of points){
   const path=findWalkPath(a,from,to);assert.ok(path.length,JSON.stringify({from,to}));
