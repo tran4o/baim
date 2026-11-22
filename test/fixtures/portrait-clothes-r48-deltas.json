@@ -19041,8 +19041,28 @@
     },
     "runtime": {
       "beforeSHA256": "ce617a4259592c581160ff1e99edf564b7268d0a9adf6fdb9012be50215b293e",
-      "afterSHA256": "329237aa84b15e40ee51179d5efedbd5b67a435a9bfb9a771cde6cb44a991ffa",
+      "afterSHA256": "b66c5b7e952fcfa10ff0a43d5c1c87e84b75ab76a3e9a1bb66b4b90e75ee5b28",
       "patches": [
+        {
+          "path": [
+            "scene.chapter1.apartment",
+            "foregroundLayers",
+            6,
+            "zIndex"
+          ],
+          "exists": true,
+          "before": 15
+        },
+        {
+          "path": [
+            "scene.chapter1.apartment",
+            "foregroundLayers",
+            4,
+            "zIndex"
+          ],
+          "exists": true,
+          "before": 51
+        },
         {
           "path": [
             "scene.chapter1.apartment"
