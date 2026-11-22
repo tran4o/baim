@@ -1,3 +1,4 @@
+import { objectRemark } from '../src/content/chapter1/objectCommentary.js';
 import test from "node:test";
 import assert from "node:assert/strict";
 import { chapter1 } from "../src/content/chapter1/index.js";
@@ -48,14 +49,14 @@ test("archive requires registration, inspection and strap; retains accordion", (
 test("ledger and jar exchange gate taking the empty box across reloads", () => {
   let game = make({ flags: { candidateRegistrationStamped: true, archiveOpened: true } });
   game.takeTarget(target("ballot_box"));
-  assert.equal(game.message, "archive.read_first");
+  assert.equal(game.message, objectRemark(target("ballot_box").id, "take", game.state.language));
   assert.equal(game.inventory.has("item.ballot_box"), false);
   game.takeTarget(target("jar"));
   assert.equal(requirementsMet(jarExchangeRule.requirements, game.effectContext()), false);
   game = reload(game);
   game.lookTarget(target("ledger"));
   game.takeTarget(target("ballot_box"));
-  assert.equal(game.message, "archive.replacement_first");
+  assert.equal(game.message, objectRemark(target("ballot_box").id, "take", game.state.language));
   use(game, jarExchangeRule);
   game = reload(game);
   assert.equal(game.inventory.has("item.pickle_jar"), false);

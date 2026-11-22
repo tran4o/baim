@@ -1,0 +1,30 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { chapter1 } from '../src/content/chapter1/index.js';
+import { characterDefinitions } from '../src/content/art/characters.js';
+import { characterHeight } from '../src/engine/CharacterRenderMath.js';
+import { sceneDepthT } from '../src/engine/DepthMath.js';
+import { scenePosePlacement } from '../src/engine/InteractionPresentation.js';
+
+test('Mitko keeps the door size and grows gradually toward the apartment foreground', () => {
+  const id = 'npc.bai_mitko';
+  const apartment = chapter1.scenes.find(scene => scene.id === 'scene.chapter1.apartment');
+  const definition = characterDefinitions[id];
+  const frame = definition.animations.walk.parts.east.stop;
+  const placement = scenePosePlacement(apartment, { id, facing: 'east' }, frame);
+  const standingBounds = frame.frameContentBounds.at(-1);
+  const standingHeight = standingBounds.h * placement.h / frame.frameHeight;
+  const rear = { x: 750, y: 480 };
+  const front = { x: 900, y: 670 };
+  const middle = { x: 900, y: 595 };
+  const heightAt = point => characterHeight(definition, apartment, point);
+  assert.ok(Math.abs(heightAt(apartment.playerStart) - standingHeight) < 1);
+  assert.equal(heightAt(rear), heightAt(apartment.playerStart));
+  assert.ok(heightAt(middle) > heightAt(rear) && heightAt(middle) < heightAt(front));
+  assert.equal(heightAt(front), heightAt(rear) * 1.08);
+  assert.equal(heightAt({ ...front, y: 700 }), heightAt(front));
+  const nearPose = scenePosePlacement(apartment, { id, facing: "east", position: front }, frame);
+  assert.ok(Math.abs(heightAt(front) - standingBounds.h * nearPose.h / frame.frameHeight) < 1);
+  assert.equal(nearPose.y, placement.y * 1.08);
+  assert.ok(sceneDepthT(apartment, rear) < sceneDepthT(apartment, front));
+});

@@ -1,5 +1,6 @@
 import { dismissItemView, clickScenePoint } from './helpers/hud-ui.js';
 import { chooseHudVerb, chooseHudLanguage, inventoryItem, collapseInventory, expandInventory, useSelectedItemOnSelf } from './helpers/hud-ui.js';
+import { objectRemark } from '../src/content/chapter1/objectCommentary.js';
 import test from "node:test";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
@@ -63,7 +64,10 @@ test("browser completes the required Chapter 1 path and restores the ending afte
           await page.evaluate(async language=>{const g=window.__comradeCandidateTest.game;await g.changeScene('scene.chapter1.village_square');g.setLanguage(language);g.menuOpen=false;g.paused=false;g.state.flags.chapter1OpeningHeard=true;g.renderUi();},language);
           await chooseHudVerb(page,'look');
           await clickScenePoint(page,{x:190,y:380});
-          await page.waitForFunction(()=>{const g=window.__comradeCandidateTest.game;return g.message===g.t('look.square.mehana_menu');});
+          await page.waitForFunction(async language=>{
+            const { objectRemark } = await import('/src/content/chapter1/objectCommentary.js');
+            return window.__comradeCandidateTest.game.message === objectRemark('hotspot.square.mehana_menu', 'look', language);
+          }, language);
           assert.equal(await page.locator('.dialogue-panel,.dialogue-menu-entries').count(),0);
           await chooseHudVerb(page,'use');
           await clickScenePoint(page,{x:190,y:380});
@@ -361,10 +365,8 @@ test("fresh photo and Tony diploma journeys reach narrow and convincing wins thr
       await mark('poster-posted-and-reloaded');
       await verb("look");
       await clickTarget("hotspot.square.poster_board");
-      await waitFor(() => {
-        const { game } = window.__comradeCandidateTest;
-        return game.message === game.t("campaign.poster.posted");
-      });
+      await page.waitForFunction(expected => window.__comradeCandidateTest.game.message === expected,
+        objectRemark('hotspot.square.poster_board', 'look', language));
       const choice = async key => {
         await page.locator(".dialogue-panel").waitFor({ timeout: 25_000 });
         const label = await page.evaluate(key => window.__comradeCandidateTest.game.t(key), key);

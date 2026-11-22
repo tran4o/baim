@@ -668,7 +668,7 @@ button.active {
   font-weight: 700;
 }
 
-.dialogue-speech-bubble {
+.dialogue-speech-bubble:not(.speech-bubble) {
   --dialogue-bubble-bg: rgba(255, 245, 211, 0.96);
   --dialogue-bubble-ink: #493523;
   --dialogue-bubble-accent: #b96d35;
@@ -687,22 +687,22 @@ button.active {
   pointer-events: none;
 }
 
-.dialogue-speech-bubble::before,
-.dialogue-speech-bubble::after {
+.dialogue-speech-bubble:not(.speech-bubble)::before,
+.dialogue-speech-bubble:not(.speech-bubble)::after {
   position: absolute;
   left: calc(50% + var(--dialogue-tail-offset));
   content: "";
   transform: translateX(-50%);
 }
 
-.dialogue-speech-bubble::before {
+.dialogue-speech-bubble:not(.speech-bubble)::before {
   bottom: -25px;
   border: 13px solid transparent;
   border-top: 24px solid var(--dialogue-bubble-accent);
   border-bottom: 0;
 }
 
-.dialogue-speech-bubble::after {
+.dialogue-speech-bubble:not(.speech-bubble)::after {
   bottom: -18px;
   border: 10px solid transparent;
   border-top: 19px solid var(--dialogue-bubble-bg);
@@ -895,6 +895,17 @@ button.active {
 
 .speech-tail path {
   fill: #fff4cf;
+}
+
+.speech-positioned .speech-tail {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: none;
+}
+
+.dialogue-speech-bubble.speech-positioned {
+  z-index: 4;
 }
 
 .speech-bubble.tail-left .speech-tail {

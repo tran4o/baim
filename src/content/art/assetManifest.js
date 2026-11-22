@@ -15,12 +15,15 @@ export const assetManifest = {
       box: "assets/chapter1/scenes/archive/box-v1.png"
     },
     "scene.chapter1.apartment": {
-      background: "assets/chapter1/scenes/apartment/window-interaction-r17/background.png",
+      background: "assets/chapter1/scenes/apartment/dining-r01/background.png",
       windowNativeR17: "assets/chapter1/scenes/apartment/window-interaction-r17/window.webp",
       windowCharacterR17: "assets/chapter1/scenes/apartment/window-interaction-r17/mitko.webp",
       droppedBelongingsPile: "assets/chapter1/items/dropped-belongings-pile-v1.png",
       foregroundTable: "assets/chapter1/scenes/apartment/ad-r08/foreground.png",
-      diningTableAD: "assets/chapter1/scenes/apartment/occlusion-r35/dining.png",
+      diningTableAD: "assets/chapter1/scenes/apartment/dining-r01/dining.png",
+      diningBackChair: "assets/chapter1/scenes/apartment/dining-r01/dining-back-chair.png",
+      diningRightChair: "assets/chapter1/scenes/apartment/dining-r01/dining-right-chair.png",
+      diningFrontChair: "assets/chapter1/scenes/apartment/dining-r01/dining-front-chair.png",
       cupboardFrontAD: "assets/chapter1/scenes/apartment/occlusion-r18/cupboard-front.png",
       wardrobeInteriorC04A: "assets/chapter1/scenes/apartment/wardrobe-r21/interior-c04-A.png",
       adultWallPhoto: "assets/chapter1/items/adult-portrait-tracksuit-r48/wall-full.png",
