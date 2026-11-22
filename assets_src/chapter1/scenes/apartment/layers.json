@@ -1,6 +1,6 @@
 {
   "sceneId": "scene.chapter1.apartment",
-  "sourceBackground": "assets/chapter1/scenes/apartment/ad-r08/background.png",
+  "sourceBackground": "assets/chapter1/scenes/apartment/dining-r01/background.png",
   "zScale": {
     "frontmost": 0,
     "horizon": 100
@@ -39,7 +39,7 @@
       "id": "layer.apartment.dining_ad",
       "enabled": true,
       "asset": "diningTableAD",
-      "output": "assets/chapter1/scenes/apartment/occlusion-r35/dining.png",
+      "output": "assets/chapter1/scenes/apartment/dining-r01/dining.png",
       "left": 0,
       "top": 0,
       "zIndex": 31

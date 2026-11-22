@@ -117,5 +117,5 @@ test("crowded destinations avoid other actors and retain clear authored stops wh
   }
   const s=scenes.find(s=>s.id.endsWith('village_square')),t=s.interactables.find(t=>t.id==='hotspot.square.kiosk');
   const clear={...s,npcs:s.npcs.filter(n=>n.id!=='npc.journalist')};
-  assert.deepEqual(planCharacterApproach(clear,t,s.playerStart,280).point,{x:990,y:550});
+  assert.deepEqual(planCharacterApproach(clear,t,s.playerStart,280).point,{x:1022.5,y:607.5});
 });

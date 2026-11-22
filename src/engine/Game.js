@@ -3,6 +3,8 @@ import { interactionSideFacing, canFaceStoppedInteraction, hasVerticalRest } fro
 import { createReviewSaveSystem } from "./ReviewState.js";
 import { AudioSystem } from "./AudioSystem.js";
 import { ActionCursor, CURSOR_ART, cursorTargetSupportsAction, effectiveTargetVerb } from './ActionCursor.js';
+import { objectRemark } from '../content/chapter1/objectCommentary.js';
+import { placeSpeechBubble } from './SpeechPlacement.js';
 import { planRefusalApproach, refusalTargetPoint } from './RefusalApproach.js';
 import { createObjectCloseup } from './ObjectCloseupView.js';
 import { mountObjectProp } from './ObjectPropView.js';
@@ -71,10 +73,6 @@ const TALK_LONG_SENTENCE_MIN_CHARS = 72;
 const SPEECH_BUBBLE_MAX_WIDTH_PX = 350;
 const SPEECH_BUBBLE_MAX_HEIGHT_PX = 190;
 const SPEECH_BUBBLE_MAX_TEXT_HEIGHT_PX = 150;
-const SPEECH_BUBBLE_WEST_OFFSET_X_FULL_SIZE = 40;
-const SPEECH_BUBBLE_WEST_OFFSET_Y_FULL_SIZE = -75;
-const SPEECH_BUBBLE_WEST_TAIL_END_FROM_RIGHT_PX = 72;
-const SPEECH_BUBBLE_TAIL_END_FROM_BOTTOM_PX = 26;
 const SPEECH_BUBBLE_FADE_SECONDS = 0.3;
 const SPEECH_BUBBLE_BEAT_PAUSE_SECONDS = 0.35;
 const SPEECH_BUBBLE_BEAT_TEXT_FADE_SECONDS = 0.2;
@@ -1241,7 +1239,8 @@ export class Game {
     if (effects.length) this.save();
     if (actionSequence.verb === VERBS.TAKE && actionSequence.target?.takeItemId) {
       const messageKey = actionSequence.sequence?.messageKey;
-      if (messageKey) this.setStatusMessage(this.t(messageKey));
+      const remark = objectRemark(actionSequence.target.id, VERBS.TAKE, this.state?.language);
+      if (remark || messageKey) this.setStatusMessage(remark || this.t(messageKey));
       return;
     }
     const messageKey = actionSequence.sequence?.messageKey;
@@ -1249,7 +1248,8 @@ export class Game {
       this.lookTarget(actionSequence.target);
       return;
     }
-    if (messageKey) this.setStatusMessage(this.t(messageKey));
+    const remark = objectRemark(actionSequence.target?.id, actionSequence.verb, this.state?.language);
+    if (remark || messageKey) this.setStatusMessage(remark || this.t(messageKey));
   }
 
   syncAnimatorToAnimationFrame(frame) {
@@ -1415,9 +1415,10 @@ export class Game {
       }
     }
     this.player.interactionDebug = { ...this.player.interactionDebug, availabilityAtDispatch: nowAvailable };
+    const commentary = objectRemark(target.id, itemId ? VERBS.USE : this.selectedVerb, this.state?.language);
     if (!itemId && !nowAvailable && rule?.reject && this.targetAvailable(target)
       && (!itemId || this.inventory.has(itemId)) && requirementsMet(rule.requirements, context)) {
-      return this.applyContentEffect(rule, { speakerTarget: target.kind === 'npc' ? target : null });
+      return this.applyContentEffect(rule, { commentary, speakerTarget: target.kind === 'npc' ? target : null });
     }
     const key = rule?.reject && rule.messageKey ? rule.messageKey
       : itemId ? (target.kind === 'npc' ? target.itemRejectKey || 'msg.inventory.npc_reject_generic' : 'msg.inventory.cannot_use_with')
@@ -1427,7 +1428,7 @@ export class Game {
     const message = this.t(key, { item: this.t(this.content?.items?.[itemId]?.nameKey || itemId || ''),
       target: this.t(target.nameKey || target.lookKey || target.id) });
     if (itemId && target.kind === 'npc') this.setNpcSpeechMessage(target, message);
-    else this.setStatusMessage(message, { reject: true });
+    else this.setStatusMessage(commentary || message, { reject: true });
   }
 
   shouldApproachTargetBeforeAction(target, clickPoint = null) {
@@ -1787,7 +1788,7 @@ export class Game {
         this.droppedItemsOpen = true;
         this.renderUi();
       } else {
-        this.setStatusMessage(this.t("msg.need_talk"), { reject: true });
+        this.setStatusMessage(objectRemark(target.id, VERBS.TALK, this.state?.language) || this.t("msg.need_talk"), { reject: true });
       }
       return;
     }
@@ -1806,7 +1807,7 @@ export class Game {
         this.player.speaking = true;
         this.renderUi();
       } else {
-        this.setStatusMessage(this.t("msg.need_talk"), { reject: true });
+        this.setStatusMessage(objectRemark(target.id, VERBS.TALK, this.state?.language) || this.t("msg.need_talk"), { reject: true });
       }
       return;
     }
@@ -1819,25 +1820,27 @@ export class Game {
       this.useTarget(target);
       return;
     }
-    this.setStatusMessage(this.t("msg.no_use"), { reject: true });
+    this.setStatusMessage(objectRemark(target.id, this.selectedVerb, this.state?.language) || this.t("msg.no_use"), { reject: true });
   }
 
   lookTarget(target) {
     const rule = firstMatchingRule(target.lookRules, this.effectContext());
-    if (rule) return this.applyContentEffect(rule);
-    this.setStatusMessage(this.t(target.lookKey || target.nameKey));
+    const commentary = objectRemark(target.id, VERBS.LOOK, this.state?.language);
+    if (rule) return this.applyContentEffect(rule, { commentary });
+    this.setStatusMessage(commentary || this.t(target.lookKey || target.nameKey));
   }
 
   takeTarget(target, options = {}) {
     if (!this.targetAvailable(target)) return false;
     const rule = firstMatchingRule(target.takeRules, this.effectContext());
-    if (rule) return this.applyContentEffect({ ...rule, effects: [...(options.effects || []), ...(rule.effects || [])] });
+    const commentary = objectRemark(target.id, VERBS.TAKE, this.state?.language);
+    if (rule) return this.applyContentEffect({ ...rule, effects: [...(options.effects || []), ...(rule.effects || [])] }, { commentary });
     if (this.inventory.has(target.takeItemId)) {
-      this.setStatusMessage(this.t("msg.already_taken"), { reject: true });
+      this.setStatusMessage(commentary || this.t("msg.already_taken"), { reject: true });
       return;
     }
     if (!applyEffects([...(options.effects || []), ...this.takeEffects(target)], this.effectContext())) return false;
-    this.setStatusMessage(this.t(options.messageKey || target.takeMessageKey || "msg.taken"));
+    this.setStatusMessage(commentary || this.t(options.messageKey || target.takeMessageKey || "msg.taken"));
     this.save();
     return true;
   }
@@ -1880,8 +1883,9 @@ export class Game {
       return;
     }
     const rule = firstMatchingRule(target.useRules, this.effectContext());
-    if (rule) return this.applyContentEffect(rule);
-    this.setStatusMessage(this.t("msg.no_use"), { reject: true });
+    const commentary = objectRemark(target.id, VERBS.USE, this.state?.language);
+    if (rule) return this.applyContentEffect(rule, { commentary });
+    this.setStatusMessage(commentary || this.t("msg.no_use"), { reject: true });
   }
 
   openObjectCloseup(target) {
@@ -1956,12 +1960,13 @@ export class Game {
       if (applied !== false) this.clearInventoryInteraction();
       return applied;
     }
-    if(rule?.messageKey){if(target.kind==='npc')this.setNpcSpeechMessage(target,this.t(rule.messageKey));else this.setStatusMessage(this.t(rule.messageKey),{reject:true});this.renderUi();return false;}
+    const commentary = objectRemark(target.id, VERBS.USE, this.state?.language);
+    if(rule?.messageKey){if(target.kind==='npc')this.setNpcSpeechMessage(target,this.t(rule.messageKey));else this.setStatusMessage(commentary || this.t(rule.messageKey),{reject:true});this.renderUi();return false;}
     if (target.kind === "npc") {
       this.setNpcSpeechMessage(target, this.t(target.itemRejectKey || "msg.inventory.npc_reject_generic"));
       return false;
     }
-    this.setStatusMessage(this.t("msg.inventory.cannot_use_with", {
+    this.setStatusMessage(commentary || this.t("msg.inventory.cannot_use_with", {
       item: this.t(item?.nameKey || itemId),
       target: this.t(target.nameKey || target.lookKey || target.id)
     }), { reject: true });
@@ -2047,8 +2052,8 @@ export class Game {
       && (!Number.isFinite(Number(range.max)) || stateValue <= Number(range.max))
     ));
     const messageKey = matchingMessage?.messageKey || definition.messageKey;
-    if (messageKey) {
-      const message = this.t(messageKey);
+    if (messageKey || options.commentary) {
+      const message = options.commentary || this.t(messageKey);
       if (options.speakerTarget?.kind === "npc") this.setNpcSpeechMessage(options.speakerTarget, message);
       else this.setStatusMessage(message, { reject: Boolean(definition.reject) });
     }
@@ -2807,23 +2812,27 @@ export class Game {
   createSpeechBubble() {
     if (!this.speechBubble.metrics) this.speechBubble.metrics = this.measureSpeechBubble(this.speechBubble.text);
     const position = this.speechBubblePosition();
-    const bubble = element("div", `speech-bubble tail-${position.tailSide} phase-${this.speechBubble.phase} ${this.speechBubble.tone === "reject" ? "reject" : ""}`);
+    const tone = this.speechBubble.tone === "reject" ? " reject" : "";
+    const bubble = this.createAnimatedSpeechBubble(this.speechBubble.text, this.t("npc.bai_mitko.name"),
+      `phase-${this.speechBubble.phase}${tone}`);
     bubble.dataset.speechId = this.speechBubble.id;
     this.applySpeechBubbleLayout(bubble, position, this.speechBubble.metrics);
-    bubble.style.maxWidth = `${position.maxWidth}px`;
-    bubble.style.maxHeight = `${position.maxHeight}px`;
+    return bubble;
+  }
+
+  createAnimatedSpeechBubble(text, speaker, className) {
+    const bubble = element("div", `speech-bubble speech-positioned ${className}`);
     bubble.innerHTML = `
       <div class="speech-blobs">
         <div class="speech-blob-top"></div>
         <div class="speech-blob-bottom"></div>
-        <svg class="speech-tail" viewBox="0 0 132 82" aria-hidden="true" focusable="false">
-          <path d="M130 7 C105 10 85 19 68 34 C49 51 31 65 0 82 C19 57 27 38 34 16 C51 26 73 27 96 18 C110 13 121 9 130 7 Z"></path>
-        </svg>
+        <svg class="speech-tail" aria-hidden="true" focusable="false"><path></path></svg>
         <div class="speech-text"></div>
       </div>
-      <div class="speech-speaker">${escapeHtml(this.t("npc.bai_mitko.name"))}</div>
+      <div class="speech-speaker"></div>
     `;
-    bubble.querySelector(".speech-text").textContent = this.speechBubble.text;
+    bubble.querySelector(".speech-text").textContent = text;
+    bubble.querySelector(".speech-speaker").textContent = speaker;
     return bubble;
   }
 
@@ -2844,13 +2853,15 @@ export class Game {
     bubble.style.bottom = `${position.bottom}%`;
     bubble.style.width = `${position.width}px`;
     if (metrics?.height) bubble.style.height = `${metrics.height}px`;
+    bubble.style.maxWidth = `${position.maxWidth}px`;
+    bubble.style.maxHeight = `${position.maxHeight}px`;
+    bubble.querySelector?.(".speech-tail path")?.setAttribute("d", position.tail);
   }
 
-  measureSpeechBubble(text) {
+  measureSpeechBubble(text, maxWidth = SPEECH_BUBBLE_MAX_WIDTH_PX) {
     if (typeof window === "undefined" || typeof document === "undefined") {
-      return { width: SPEECH_BUBBLE_MAX_WIDTH_PX, height: 120, maxWidth: SPEECH_BUBBLE_MAX_WIDTH_PX, maxHeight: SPEECH_BUBBLE_MAX_HEIGHT_PX };
+      return { width: maxWidth, height: 120, maxWidth, maxHeight: SPEECH_BUBBLE_MAX_HEIGHT_PX };
     }
-    const maxWidth = SPEECH_BUBBLE_MAX_WIDTH_PX;
     const maxHeight = SPEECH_BUBBLE_MAX_HEIGHT_PX;
     if (!this.uiRoot) return { width: maxWidth, height: 120, maxWidth, maxHeight };
     const probe = element("div", "speech-bubble speech-measure tail-right");
@@ -2881,62 +2892,24 @@ export class Game {
   }
 
   speechBubblePosition(metricsOverride = null) {
-    const definition = this.characterDefinitions?.["npc.bai_mitko"] || characterDefinitions["npc.bai_mitko"];
-    const height = characterHeight(definition, this.currentScene, this.player.position);
+    const metrics = metricsOverride || this.speechBubble?.metrics || {
+      width: 350, height: 120, maxWidth: SPEECH_BUBBLE_MAX_WIDTH_PX, maxHeight: SPEECH_BUBBLE_MAX_HEIGHT_PX
+    };
+    const { body, height } = this.mitkoSpeechBounds();
     const facing = eastWestFallbackFacing(this.player.facing) || "east";
     const side = facing === "west" ? -1 : 1;
-    const mouth = {
-      x: this.player.position.x + side * height * 0.18,
-      y: this.player.position.y - height * 0.68
-    };
-    const fullSizeHeight =
-      definition.render.sceneHeights?.[this.currentScene.id]?.near || definition.gameHeight || height;
-    const renderScale = height / Math.max(1, fullSizeHeight);
-    const speechOffsetX = SPEECH_BUBBLE_WEST_OFFSET_X_FULL_SIZE * renderScale * (facing === "west" ? 1 : -1);
-    const speechOffsetY = SPEECH_BUBBLE_WEST_OFFSET_Y_FULL_SIZE * renderScale;
-    const metrics = metricsOverride || this.speechBubble?.metrics || { width: 350, height: 120, maxWidth: SPEECH_BUBBLE_MAX_WIDTH_PX, maxHeight: SPEECH_BUBBLE_MAX_HEIGHT_PX };
-    const bubbleWidthWorld = metrics.width;
-    const bubbleHeightWorld = metrics.height;
-    const tailEnd = {
-      x: mouth.x + speechOffsetX,
-      y: mouth.y + speechOffsetY
-    };
-    const tailOffsetXWorld = SPEECH_BUBBLE_WEST_TAIL_END_FROM_RIGHT_PX;
-    const tailOffsetYWorld = SPEECH_BUBBLE_TAIL_END_FROM_BOTTOM_PX;
-    const bottomWorld = 720 - tailEnd.y + tailOffsetYWorld;
-    if (facing === "west") {
-      const leftWorld = tailEnd.x - bubbleWidthWorld + tailOffsetXWorld;
-      const rightWorld = 1280 - (leftWorld + bubbleWidthWorld);
-      const topWorld = 720 - bottomWorld - bubbleHeightWorld;
-      this.speechBubble.debug = {
-        tailEnd,
-        bubbleRect: { x: leftWorld, y: topWorld, w: bubbleWidthWorld, h: bubbleHeightWorld },
-        metrics
-      };
-      return {
-        right: (rightWorld / 1280) * 100,
-        bottom: (bottomWorld / 720) * 100,
-        width: metrics.width,
-        maxWidth: metrics.maxWidth,
-        maxHeight: metrics.maxHeight,
-        tailSide: "right"
-      };
-    }
-    const leftWorld = tailEnd.x - tailOffsetXWorld;
-    const topWorld = 720 - bottomWorld - bubbleHeightWorld;
-    this.speechBubble.debug = {
-      tailEnd,
-      bubbleRect: { x: leftWorld, y: topWorld, w: bubbleWidthWorld, h: bubbleHeightWorld },
-      metrics
-    };
-    return {
-      left: (leftWorld / 1280) * 100,
-      bottom: (bottomWorld / 720) * 100,
-      width: metrics.width,
-      maxWidth: metrics.maxWidth,
-      maxHeight: metrics.maxHeight,
-      tailSide: "left"
-    };
+    const tailEnd = { x: this.player.position.x + side * height * 0.17, y: body.top + height * 0.18 };
+    const position = placeSpeechBubble(body, tailEnd, metrics, facing);
+    if (this.speechBubble) this.speechBubble.debug = { tailEnd, bubbleRect: position.rect, metrics };
+    return position;
+  }
+
+  mitkoSpeechBounds() {
+    const definition = this.characterDefinitions?.["npc.bai_mitko"] || characterDefinitions["npc.bai_mitko"];
+    const { x, y } = this.player.position;
+    const height = characterHeight(definition, this.currentScene, this.player.position);
+    const radius = height * 0.29 + 8;
+    return { height, body: { left: x - radius, right: x + radius, top: y - height - 12 } };
   }
 
   createMenu() {
@@ -3590,6 +3563,17 @@ node tools/build-external-runtime-staging.js</pre>
     if (!dialogue?.npcId) return null;
     const npc = findSceneSpeaker(this.currentScene, node.npcId || dialogue.npcId);
     const lineKey = firstMatchingRule(node.lineRules, this.effectContext())?.lineKey || node.lineKey;
+    if (npc?.id === "hotspot.square.kiosk") {
+      const text = this.t(lineKey).replace(/^\s*(?:Леля\s+)?Пепа:\s*|^\s*(?:Aunt\s+)?Pepa:\s*/iu, "");
+      const metrics = this.measureSpeechBubble(text, 400);
+      const mouth = npc.speechAnchor;
+      const top = Math.min(npc.rect.y - 22, this.mitkoSpeechBounds().body.top);
+      const position = placeSpeechBubble({ left: npc.rect.x, right: npc.rect.x + npc.rect.w, top }, mouth, metrics, "west", true);
+      const bubble = this.createAnimatedSpeechBubble(text, this.t(npc.nameKey), "dialogue-speech-bubble phase-in");
+      bubble.setAttribute("role", "status");
+      this.applySpeechBubbleLayout(bubble, position, metrics);
+      return bubble;
+    }
     return this.createNpcSpeechBubble(npc, this.t(lineKey), "dialogue-speech-bubble");
   }
 

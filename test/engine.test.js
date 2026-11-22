@@ -15,6 +15,7 @@ import { Renderer, animationRenderFrameIndex, animationRenderMirrored, animation
 import { applyTimedSobering, intoxicationBandKey, intoxicationColor, intoxicationMovementMultiplier, RAKIA_SOBER_INTERVAL_MS } from "../src/engine/IntoxicationSystem.js";
 import { strings } from "../src/content/localization/index.js";
 import { chapter1 as currentChapter1 } from "../src/content/chapter1/index.js";
+import { objectRemark } from '../src/content/chapter1/objectCommentary.js';
 import { assetManifest as currentAssetManifest } from "../src/content/art/assetManifest.js";
 import {restoreApartmentTwoPhotoSnapshot} from './helpers/apartment-two-photo-preservation.js';
 // Keep these generic engine/old-room fixtures exact; the new AD geometry,
@@ -2543,7 +2544,7 @@ test("near object approach does not start tiny corrective walk", () => {
   assert.equal(game.walkedTo, undefined);
   assert.equal(game.player.pendingInteraction, null);
   assert.equal(game.player.facing, "west");
-  assert.equal(game.message, "look.apartment.mirror");
+  assert.equal(game.message, objectRemark(target.id, 'look', 'bg'));
   assert.equal(game.player.target, null);
 });
 
@@ -2615,7 +2616,7 @@ test("looking at an open window reports its state without triggering an action a
   game.performTargetAction(target);
 
   assert.equal(game.player.animation, "idle");
-  assert.equal(game.spokenMessage, "translated:look.apartment.window.open");
+  assert.equal(game.spokenMessage, objectRemark('window.open', 'look', 'bg'));
 });
 
 test("using each apartment window hotspot selects its matching direction and approach", () => {
@@ -2805,7 +2806,7 @@ test("pending target action runs after walk and stop animation complete", () => 
   assert.equal(game.player.pendingInteraction, null);
   assert.equal(game.selectedVerb, "use");
   assert.equal(game.player.facing, "east");
-  assert.equal(game.message, "look.apartment.mirror");
+  assert.equal(game.message, objectRemark(target.id, 'look', 'bg'));
 });
 
 test("target action turns toward hand point when no movement is needed", () => {
@@ -2834,7 +2835,7 @@ test("target action turns toward hand point when no movement is needed", () => {
 
   assert.equal(game.player.pendingInteraction, null);
   assert.equal(game.player.facing, "west");
-  assert.equal(game.message, "look.apartment.mirror");
+  assert.equal(game.message, objectRemark(target.id, 'look', 'bg'));
 });
 
 test("speech bubble layout stays in 1280 by 720 virtual coordinates across viewport scales", () => {

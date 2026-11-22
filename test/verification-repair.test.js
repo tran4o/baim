@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {EventEmitter} from 'node:events';
 import {stripNortheastKiosk} from './helpers/northeast-kiosk-preservation.js';
+import {stripPortraitClothesR48} from './helpers/portrait-clothes-r48-preservation.js';
 import {stripCentreFacing} from './helpers/centre-facing-preservation.js';
 import {observeImageDecode} from './helpers/image-decode-diagnostics.js';
 import {stripTavernPageLifetime} from './helpers/tavern-page-lifetime-preservation.js';
@@ -13,9 +14,10 @@ const contract=JSON.parse(readFileSync('test/fixtures/verification-repair-contra
 test('exact stop-test inverse reaches the unchanged historical catalog inventory through the full chain',()=>{
  const record=contract.checkedStopTest,file=record.file,current=readFileSync(file),restored=stripNortheastKiosk(file,current),catalogBytes=readFileSync('test/fixtures/walking-catalog-promotion.json'),catalog=JSON.parse(catalogBytes);
  assert.equal(sha(catalogBytes),record.oldCatalogFixtureSHA256,'Historical inventory itself stays immutable');
- assert.equal(sha(current),record.afterSHA256);assert.equal(sha(restored),record.beforeSHA256);
+ const priorStopTest=stripPortraitClothesR48(file,current);
+ assert.equal(sha(priorStopTest),record.afterSHA256);assert.equal(sha(restored),record.beforeSHA256);
  assert.equal(sha(stripCentreFacing(file,current)),catalog.acceptedRuntimeSHA256[file]);
- assert.equal(Buffer.from(restored).toString().replaceAll('{x:430,y:430}','{x:442.5,y:477.5}').replaceAll('{x:1090,y:630}','{x:1077.5,y:655}'),current.toString());
+ assert.equal(Buffer.from(restored).toString().replaceAll('{x:430,y:430}','{x:442.5,y:477.5}').replaceAll('{x:1090,y:630}','{x:1077.5,y:655}'),priorStopTest.toString());
 });
 
 test('stop-test inverse rejects extra bytes, different stop values and already-old unbound input',()=>{

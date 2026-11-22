@@ -1,3 +1,4 @@
+import { objectRemark } from '../src/content/chapter1/objectCommentary.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
@@ -42,7 +43,7 @@ test('real BG/EN clicks give all scenery comments without moving/granting items,
         t.diagnostic(language+': '+name);
         const before=await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;return {inventory:[...g.state.inventory],flags:JSON.stringify(g.state.flags),position:{...g.player.position}};});
         await clickScenePoint(page,point);
-        await page.waitForFunction(name=>{const g=window.__comradeCandidateTest.game;return g.message===g.t('apartment.scenery.'+name+'.look');},name,{timeout:5000}).catch(async error=>{t.diagnostic(JSON.stringify(await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;return{message:g.message,scene:g.currentScene.id,verb:g.selectedVerb,hover:g.hoveredTarget?.id,menu:g.menuOpen,paused:g.paused,dialogue:g.dialogue.current,flags:g.state.flags};})));throw error;});
+        await page.waitForFunction(expected=>window.__comradeCandidateTest.game.message===expected,objectRemark('hotspot.apartment.'+name,'look',language),{timeout:5000}).catch(async error=>{t.diagnostic(JSON.stringify(await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;return{message:g.message,scene:g.currentScene.id,verb:g.selectedVerb,hover:g.hoveredTarget?.id,menu:g.menuOpen,paused:g.paused,dialogue:g.dialogue.current,flags:g.state.flags};})));throw error;});
         assert.equal(await page.locator('.dialogue-panel,.received-item-screen').count(),0);
         assert.deepEqual(await page.evaluate(()=>{const g=window.__comradeCandidateTest.game;return {inventory:[...g.state.inventory],flags:JSON.stringify(g.state.flags),position:{...g.player.position}};}),before,'Look is commentary without movement or quest/item changes');
       }

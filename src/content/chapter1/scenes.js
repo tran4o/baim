@@ -29,17 +29,24 @@ const rawScenes = [
     id: "scene.chapter1.apartment",
     titleKey: "scene.chapter1.apartment.title",
     palette: { sky: "#4d6f86", wall: "#735f49", floor: "#2f2a23" },
-    characterPlacement: {"characterId":"npc.bai_mitko","sourceWidth":399,"sourceHeight":599,"w":318,"h":478,"westX":-180.7220636737793,"eastX":-137.2779363262207,"y":-402.939745646501},
+    characterPlacement: {"characterId":"npc.bai_mitko","sourceWidth":399,"sourceHeight":599,"w":318,"h":478,"westX":-180.7220636737793,"eastX":-137.2779363262207,"y":-402.939745646501,
+      "foregroundScale": { "startY": 515, "endY": 670, "max": 1.08 }
+    },
     interactionPresentation: apartmentWindowPresentation,
     movementSpeed: 70,
     playerStart: { x: 980, y: 515 },
     walkPolygons: apartmentWalkGeometry.walkPolygons,
     walkMask: apartmentWalkGeometry.walkMask,
     perspectiveScale: { horizonY: 300, bottomY: 700, far: 0.76, near: 1.12 },
+    depthZones: [{
+      // Match the standing side sprite before applying the foreground scale.
+      characterHeights: { "npc.bai_mitko": 342 },
+      polygon: [{ x: 0, y: 0 }, { x: 1280, y: 0 }, { x: 1280, y: 720 }, { x: 0, y: 720 }]
+    }],
     anchors: {
       door: { x: 1115, y: 500 },
       mirror: { x: 690, y: 420 },
-      table: { x: 415, y: 510 },
+      table: { x: 513, y: 480 },
       baiMitkoSpawn: { x: 980, y: 515 }
     },
     foregroundLayers: sceneLayerGeometry["scene.chapter1.apartment"]?.foregroundLayers || [],
@@ -59,7 +66,7 @@ const rawScenes = [
         rect: {x:435,y:108,w:105,h:120}, takeItemId:'item.mitko_photo',
         requirements: adultPhotoReward.requirements,
         takeEffects: [{type:'setFlag',key:'adultPhotoTaken'}],
-        interactionApproach:{x:600,y:490}, interactionApproachExact:true,
+        interactionApproach:{x:735,y:490}, interactionApproachExact:true,
         takeMessageKey:'photoquest.adult_found' },
       {
         id: "window",
@@ -188,7 +195,8 @@ const rawScenes = [
         id: "hotspot.apartment.table",
         kind: "hotspot",
         nameKey: "hotspot.table.name",
-        rect: { x: 225, y: 385, w: 280, h: 175 },
+        rect: { x: 345, y: 390, w: 330, h: 173 },
+        hitPriority: 2,
         lookKey: "look.apartment.table"
       },
       ...apartmentCommentaryTargets,
@@ -315,7 +323,7 @@ const rawScenes = [
         speechAnchor: { x: 1169, y: 321 },
         nameKey: "hotspot.kiosk.name",
         rect: { x: 1125, y: 326, w: 118, h: 117 },
-        interactionApproach: { x: 990, y: 550 },
+        interactionApproach: { x: 1022.5, y: 607.5 },
         interactionApproachExact: true,
         lookKey: "campaign.kiosk.look",
         dialogueId: "dialogue.penka_kiosk",

@@ -1,3 +1,5 @@
+import { characterForegroundScale } from "./CharacterRenderMath.js";
+
 // Optional rigid-object presentation driven by the interaction's own frame clock.
 // No wall-clock animation continues while the game is paused, nor is transient
 // state written into a save. Flags select exact static endpoints after reload.
@@ -13,11 +15,11 @@ export function interactionLayerPresentation(scene, player, flags = {}) {
     behindActor: (active || pending)?.behindActor !== false };
 }
 
-// One source-bound side-family registration, constant across every pose. This
-// matches the approved approach/action comparison without fitting frame bounds.
+// Use the shared source registration and scale its offsets around the foot anchor.
 export function scenePosePlacement(scene, player, frame, mirrored = false) {
   const p = scene?.characterPlacement;
   if (!p || player?.id !== p.characterId || frame?.frameWidth !== p.sourceWidth
     || frame?.frameHeight !== p.sourceHeight || !['east', 'west'].includes(player.facing)) return null;
-  return { x: mirrored ? p.westX : p.eastX, y: p.y, w: p.w, h: p.h };
+  const scale = characterForegroundScale(scene, player.id, player.position);
+  return { x: (mirrored ? p.westX : p.eastX) * scale, y: p.y * scale, w: p.w * scale, h: p.h * scale };
 }
