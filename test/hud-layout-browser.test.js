@@ -67,8 +67,9 @@ test('HUD keeps all actions, one language switch and accessible upward three-by-
           assert.equal(geometry.columnsFullyVisible, true);
           assert.equal(geometry.noHorizontalScroll, true);
           assert.equal(geometry.scrolls, count > 9);
-          const meters = await page.locator('.hud-meters').boundingBox(), action = await page.locator('.hud-verb').boundingBox();
-          assert.equal(overlap(meters, expanded), false); assert.equal(overlap(action, expanded), false); assert.equal(overlap(action, meters), false);
+          assert.equal(await page.locator('.hud-meters, .game-hud [role=meter]').count(), 0);
+          const action = await page.locator('.hud-verb').boundingBox();
+          assert.equal(overlap(action, expanded), false);
           if (count) {
             const last = await inventoryItem(page, ids[count - 1]); await last.hover();
             assert.equal(await page.locator('.inventory-hover-label,.inventory-tooltip').count(), 0);

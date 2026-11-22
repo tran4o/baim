@@ -44,3 +44,24 @@ test('chairs cover Mitko from behind and the rear chair mask leaves the gap abov
   assert.equal(opacity(355, 386), 0);
   assert.equal(opacity(359, 395), 255);
 });
+
+test('the right chair leaves its leg gaps clear and the counter covers the near chair foot', () => {
+  const root = 'assets/chapter1/scenes/apartment/dining-r01/';
+  const chair = PNG.sync.read(readFileSync(root + 'dining-right-chair.png'));
+  const counter = PNG.sync.read(readFileSync(root + 'counter.png'));
+  const alpha = (image, x, y) => image.data[(y * image.width + x) * 4 + 3];
+  assert.equal(alpha(chair, 687, 536), 0);
+  assert.equal(alpha(chair, 700, 536), 255);
+  assert.equal(alpha(counter, 346, 627), 255);
+});
+
+test('Mitko stops on the mat and has a connected route around the front of the dining set', () => {
+  const door = apartment.exits.find(exit => exit.id === 'exit.apartment.to_square');
+  assert.ok(isWalkable(apartment, door.entryApproach));
+  for (const point of [{ x: 1010, y: 505 }, { x: 1025, y: 520 }, { x: 1045, y: 545 }]) {
+    assert.equal(isWalkable(apartment, point), false);
+  }
+  const path = findWalkPath(apartment, { x: 550, y: 680 }, { x: 280, y: 590 });
+  assert.ok(path.some(point => point.x > 340 && point.x < 420 && point.y > 650));
+  assert.ok(path.every(point => point.y > 580));
+});

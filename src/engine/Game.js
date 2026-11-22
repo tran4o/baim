@@ -38,7 +38,7 @@ import { AssetLoader } from "./AssetLoader.js";
 import { characterHeight } from "./CharacterRenderMath.js";
 import { DEFAULT_SAVE, LANGUAGES, VERBS } from "./ids.js";
 import { findSceneSpeaker, findTargetAt, findWalkPath, isWalkable, nearestReachableWalkablePoint, nearestWalkablePoint, walkPathDistance } from "./SceneGeometry.js";
-import { distance } from "./geometry.js";
+import { distance, pointInRect } from "./geometry.js";
 import { strings } from "../content/localization/index.js";
 import { chapter1 } from "../content/chapter1/index.js";
 import { characterDefinitions } from "../content/art/characters.js";
@@ -48,10 +48,7 @@ import { mitkoSizeMatchedFront as mitkoTurnPocket, mitkoSizeMatchedRear } from "
 import { mitkoTurnPilot } from "../content/art/mitkoTurnPilot.generated.js";
 import {
   applyTimedSobering,
-  intoxicationBandKey,
-  intoxicationColor,
-  intoxicationMovementMultiplier,
-  RAKIA_MAX_GLASSES
+  intoxicationMovementMultiplier
 } from "./IntoxicationSystem.js";
 
 const verbs = [VERBS.LOOK, VERBS.TALK, VERBS.USE, VERBS.TAKE];
@@ -1274,9 +1271,11 @@ export class Game {
     }
     if (this.inventoryUseItemId) {this.setStatusMessage(this.t('msg.inventory.cannot_use_with',{item:this.t(this.content.items[this.inventoryUseItemId]?.nameKey),target:this.t('ui.inventory.ground')}),{reject:true});return;}
     if (this.currentScene?.playerMode === "closeup") return;
-    const destination = isWalkable(this.currentScene, point)
-      ? point
-      : nearestReachableWalkablePoint(this.currentScene, this.player.position, point);
+    const stop = this.currentScene.walkStopRegions?.find(region => pointInRect(point, region.rect));
+    const requested = stop?.position ?? point;
+    const destination = isWalkable(this.currentScene, requested)
+      ? requested
+      : nearestReachableWalkablePoint(this.currentScene, this.player.position, requested);
     if (destination && this.walkToPoint(destination, point)) {
       this.player.pendingInteraction = null;
       this.player.pendingFacingPoint = null;
@@ -2507,15 +2506,7 @@ export class Game {
     const hud = element("section", "game-hud");
     hud.setAttribute("aria-label", this.t("ui.hud"));
 
-    const meters = element("div", "hud-meters");
-    meters.append(
-      this.createIntoxicationMeter(),
-      this.createHudMeter("ui.meter.influence", this.state.influence, "influence"),
-      this.createHudMeter("ui.meter.suspicion", this.state.suspicion, "suspicion"),
-      this.createHudMeter("ui.meter.public_mood", this.state.publicMood, "public-mood")
-    );
-
-    hud.append(meters, this.createVerbControl());
+    hud.append(this.createVerbControl());
     const items = this.inventory.list();
     hud.appendChild(this.createInventoryDock(items));
     if (this.inventoryUseItemId) hud.appendChild(this.createInventoryUseIndicator());
@@ -2545,38 +2536,6 @@ export class Game {
     });
 
     return verb;
-  }
-
-  createHudMeter(labelKey, value, tone) {
-    const meter = element("div", `hud-meter ${tone}`);
-    const normalized = clampNumber(Number(value) || 0, 0, 100);
-    meter.setAttribute("role", "meter");
-    meter.setAttribute("aria-label", this.t(labelKey));
-    meter.setAttribute("aria-valuemin", "0");
-    meter.setAttribute("aria-valuemax", "100");
-    meter.setAttribute("aria-valuenow", String(normalized));
-    meter.innerHTML = `
-      <span class="hud-meter-label">${escapeHtml(this.t(labelKey))}</span>
-      <span class="hud-meter-track"><span class="hud-meter-fill" style="width:${normalized}%"></span></span>
-    `;
-    return meter;
-  }
-
-  createIntoxicationMeter() {
-    const glasses = Math.max(0, Math.min(RAKIA_MAX_GLASSES, Math.round(Number(this.state.rakiaGlasses) || 0)));
-    const labelKey = `ui.intoxication.${intoxicationBandKey(glasses)}`;
-    const color = intoxicationColor(glasses);
-    const meter = element("div", "hud-meter intoxication");
-    meter.setAttribute("role", "meter");
-    meter.setAttribute("aria-label", `${this.t("ui.meter.rakia")}: ${this.t(labelKey)}`);
-    meter.setAttribute("aria-valuemin", "0");
-    meter.setAttribute("aria-valuemax", String(RAKIA_MAX_GLASSES));
-    meter.setAttribute("aria-valuenow", String(glasses));
-    meter.innerHTML = `
-      <span class="hud-meter-label">${escapeHtml(this.t(labelKey))}</span>
-      <span class="hud-meter-track"><span class="hud-meter-fill" style="width:${glasses * 10}%;background:${color}"></span><span class="hud-meter-glass">🥃 ${glasses}/${RAKIA_MAX_GLASSES}</span></span>
-    `;
-    return meter;
   }
 
   createInventoryDock(items) {

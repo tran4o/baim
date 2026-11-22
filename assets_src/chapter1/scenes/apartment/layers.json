@@ -30,7 +30,7 @@
       "id": "layer.apartment.table_foreground",
       "enabled": true,
       "asset": "foregroundTable",
-      "output": "assets/chapter1/scenes/apartment/ad-r08/foreground.png",
+      "output": "assets/chapter1/scenes/apartment/dining-r01/counter.png",
       "left": 0,
       "top": 0,
       "zIndex": -1
