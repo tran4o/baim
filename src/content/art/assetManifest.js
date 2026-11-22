@@ -19,7 +19,7 @@ export const assetManifest = {
       windowNativeR17: "assets/chapter1/scenes/apartment/window-interaction-r17/window.webp",
       windowCharacterR17: "assets/chapter1/scenes/apartment/window-interaction-r17/mitko.webp",
       droppedBelongingsPile: "assets/chapter1/items/dropped-belongings-pile-v1.png",
-      foregroundTable: "assets/chapter1/scenes/apartment/ad-r08/foreground.png",
+      foregroundTable: "assets/chapter1/scenes/apartment/dining-r01/counter.png",
       diningTableAD: "assets/chapter1/scenes/apartment/dining-r01/dining.png",
       diningBackChair: "assets/chapter1/scenes/apartment/dining-r01/dining-back-chair.png",
       diningRightChair: "assets/chapter1/scenes/apartment/dining-r01/dining-right-chair.png",

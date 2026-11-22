@@ -35,6 +35,7 @@ const rawScenes = [
     interactionPresentation: apartmentWindowPresentation,
     movementSpeed: 70,
     playerStart: { x: 980, y: 515 },
+    walkStopRegions: [{ rect: { x: 1000, y: 465, w: 110, h: 93 }, position: { x: 990, y: 515 } }],
     walkPolygons: apartmentWalkGeometry.walkPolygons,
     walkMask: apartmentWalkGeometry.walkMask,
     perspectiveScale: { horizonY: 300, bottomY: 700, far: 0.76, near: 1.12 },
@@ -189,7 +190,7 @@ const rawScenes = [
         rect: { x: 805, y: 105, w: 240, h: 410 },
         lookKey: "look.apartment.wardrobe",
         objectCloseup: wardrobeCloseup,
-        interactionApproach: { x: 1000, y: 515 }, interactionApproachExact: true
+        interactionApproach: { x: 975, y: 515 }, interactionApproachExact: true
       },
       {
         id: "hotspot.apartment.table",
